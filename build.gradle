@@ -1,0 +1,33 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.8'
+}
+
+sourceCompatibility = 15
+mainClassName = 'bg.tuvarna.traveltickets.App'
+
+group 'bg.tuvarna'
+version '1.0-SNAPSHOT'
+
+ext {
+    hibernateVersion = '5.4.21'
+    postgrsDriverVersion = '42.2.16'
+    junitVersion = '4.12'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation "org.hibernate:hibernate-core:${hibernateVersion}.Final"
+    implementation "org.postgresql:postgresql:${postgrsDriverVersion}"
+
+    testImplementation group: 'junit', name: 'junit', version: "${junitVersion}"
+}
+
+javafx {
+    version = '15'
+    modules = [ 'javafx.controls', 'javafx.fxml' ]
+}
