@@ -9,6 +9,10 @@
         <description>The base persistence unit of ticket-travel application.</description>
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 
+        <!-- explicit entity mapping -->
+        <class>bg.tuvarna.traveltickets.entity.User</class>
+        <class>bg.tuvarna.traveltickets.entity.Role</class>
+
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL10Dialect"/>
             <!-- connection properties -->
