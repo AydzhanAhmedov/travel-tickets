@@ -12,6 +12,11 @@
         <!-- explicit entity mapping -->
         <class>bg.tuvarna.traveltickets.entity.User</class>
         <class>bg.tuvarna.traveltickets.entity.Role</class>
+        <class>bg.tuvarna.traveltickets.entity.Client</class>
+        <class>bg.tuvarna.traveltickets.entity.ClientType</class>
+        <class>bg.tuvarna.traveltickets.entity.Company</class>
+        <class>bg.tuvarna.traveltickets.entity.Cashier</class>
+        <class>bg.tuvarna.traveltickets.entity.Distributor</class>
 
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL10Dialect"/>
