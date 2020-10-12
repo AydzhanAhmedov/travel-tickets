@@ -20,6 +20,9 @@
             <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost/test"/>
             <property name="javax.persistence.jdbc.user" value="test"/>
             <property name="javax.persistence.jdbc.password" value="test"/>
+            <!-- SQL logging -->
+            <property name="hibernate.show_sql" value="false"/>
+            <property name="hibernate.format_sql" value="false"/>
         </properties>
 
     </persistence-unit>
