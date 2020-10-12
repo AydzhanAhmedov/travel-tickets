@@ -12,34 +12,34 @@ import java.util.Objects;
 
 @Immutable
 @Entity
-@Table(name = "roles")
-public class Role extends BaseEntity {
+@Table(name = "client_types")
+public class ClientType extends BaseEntity {
 
-    private static final long serialVersionUID = 4074864207273715830L;
+    private static final long serialVersionUID = 4811666361979795492L;
 
     /**
-     * Role's names enum.
+     * ClientType's names enum.
      */
-    public enum Enum { ADMIN, CLIENT }
+    public enum Enum {COMPANY, DISTRIBUTOR, CASHIER}
 
     @Enumerated(EnumType.STRING)
     @Column(insertable = false, nullable = false)
-    private Role.Enum name;
+    private ClientType.Enum name;
 
-    public Role() {
+    public ClientType() {
         super();
     }
 
-    public Role(final Role.Enum name) {
+    public ClientType(final ClientType.Enum name) {
         this.name = name;
     }
 
-    public Role(final Long id, final Role.Enum name) {
+    public ClientType(final Long id, final ClientType.Enum name) {
         this(name);
         super.id = id;
     }
 
-    public Role.Enum getName() {
+    public Enum getName() {
         return name;
     }
 
@@ -48,8 +48,8 @@ public class Role extends BaseEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-        Role role = (Role) o;
-        return name == role.name;
+        ClientType that = (ClientType) o;
+        return name == that.name;
     }
 
     @Override
