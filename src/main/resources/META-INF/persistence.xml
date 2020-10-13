@@ -17,17 +17,21 @@
         <class>bg.tuvarna.traveltickets.entity.Company</class>
         <class>bg.tuvarna.traveltickets.entity.Cashier</class>
         <class>bg.tuvarna.traveltickets.entity.Distributor</class>
+        <class>bg.tuvarna.traveltickets.entity.Region</class>
+        <class>bg.tuvarna.traveltickets.entity.City</class>
+        <class>bg.tuvarna.traveltickets.entity.Address</class>
 
         <properties>
+            <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.format_sql" value="true"/>
+            <property name="hibernate.generate_statistics" value="true"/>
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL10Dialect"/>
             <!-- connection properties -->
             <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
             <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost/test"/>
-            <property name="javax.persistence.jdbc.user" value="test"/>
-            <property name="javax.persistence.jdbc.password" value="test"/>
-            <!-- SQL logging -->
-            <property name="hibernate.show_sql" value="false"/>
-            <property name="hibernate.format_sql" value="false"/>
+            <property name="javax.persistence.jdbc.user" value="postgres"/>
+            <property name="javax.persistence.jdbc.password" value="admin"/>
+
         </properties>
 
     </persistence-unit>

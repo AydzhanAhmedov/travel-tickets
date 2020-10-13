@@ -84,7 +84,7 @@ DROP TABLE IF EXISTS companies;
 CREATE TABLE companies(
 	client_id int8 NOT NULL PRIMARY KEY,
 	logo_url varchar(200) NOT NULL,
-	description varchar(500) NOT NULL
+	description varchar(500)
 );
 
 DROP TABLE IF EXISTS distributors;
@@ -118,6 +118,7 @@ name varchar(20) NOT NULL UNIQUE
 DROP TABLE IF EXISTS users;
 CREATE TABLE users(
 id bigserial NOT NULL PRIMARY KEY,
+email varchar(30) NOT NULL UNIQUE,
 username varchar(30) UNIQUE NOT NULL,
 password varchar(100) NOT NULL,
 role_id int4 NOT NULL
