@@ -10,12 +10,12 @@
             <AppenderRef ref="Console-Appender"/>
         </Logger>
 
-        <Logger name="org.hibernate.type.descriptor.sql" level="error">
+        <Logger name="org.hibernate.type.descriptor.sql" level="trace">
             <AppenderRef ref="Console-Appender"/>
         </Logger>
 
         <Root level="error">
-            <AppenderRef ref="Console"/>
+            <AppenderRef ref="Console-Appender"/>
         </Root>
     </Loggers>
 </Configuration>
