@@ -14,8 +14,6 @@ public interface GenericCrudRepository<E, ID> {
 
     E save(E entity);
 
-    E update(E entity);
-
     void delete(E entity);
 
 }
