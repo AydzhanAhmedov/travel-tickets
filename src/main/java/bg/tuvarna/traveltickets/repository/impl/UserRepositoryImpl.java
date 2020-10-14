@@ -7,7 +7,7 @@ import bg.tuvarna.traveltickets.util.EntityManagerUtil;
 
 import java.util.Optional;
 
-import static bg.tuvarna.traveltickets.common.Constants.PASSWORD_PARAM;
+import static bg.tuvarna.traveltickets.common.Constants.EMAIL_PARAM;
 import static bg.tuvarna.traveltickets.common.Constants.USERNAME_PARAM;
 
 public class UserRepositoryImpl extends GenericCrudRepositoryImpl<User, Long> implements UserRepository {
@@ -16,7 +16,7 @@ public class UserRepositoryImpl extends GenericCrudRepositoryImpl<User, Long> im
 
     public static UserRepositoryImpl getInstance() {
         if (instance == null) {
-            synchronized (UserRepository.class) {
+            synchronized (UserRepositoryImpl.class) {
                 if (instance == null) instance = new UserRepositoryImpl();
             }
         }
@@ -27,18 +27,18 @@ public class UserRepositoryImpl extends GenericCrudRepositoryImpl<User, Long> im
         super();
     }
 
-    private static final String FIND_BY_USERNAME_AND_PASSWORD_JPQL = """
+    private static final String FIND_BY_USERNAME_AND_PASSWORD_HQL = """
                 SELECT u FROM User u
                 LEFT JOIN FETCH u.role
-                WHERE u.username = :username AND u.password = :password
+                WHERE u.username = :username OR u.email = :email
             """;
 
     @Override
-    public Optional<User> findByUsernameAndPassword(final String username, final String password) {
+    public Optional<User> findByUsernameOrEmail(final String username, final String email) {
         final User found = EntityManagerUtil.getEntityManager()
-                .createQuery(FIND_BY_USERNAME_AND_PASSWORD_JPQL, User.class)
+                .createQuery(FIND_BY_USERNAME_AND_PASSWORD_HQL, User.class)
                 .setParameter(USERNAME_PARAM, username)
-                .setParameter(PASSWORD_PARAM, password)
+                .setParameter(EMAIL_PARAM, email)
                 .getSingleResult();
 
         return Optional.ofNullable(found);

@@ -9,7 +9,7 @@ public final class Constants {
     public static final String PERSISTENT_UNIT_NAME = "travel-ticket-persistence-unit";
 
     public static final String USERNAME_PARAM = "username";
-    public static final String PASSWORD_PARAM = "password";
+    public static final String EMAIL_PARAM = "email";
 
     private Constants() {
         throw new UnsupportedOperationException(CANNOT_BE_INSTANTIATED_FORMAT.formatted(getClass().toString()));
