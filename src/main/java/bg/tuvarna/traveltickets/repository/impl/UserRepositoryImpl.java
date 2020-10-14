@@ -7,8 +7,7 @@ import bg.tuvarna.traveltickets.util.EntityManagerUtil;
 
 import java.util.Optional;
 
-import static bg.tuvarna.traveltickets.common.Constants.EMAIL_PARAM;
-import static bg.tuvarna.traveltickets.common.Constants.USERNAME_PARAM;
+import static bg.tuvarna.traveltickets.common.Constants.USERNAME_OR_EMAIL_PARAM;
 
 public class UserRepositoryImpl extends GenericCrudRepositoryImpl<User, Long> implements UserRepository {
 
@@ -30,15 +29,14 @@ public class UserRepositoryImpl extends GenericCrudRepositoryImpl<User, Long> im
     private static final String FIND_BY_USERNAME_AND_PASSWORD_HQL = """
                 SELECT u FROM User u
                 LEFT JOIN FETCH u.role
-                WHERE u.username = :username OR u.email = :email
+                WHERE u.username = :usernameOrEmail OR u.email = :usernameOrEmail
             """;
 
     @Override
-    public Optional<User> findByUsernameOrEmail(final String username, final String email) {
+    public Optional<User> findByUsernameOrEmail(final String usernameOrEmail) {
         final User found = EntityManagerUtil.getEntityManager()
                 .createQuery(FIND_BY_USERNAME_AND_PASSWORD_HQL, User.class)
-                .setParameter(USERNAME_PARAM, username)
-                .setParameter(EMAIL_PARAM, email)
+                .setParameter(USERNAME_OR_EMAIL_PARAM, usernameOrEmail)
                 .getSingleResult();
 
         return Optional.ofNullable(found);
