@@ -2,9 +2,11 @@ package bg.tuvarna.traveltickets.entity;
 
 import bg.tuvarna.traveltickets.entity.base.BaseEntity;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import java.util.Objects;
-import java.util.Optional;
 
 @Entity
 @Table(name = "cities")
@@ -12,10 +14,10 @@ public class City extends BaseEntity {
 
     private static final long serialVersionUID = 2398116316143393429L;
 
-    @Column (nullable = false, unique = true)
+    @Column(nullable = false, unique = true)
     private String name;
 
-    @ManyToOne (optional = false)
+    @ManyToOne(optional = false)
     private Region region;
 
     public City() {
@@ -24,6 +26,11 @@ public class City extends BaseEntity {
     public City(String name, Region region) {
         this.name = name;
         this.region = region;
+    }
+
+    public City(long id, String name, Region region) {
+        this(name, region);
+        super.id = id;
     }
 
     public String getName() {

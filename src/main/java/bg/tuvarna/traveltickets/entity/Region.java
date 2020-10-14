@@ -16,6 +16,8 @@ public class Region extends BaseEntity {
     @Column (nullable = false, unique = true)
     private String name;
 
+    public Region(){
+    }
     public Region(final String name) {
         this.name = name;
     }

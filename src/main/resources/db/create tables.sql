@@ -159,7 +159,7 @@ CREATE TABLE cities(
 DROP TABLE IF EXISTS regions;
 CREATE TABLE regions(
 	id bigserial NOT NULL PRIMARY KEY,
-	name varchar(50) NOT NULL
+	name varchar(50) NOT NULL UNIQUE
 );
 
 ALTER TABLE notifications_recipients
