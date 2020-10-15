@@ -12,7 +12,7 @@ import static bg.tuvarna.traveltickets.common.Constants.PERSISTENT_UNIT_NAME;
 
 /**
  * This utility class holds an instance of {@link EntityManagerFactory} and provides methods for working with it.
- * It class also encapsulates logic for working with {@link EntityTransaction}s and {@link EntityManager}s in a
+ * It also provides methods for working with {@link EntityTransaction}s and {@link EntityManager}s in a
  * thread-local manner.
  */
 public final class EntityManagerUtil {
