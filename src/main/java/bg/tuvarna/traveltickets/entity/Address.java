@@ -2,7 +2,10 @@ package bg.tuvarna.traveltickets.entity;
 
 import bg.tuvarna.traveltickets.entity.base.BaseEntity;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import java.util.Objects;
 
 @Entity
@@ -24,6 +27,11 @@ public class Address extends BaseEntity {
     public Address(City city, String address) {
         this.city = city;
         this.address = address;
+    }
+
+    public Address(long id, City city, String address) {
+        this(city, address);
+        super.id = id;
     }
 
     public City getCity() {

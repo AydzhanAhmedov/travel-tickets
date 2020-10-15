@@ -20,6 +20,12 @@
         <class>bg.tuvarna.traveltickets.entity.Region</class>
         <class>bg.tuvarna.traveltickets.entity.City</class>
         <class>bg.tuvarna.traveltickets.entity.Address</class>
+        <class>bg.tuvarna.traveltickets.entity.TravelType</class>
+        <class>bg.tuvarna.traveltickets.entity.TransportType</class>
+        <class>bg.tuvarna.traveltickets.entity.TravelStatus</class>
+        <class>bg.tuvarna.traveltickets.entity.Travel</class>
+        <class>bg.tuvarna.traveltickets.entity.Ticket</class>
+        <class>bg.tuvarna.traveltickets.entity.TravelRoute</class>
 
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL10Dialect"/>
