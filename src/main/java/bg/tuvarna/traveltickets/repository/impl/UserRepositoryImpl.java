@@ -11,6 +11,21 @@ import static bg.tuvarna.traveltickets.common.Constants.USERNAME_OR_EMAIL_PARAM;
 
 public class UserRepositoryImpl extends GenericCrudRepositoryImpl<User, Long> implements UserRepository {
 
+    private static final String FIND_BY_USERNAME_OR_EMAIL_HQL = """
+                SELECT u FROM User u
+                WHERE u.username = :usernameOrEmail OR u.email = :usernameOrEmail
+            """;
+
+    @Override
+    public Optional<User> findByUsernameOrEmail(final String usernameOrEmail) {
+        final User found = EntityManagerUtil.getEntityManager()
+                .createQuery(FIND_BY_USERNAME_OR_EMAIL_HQL, User.class)
+                .setParameter(USERNAME_OR_EMAIL_PARAM, usernameOrEmail)
+                .getSingleResult();
+
+        return Optional.ofNullable(found);
+    }
+
     private static UserRepositoryImpl instance;
 
     public static UserRepositoryImpl getInstance() {
@@ -24,22 +39,6 @@ public class UserRepositoryImpl extends GenericCrudRepositoryImpl<User, Long> im
 
     private UserRepositoryImpl() {
         super();
-    }
-
-    private static final String FIND_BY_USERNAME_AND_PASSWORD_HQL = """
-                SELECT u FROM User u
-                LEFT JOIN FETCH u.role
-                WHERE u.username = :usernameOrEmail OR u.email = :usernameOrEmail
-            """;
-
-    @Override
-    public Optional<User> findByUsernameOrEmail(final String usernameOrEmail) {
-        final User found = EntityManagerUtil.getEntityManager()
-                .createQuery(FIND_BY_USERNAME_AND_PASSWORD_HQL, User.class)
-                .setParameter(USERNAME_OR_EMAIL_PARAM, usernameOrEmail)
-                .getSingleResult();
-
-        return Optional.ofNullable(found);
     }
 
 }
