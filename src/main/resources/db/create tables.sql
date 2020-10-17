@@ -73,7 +73,7 @@ CREATE TABLE travels(
 	end_date timestamp NOT NULL CHECK (end_date >= start_date),
 	ticket_quantity int2 NOT NULL CHECK (ticket_quantity > 0),
 	current_ticket_quantity int2 NOT NULL CHECK (current_ticket_quantity >= 0 AND current_ticket_quantity <= ticket_quantity),
-	ticket_price money NOT NULL,
+	ticket_price double NOT NULL,
 	ticket_buy_limit int2 NOT NULL,
 	details varchar(500),
 	created_at timestamp NOT NULL,
