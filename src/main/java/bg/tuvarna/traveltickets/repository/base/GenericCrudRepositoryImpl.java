@@ -1,6 +1,7 @@
 package bg.tuvarna.traveltickets.repository.base;
 
 import bg.tuvarna.traveltickets.util.EntityManagerUtil;
+import bg.tuvarna.traveltickets.util.JpaOperationsUtil;
 
 import javax.persistence.EntityManager;
 import java.lang.reflect.ParameterizedType;
@@ -33,12 +34,12 @@ public abstract class GenericCrudRepositoryImpl<E, ID> implements GenericCrudRep
 
     @Override
     public E save(final E entity) {
-        return EntityManagerUtil.executeInTransaction(() -> persistOrMerge(entity), false);
+        return JpaOperationsUtil.executeInTransaction(() -> persistOrMerge(entity), false);
     }
 
     @Override
     public void delete(final E entity) {
-        EntityManagerUtil.executeInTransaction(() -> {
+        JpaOperationsUtil.executeInTransaction(() -> {
             EntityManagerUtil.getEntityManager().remove(entity);
             return null;
         }, false);
