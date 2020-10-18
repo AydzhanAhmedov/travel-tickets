@@ -14,7 +14,7 @@
 
 <BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="bg.tuvarna.traveltickets.controller.UserLoginController">
    <left>
-      <AnchorPane prefHeight="600.0" prefWidth="300.0" style="-fx-background-color: #7076ba#7076ba;" BorderPane.alignment="CENTER">
+      <AnchorPane prefHeight="600.0" prefWidth="300.0" style="-fx-background-color: radial-gradient(focus-distance 0% , center 50% 50% , radius 85% ,#7076ba,#444484);" BorderPane.alignment="CENTER">
          <children>
             <ImageView cache="true" fitHeight="200.0" fitWidth="200.0" layoutX="50.0" layoutY="200.0">
                <image>

@@ -29,7 +29,7 @@ public abstract class BaseController implements Initializable {
     protected Button exitButton;
 
     @FXML
-    public void onExitButtonClicked(final MouseEvent event) {
+    protected void onExitButtonClicked(final MouseEvent event) {
         getPrimaryStage().fireEvent(new WindowEvent(getPrimaryStage(), WindowEvent.WINDOW_CLOSE_REQUEST));
     }
 

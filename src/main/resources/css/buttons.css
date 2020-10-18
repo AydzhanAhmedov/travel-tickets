@@ -1,5 +1,5 @@
 .loginBtn {
-    -fx-background-color: #444484;
+    -fx-background-color:  radial-gradient(center 50% 50%, radius 100%, #7076ba, #444484);
     -fx-text-fill: #d3d3ed;
     -fx-background-radius: 10px;
 }

@@ -36,7 +36,7 @@ public class UserLoginController extends BaseController {
     private Text infoField;
 
     @FXML
-    public void onLoginButtonClicked(final MouseEvent event) {
+    private void onLoginButtonClicked(final MouseEvent event) {
         final String usernameOrEmail = usernameTextField.getText();
         final String password = passwordField.getText();
 
