@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="bg.tuvarna.traveltickets.controller.UserLoginController">
+   <left>
+      <AnchorPane prefHeight="600.0" prefWidth="300.0" style="-fx-background-color: #7076ba#7076ba;" BorderPane.alignment="CENTER">
+         <children>
+            <ImageView cache="true" fitHeight="200.0" fitWidth="200.0" layoutX="50.0" layoutY="200.0">
+               <image>
+                  <Image url="@../images/logo_name.png" />
+               </image>
+            </ImageView>
+         </children>
+      </AnchorPane>
+   </left>
+   <center>
+      <AnchorPane prefHeight="600.0" prefWidth="603.0" style="-fx-background-color: #d3d3ed;" BorderPane.alignment="CENTER">
+         <TextField fx:id="usernameTextField" layoutX="137.0" layoutY="300.0" prefHeight="30.0" prefWidth="250.0" promptText="User Name" style="-fx-background-color: transparent; -fx-border-color: #7076ba#7076ba; -fx-border-width: 0px 0px 2px 0px;">
+            <opaqueInsets>
+               <Insets />
+            </opaqueInsets>
+         </TextField>
+         <PasswordField fx:id="passwordField" layoutX="137.0" layoutY="357.0" prefHeight="30.0" prefWidth="250.0" promptText="Password" style="-fx-background-color: transparent; -fx-border-color: #7076ba#7076ba; -fx-border-width: 0px 0px 2px 0px;" />
+         <Button fx:id="loginButton" layoutX="116.0" layoutY="414.0" mnemonicParsing="false" onMouseClicked="#onLoginButtonClicked" prefHeight="30.0" prefWidth="273.0" styleClass="loginBtn" stylesheets="@../css/buttons.css" text="Login">
+            <font>
+               <Font name="System Bold" size="14.0" />
+            </font>
+            <effect>
+               <DropShadow blurType="ONE_PASS_BOX" color="#5c5c5c7a" offsetX="1.5" offsetY="1.5" />
+            </effect></Button>
+         <ImageView cache="true" fitHeight="80.0" fitWidth="80.0" layoutX="210.0" layoutY="100.0">
+            <image>
+               <Image url="@../images/users.png" />
+            </image>
+         </ImageView>
+         <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="111.0" layoutY="365.0">
+            <image>
+               <Image url="@../images/password_icon.png" />
+            </image>
+         </ImageView>
+         <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="111.0" layoutY="308.0">
+            <image>
+               <Image url="@../images/username_icon.png" />
+            </image>
+         </ImageView>
+         <Text fill="#444484" layoutX="186.0" layoutY="202.0" strokeType="OUTSIDE" strokeWidth="0.0" text="User Login">
+            <font>
+               <Font size="24.0" />
+            </font>
+         </Text>
+         <Button fx:id="exitButton" layoutX="466.0" layoutY="14.0" maxHeight="20.0" maxWidth="20.0" minHeight="20.0" minWidth="20.0" mnemonicParsing="false" onMouseClicked="#onExitButtonClicked" prefHeight="20.0" prefWidth="20.0" styleClass="exitButton" stylesheets="@../css/buttons.css" />
+         <Text fx:id="infoField" layoutX="139.0" layoutY="278.0" opacity="0.49" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="245.7294921875" />
+      </AnchorPane>
+   </center>
+</BorderPane>

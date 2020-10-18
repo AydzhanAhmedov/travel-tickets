@@ -24,7 +24,7 @@ public class App extends Application {
 
         configurePrimaryStage();
 
-        primaryStage.setScene(new Scene(FXMLLoader.load(getClass().getResource("/main.fxml"))));
+        primaryStage.setScene(new Scene(FXMLLoader.load(getClass().getResource("/bg.tuvarna.traveltickets.controller/login.fxml"))));
         primaryStage.show();
     }
 
