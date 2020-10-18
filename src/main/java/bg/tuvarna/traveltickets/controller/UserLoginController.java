@@ -10,15 +10,15 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
 public class UserLoginController extends BaseController {
 
     private static final String BAD_CREDENTIALS_MESSAGE = "Bad credentials!";
     private static final String ERROR_OCCURRED_MESSAGE = "An error occurred, please try again!";
-    private static final String BLANK_FIELDS_MESSAGE = "Username or email and password fields must not be blank!";
+    private static final String BLANK_FIELDS_MESSAGE = "Username and password fields must not be blank!";
     private static final String PLEASE_WAIT_MESSAGE = "Please wait..";
 
     private final UserService userService = UserServiceImpl.getInstance();
@@ -33,7 +33,10 @@ public class UserLoginController extends BaseController {
     private Button loginButton;
 
     @FXML
-    private Text infoField;
+    private Text errorText;
+
+    @FXML
+    private ImageView errorImageView;
 
     @FXML
     private void onLoginButtonClicked(final MouseEvent event) {
@@ -41,8 +44,7 @@ public class UserLoginController extends BaseController {
         final String password = passwordField.getText();
 
         if (usernameOrEmail.isBlank() || password.isBlank()) {
-            infoField.setText(BLANK_FIELDS_MESSAGE);
-            infoField.setFill(Color.RED);
+            setErrorText(BLANK_FIELDS_MESSAGE);
             return;
         }
 
@@ -56,27 +58,30 @@ public class UserLoginController extends BaseController {
     }
 
     private void onLoginTaskRunning(final WorkerStateEvent event) {
-        loginButton.setDisable(true);
-        infoField.setText(PLEASE_WAIT_MESSAGE);
-        infoField.setFill(Color.BLACK);
+        setDisableOnButtonAndTextFields(true);
     }
 
     private void onLoginTaskSucceeded(final Boolean successfullyLoggedIn) {
-        loginButton.setDisable(false/*successfullyLoggedIn*/);
-
+        setDisableOnButtonAndTextFields(successfullyLoggedIn);
         if (!successfullyLoggedIn) {
-            infoField.setText(BAD_CREDENTIALS_MESSAGE);
-            infoField.setFill(Color.RED);
-        } else {
-            infoField.setText("Success");
-            infoField.setFill(Color.GREEN);
+            setErrorText(BAD_CREDENTIALS_MESSAGE);
         }
     }
 
     private void onLoginTaskFailed(final WorkerStateEvent event) {
-        loginButton.setDisable(false);
-        infoField.setText(ERROR_OCCURRED_MESSAGE);
-        infoField.setFill(Color.RED);
+        setDisableOnButtonAndTextFields(false);
+        setErrorText(ERROR_OCCURRED_MESSAGE);
+    }
+
+    private void setErrorText(final String text) {
+        errorImageView.setVisible(!text.isBlank());
+        errorText.setText(text);
+    }
+
+    private void setDisableOnButtonAndTextFields(final boolean value) {
+        usernameTextField.setDisable(value);
+        passwordField.setDisable(value);
+        loginButton.setDisable(value);
     }
 
 }

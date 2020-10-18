@@ -26,13 +26,13 @@
    </left>
    <center>
       <AnchorPane prefHeight="600.0" prefWidth="603.0" style="-fx-background-color: #d3d3ed;" BorderPane.alignment="CENTER">
-         <TextField fx:id="usernameTextField" layoutX="137.0" layoutY="300.0" prefHeight="30.0" prefWidth="250.0" promptText="User Name" style="-fx-background-color: transparent; -fx-border-color: #7076ba#7076ba; -fx-border-width: 0px 0px 2px 0px;">
+         <TextField fx:id="usernameTextField" focusTraversable="false" layoutX="137.0" layoutY="257.0" prefHeight="30.0" prefWidth="250.0" promptText="User Name" style="-fx-background-color: transparent; -fx-border-color: #7076ba#7076ba; -fx-border-width: 0px 0px 2px 0px;">
             <opaqueInsets>
                <Insets />
             </opaqueInsets>
          </TextField>
-         <PasswordField fx:id="passwordField" layoutX="137.0" layoutY="357.0" prefHeight="30.0" prefWidth="250.0" promptText="Password" style="-fx-background-color: transparent; -fx-border-color: #7076ba#7076ba; -fx-border-width: 0px 0px 2px 0px;" />
-         <Button fx:id="loginButton" layoutX="116.0" layoutY="414.0" mnemonicParsing="false" onMouseClicked="#onLoginButtonClicked" prefHeight="30.0" prefWidth="273.0" styleClass="loginBtn" stylesheets="@../css/buttons.css" text="Login">
+         <PasswordField fx:id="passwordField" focusTraversable="false" layoutX="137.0" layoutY="309.0" prefHeight="30.0" prefWidth="250.0" promptText="Password" style="-fx-background-color: transparent; -fx-border-color: #7076ba#7076ba; -fx-border-width: 0px 0px 2px 0px;" />
+         <Button fx:id="loginButton" layoutX="116.0" layoutY="402.0" mnemonicParsing="false" onMouseClicked="#onLoginButtonClicked" prefHeight="30.0" prefWidth="273.0" styleClass="loginBtn" stylesheets="@../css/buttons.css" text="Login">
             <font>
                <Font name="System Bold" size="14.0" />
             </font>
@@ -44,12 +44,12 @@
                <Image url="@../images/users.png" />
             </image>
          </ImageView>
-         <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="111.0" layoutY="365.0">
+         <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="111.0" layoutY="317.0">
             <image>
                <Image url="@../images/password_icon.png" />
             </image>
          </ImageView>
-         <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="111.0" layoutY="308.0">
+         <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="111.0" layoutY="265.0">
             <image>
                <Image url="@../images/username_icon.png" />
             </image>
@@ -60,7 +60,15 @@
             </font>
          </Text>
          <Button fx:id="exitButton" layoutX="466.0" layoutY="14.0" maxHeight="20.0" maxWidth="20.0" minHeight="20.0" minWidth="20.0" mnemonicParsing="false" onMouseClicked="#onExitButtonClicked" prefHeight="20.0" prefWidth="20.0" styleClass="exitButton" stylesheets="@../css/buttons.css" />
-         <Text fx:id="infoField" layoutX="139.0" layoutY="278.0" opacity="0.49" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="245.7294921875" />
+         <Text fx:id="errorText" layoutX="140.0" layoutY="367.0" opacity="0.75" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: #9e2c2c;" wrappingWidth="250.7294921875">
+            <font>
+               <Font name="System Bold" size="11.0" />
+            </font></Text>
+         <ImageView fx:id="errorImageView" fitHeight="17.0" fitWidth="17.0" layoutX="113.0" layoutY="355.0" opacity="0.75" visible="false">
+            <image>
+               <Image url="@../images/error.png" />
+            </image>
+         </ImageView>
       </AnchorPane>
    </center>
 </BorderPane>
