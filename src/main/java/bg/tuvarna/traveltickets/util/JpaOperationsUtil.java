@@ -2,6 +2,9 @@ package bg.tuvarna.traveltickets.util;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import javax.persistence.NonUniqueResultException;
+import javax.persistence.TypedQuery;
+import java.util.List;
 import java.util.Objects;
 
 import static bg.tuvarna.traveltickets.common.Constants.ACTION_CANNOT_BE_NULL_MESSAGE;
@@ -58,6 +61,15 @@ public final class JpaOperationsUtil {
         }
 
         return actionResult;
+    }
+
+    public static <T> T getSingleResultOrNull(final TypedQuery<T> query) {
+        final List<T> resultList = query.getResultList();
+
+        if (resultList.size() > 1) {
+            throw new NonUniqueResultException();
+        }
+        return resultList.isEmpty() ? null : resultList.get(0);
     }
 
     private JpaOperationsUtil() {
