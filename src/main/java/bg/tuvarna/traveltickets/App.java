@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+import javax.persistence.EntityManagerFactory;
 import java.io.IOException;
 
 public class App extends Application {
@@ -15,6 +16,7 @@ public class App extends Application {
     private static Stage primaryStage;
 
     public static void main(final String... args) {
+        configureHibernate();
         launch(args);
     }
 
@@ -39,6 +41,14 @@ public class App extends Application {
             Platform.exit();
             System.exit(0);
         });
+    }
+
+    /**
+     * This method calls {@link EntityManagerUtil#getEntityManagerFactory()} which triggers initialization
+     * of {@link EntityManagerFactory}, this is done on a new thread to prevent waiting on ui.
+     */
+    private static void configureHibernate() {
+        new Thread(EntityManagerUtil::getEntityManagerFactory).start();
     }
 
 }
