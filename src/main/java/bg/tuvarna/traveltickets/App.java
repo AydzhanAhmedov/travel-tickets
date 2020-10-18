@@ -45,8 +45,9 @@ public class App extends Application {
 
     /**
      * This method calls {@link EntityManagerUtil#getEntityManagerFactory()} which triggers initialization
-     * of {@link EntityManagerFactory}, this is done on a new thread to prevent waiting on ui.
+     * of {@link EntityManagerFactory}, this is done on a new thread to prevent ur from waiting.
      */
+    @SuppressWarnings("all")
     private static void configureHibernate() {
         new Thread(EntityManagerUtil::getEntityManagerFactory).start();
     }
