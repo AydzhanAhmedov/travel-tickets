@@ -2,15 +2,17 @@ package bg.tuvarna.traveltickets.entity;
 
 import bg.tuvarna.traveltickets.entity.base.BaseAuditEntity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
@@ -48,14 +50,44 @@ public class Travel extends BaseAuditEntity {
 
     private String details;
 
-    //TODO implement many to many logic here
+    @OneToMany(mappedBy = "travel", cascade = CascadeType.ALL)
+    private List<TravelRoute> travelRoutes = new ArrayList<>();
+
     //@OneToMany(mappedBy = "travel")
-    //List<TravelRoute> travelRouteList;
+    //private List<TravelDistributorRequest> distributorRequests = new ArrayList<>();
+
+   //public void addDistributorRequest(Distributor distributor, RequestStatus requestStatus) {
+   //    TravelDistributorRequest distributorRequest = new TravelDistributorRequest(this, distributor);
+   //    distributorRequest.setRequestStatus(requestStatus);
+   //    distributorRequests.add(distributorRequest);
+   //}
+
+    public void addTravelRoute(City city, OffsetDateTime date, TransportType type) {
+        TravelRoute travelRoute = new TravelRoute(this, city);
+        travelRoute.setArrivalDate(date);
+        travelRoute.setTransportType(type);
+        travelRoutes.add(travelRoute);
+    }
+
+    // TODO test remove
+    public void removeTravelRoute(City city) {
+        for (Iterator<TravelRoute> iterator = travelRoutes.iterator();
+             iterator.hasNext(); ) {
+            TravelRoute travelRoute = iterator.next();
+
+            if (travelRoute.getTravel().equals(this) &&
+                    travelRoute.getCity().equals(city)) {
+                iterator.remove();
+                travelRoute.setCity(null);
+                travelRoute.setTravel(null);
+            }
+        }
+    }
 
     public Travel() {
     }
 
-    public Travel(long id){
+    public Travel(long id) {
         super.id = id;
     }
 
@@ -131,6 +163,22 @@ public class Travel extends BaseAuditEntity {
         this.details = details;
     }
 
+    public List<TravelRoute> getTravelRoutes() {
+        return travelRoutes;
+    }
+
+    public void setTravelRoutes(List<TravelRoute> travelRoutes) {
+        this.travelRoutes = travelRoutes;
+    }
+
+    //public List<TravelDistributorRequest> getDistributorRequests() {
+    //    return distributorRequests;
+    //}
+//
+    //public void setDistributorRequests(List<TravelDistributorRequest> distributorRequests) {
+    //    this.distributorRequests = distributorRequests;
+    //}
+
     @Override
     public User getCreatedBy() {
         return super.getCreatedBy();
@@ -151,7 +199,7 @@ public class Travel extends BaseAuditEntity {
                 Objects.equals(travelStatus, travel.travelStatus) &&
                 Objects.equals(startDate, travel.startDate) &&
                 Objects.equals(endDate, travel.endDate) &&
-                Objects.equals(ticketQuantity,travel.ticketQuantity) &&
+                Objects.equals(ticketQuantity, travel.ticketQuantity) &&
                 Objects.equals(currentTicketQuantity, travel.currentTicketQuantity) &&
                 Objects.equals(ticketPrice, travel.ticketPrice) &&
                 Objects.equals(ticketBuyLimit, travel.ticketBuyLimit) &&

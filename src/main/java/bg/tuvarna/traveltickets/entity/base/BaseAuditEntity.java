@@ -4,6 +4,7 @@ import bg.tuvarna.traveltickets.entity.User;
 
 import javax.persistence.Column;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
@@ -19,7 +20,7 @@ public abstract class BaseAuditEntity extends BaseEntity {
 
     private static final long serialVersionUID = -3330059911789806595L;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "created_by", updatable = false, nullable = false)
     protected User createdBy;
 
