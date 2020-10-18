@@ -19,7 +19,6 @@ public class UserLoginController extends BaseController {
     private static final String BAD_CREDENTIALS_MESSAGE = "Bad credentials!";
     private static final String ERROR_OCCURRED_MESSAGE = "An error occurred, please try again!";
     private static final String BLANK_FIELDS_MESSAGE = "Username and password fields must not be blank!";
-    private static final String PLEASE_WAIT_MESSAGE = "Please wait..";
 
     private final UserService userService = UserServiceImpl.getInstance();
 
