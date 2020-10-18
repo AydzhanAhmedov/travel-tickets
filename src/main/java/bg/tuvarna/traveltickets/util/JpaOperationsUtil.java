@@ -1,5 +1,7 @@
 package bg.tuvarna.traveltickets.util;
 
+import javafx.concurrent.Task;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.NonUniqueResultException;
@@ -70,6 +72,24 @@ public final class JpaOperationsUtil {
             throw new NonUniqueResultException();
         }
         return resultList.isEmpty() ? null : resultList.get(0);
+    }
+
+    public static <T> Task<T> createTask(final PersistentFunction<T> action) {
+        return new Task<>() {
+            @Override
+            protected T call() {
+                return execute(action);
+            }
+        };
+    }
+
+    public static <T> Task<T> createTransactionTask(final PersistentFunction<T> action) {
+        return new Task<>() {
+            @Override
+            protected T call() {
+                return executeInTransaction(action);
+            }
+        };
     }
 
     private JpaOperationsUtil() {

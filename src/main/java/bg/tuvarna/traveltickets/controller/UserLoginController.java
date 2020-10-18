@@ -3,10 +3,9 @@ package bg.tuvarna.traveltickets.controller;
 import bg.tuvarna.traveltickets.controller.base.BaseController;
 import bg.tuvarna.traveltickets.service.UserService;
 import bg.tuvarna.traveltickets.service.impl.UserServiceImpl;
-import bg.tuvarna.traveltickets.util.TaskUtil;
+import bg.tuvarna.traveltickets.util.JpaOperationsUtil;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
@@ -47,7 +46,7 @@ public class UserLoginController extends BaseController {
             return;
         }
 
-        final Task<Boolean> loginTask = TaskUtil.createTask(() -> userService.login(usernameOrEmail, password));
+        final Task<Boolean> loginTask = JpaOperationsUtil.createTask(() -> userService.login(usernameOrEmail, password));
 
         loginTask.setOnFailed(this::onLoginTaskFailed);
         loginTask.setOnRunning(this::onLoginTaskRunning);
