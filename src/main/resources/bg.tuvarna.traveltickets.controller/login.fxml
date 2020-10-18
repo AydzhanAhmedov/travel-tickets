@@ -25,13 +25,13 @@
       </AnchorPane>
    </left>
    <center>
-      <AnchorPane prefHeight="600.0" prefWidth="603.0" style="-fx-background-color: #d3d3ed;" BorderPane.alignment="CENTER">
-         <TextField fx:id="usernameTextField" focusTraversable="false" layoutX="137.0" layoutY="257.0" prefHeight="30.0" prefWidth="250.0" promptText="User Name" style="-fx-background-color: transparent; -fx-border-color: #7076ba#7076ba; -fx-border-width: 0px 0px 2px 0px;">
+      <AnchorPane focusTraversable="true" prefHeight="600.0" prefWidth="603.0" style="-fx-background-color: #d3d3ed;" BorderPane.alignment="CENTER">
+         <TextField fx:id="usernameTextField" layoutX="137.0" layoutY="257.0" prefHeight="30.0" prefWidth="250.0" promptText="User Name" style="-fx-background-color: transparent; -fx-border-color: #7076ba#7076ba; -fx-border-width: 0px 0px 2px 0px;">
             <opaqueInsets>
                <Insets />
             </opaqueInsets>
          </TextField>
-         <PasswordField fx:id="passwordField" focusTraversable="false" layoutX="137.0" layoutY="309.0" prefHeight="30.0" prefWidth="250.0" promptText="Password" style="-fx-background-color: transparent; -fx-border-color: #7076ba#7076ba; -fx-border-width: 0px 0px 2px 0px;" />
+         <PasswordField fx:id="passwordField" layoutX="137.0" layoutY="309.0" prefHeight="30.0" prefWidth="250.0" promptText="Password" style="-fx-background-color: transparent; -fx-border-color: #7076ba#7076ba; -fx-border-width: 0px 0px 2px 0px;" />
          <Button fx:id="loginButton" layoutX="116.0" layoutY="402.0" mnemonicParsing="false" onMouseClicked="#onLoginButtonClicked" prefHeight="30.0" prefWidth="273.0" styleClass="loginBtn" stylesheets="@../css/buttons.css" text="Login">
             <font>
                <Font name="System Bold" size="14.0" />
@@ -39,7 +39,7 @@
             <effect>
                <DropShadow blurType="ONE_PASS_BOX" color="#5c5c5c7a" offsetX="1.5" offsetY="1.5" />
             </effect></Button>
-         <ImageView cache="true" fitHeight="80.0" fitWidth="80.0" layoutX="210.0" layoutY="100.0">
+         <ImageView cache="true" fitHeight="80.0" fitWidth="80.0" focusTraversable="true" layoutX="210.0" layoutY="100.0">
             <image>
                <Image url="@../images/users.png" />
             </image>
