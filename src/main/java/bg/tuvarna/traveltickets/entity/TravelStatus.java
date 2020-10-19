@@ -17,20 +17,20 @@ public class TravelStatus extends BaseEntity {
 
     private static final long serialVersionUID = -6993633903199159181L;
 
-    public enum Enum { INCOMING, ONGOING, CANCELLED, ENDED};
+    public enum Enum {INCOMING, ONGOING, CANCELLED, ENDED}
 
-    @Enumerated (EnumType.STRING)
-    @Column (nullable = false, unique = true)
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, unique = true)
     private TravelStatus.Enum name;
 
-    public TravelStatus(){
+    public TravelStatus() {
     }
 
     public TravelStatus(Enum name) {
         this.name = name;
     }
 
-    public TravelStatus(long id, Enum name) {
+    public TravelStatus(Long id, Enum name) {
         this(name);
         super.id = id;
     }

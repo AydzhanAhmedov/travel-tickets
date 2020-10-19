@@ -28,7 +28,7 @@ public class City extends BaseEntity {
         this.region = region;
     }
 
-    public City(long id, String name, Region region) {
+    public City(Long id, String name, Region region) {
         this(name, region);
         super.id = id;
     }

@@ -20,50 +20,37 @@ public class NotificationRecipient implements Serializable {
     @EmbeddedId
     private NotificationRecipientID notificationRecipientID;
 
-    @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("notificationID")
+    @ManyToOne(fetch = FetchType.LAZY)
     private Notification notification;
 
-    // wont work with MapsId  (searchs for column user_id)
+    @MapsId("recipientID")
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "recipient_id", insertable = false, updatable = false)
-    private User user;
+    private User recipient;
 
-    @ManyToOne(targetEntity = NotificationStatus.class)
-    @JoinColumn(name = "notification_status_id")
+    @ManyToOne
+    @JoinColumn(name = "notification_status_id", nullable = false)
     private NotificationStatus notificationStatus;
 
     public NotificationRecipient() {
     }
 
-    public NotificationRecipient(Notification notification, User user) {
+    public NotificationRecipient(Notification notification, User recipient) {
         this.notification = notification;
-        this.user = user;
-        notificationRecipientID = new NotificationRecipientID(notification.getId(), user.getId());
+        this.recipient = recipient;
+        notificationRecipientID = new NotificationRecipientID(notification.getId(), recipient.getId());
     }
 
     public NotificationRecipientID getNotificationRecipientID() {
         return notificationRecipientID;
     }
 
-    public void setNotificationRecipientID(NotificationRecipientID notificationRecipientID) {
-        this.notificationRecipientID = notificationRecipientID;
-    }
-
     public Notification getNotification() {
         return notification;
     }
 
-    public void setNotification(Notification notification) {
-        this.notification = notification;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
+    public User getRecipient() {
+        return recipient;
     }
 
     public NotificationStatus getNotificationStatus() {
@@ -81,18 +68,18 @@ public class NotificationRecipient implements Serializable {
         if (!super.equals(o)) return false;
         NotificationRecipient notificationRecipient = (NotificationRecipient) o;
         return Objects.equals(notification, notificationRecipient.notification) &&
-                Objects.equals(user, notificationRecipient.user);
+                Objects.equals(recipient, notificationRecipient.recipient);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), notification, user, notification);
+        return Objects.hash(super.hashCode(), notification, recipient, notification);
     }
 
     @PrePersist
     protected final void prePersist(){
         if (notificationStatus == null)
-            notificationStatus = new NotificationStatus(1L, NotificationStatus.Enum.NOTSEEN);
+            notificationStatus = new NotificationStatus(1L, NotificationStatus.Enum.NOT_SEEN);
     }
 }
 

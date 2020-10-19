@@ -13,16 +13,17 @@ public class Region extends BaseEntity {
 
     private static final long serialVersionUID = 3862063068546561252L;
 
-    @Column (nullable = false, unique = true)
+    @Column(nullable = false, unique = true)
     private String name;
 
-    public Region(){
+    public Region() {
     }
+
     public Region(final String name) {
         this.name = name;
     }
 
-    public Region(final long id, final String name) {
+    public Region(final Long id, final String name) {
         this(name);
         super.id = id;
     }
@@ -42,6 +43,6 @@ public class Region extends BaseEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(),name);
+        return Objects.hash(super.hashCode(), name);
     }
 }

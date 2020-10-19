@@ -10,10 +10,10 @@ public class TravelCityID implements Serializable {
 
     private static final long serialVersionUID = 5789773928902544080L;
 
-    @Column(name = "travel_id")
+    @Column(name = "travel_id", updatable = false)
     private Long travelID;
 
-    @Column(name = "city_id")
+    @Column(name = "city_id", updatable = false)
     private Long cityID;
 
     public TravelCityID() {
@@ -28,16 +28,8 @@ public class TravelCityID implements Serializable {
         return travelID;
     }
 
-    public void setTravelID(Long travelID) {
-        this.travelID = travelID;
-    }
-
     public Long getCityID() {
         return cityID;
-    }
-
-    public void setCityID(Long cityID) {
-        this.cityID = cityID;
     }
 
     @Override

@@ -5,9 +5,7 @@ import bg.tuvarna.traveltickets.entity.base.BaseEntity;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapsId;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.util.ArrayList;
@@ -32,7 +30,7 @@ public class User extends BaseEntity {
     @ManyToOne
     private Role role;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "recipient")
     private List<NotificationRecipient> notifications = new ArrayList<>();
 
     public User() {
@@ -48,10 +46,14 @@ public class User extends BaseEntity {
         super.id = id;
     }
 
-    public void addNotification(Notification notification){
-        NotificationRecipient notificationRecipient = new NotificationRecipient(notification, this);
-        notifications.add(notificationRecipient);
+    public List<NotificationRecipient> getNotifications() {
+        return notifications;
     }
+
+    public void setNotifications(List<NotificationRecipient> notifications) {
+        this.notifications = notifications;
+    }
+
     public String getEmail() {
         return email;
     }

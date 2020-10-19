@@ -1,6 +1,5 @@
 package bg.tuvarna.traveltickets.entity;
 
-
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.io.Serializable;
@@ -11,10 +10,10 @@ public class NotificationRecipientID implements Serializable {
 
     private static final long serialVersionUID = -7117467286788379816L;
 
-    @Column(name = "notification_id")
+    @Column(name = "notification_id", updatable = false)
     private Long notificationID;
 
-    @Column(name = "recipient_id")
+    @Column(name = "recipient_id", updatable = false)
     private Long recipientID;
 
     public NotificationRecipientID() {
@@ -29,16 +28,8 @@ public class NotificationRecipientID implements Serializable {
         return notificationID;
     }
 
-    public void setNotificationID(Long notificationID) {
-        this.notificationID = notificationID;
-    }
-
     public Long getRecipientID() {
         return recipientID;
-    }
-
-    public void setRecipientID(Long recipientID) {
-        this.recipientID = recipientID;
     }
 
     @Override
@@ -53,6 +44,6 @@ public class NotificationRecipientID implements Serializable {
 
     @Override
     public int hashCode() {
-        return  Objects.hash(super.hashCode(), notificationID, recipientID);
+        return Objects.hash(super.hashCode(), notificationID, recipientID);
     }
 }

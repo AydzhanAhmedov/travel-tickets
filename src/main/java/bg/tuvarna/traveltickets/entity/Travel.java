@@ -37,16 +37,16 @@ public class Travel extends BaseAuditEntity {
     private OffsetDateTime endDate;
 
     @Column(name = "ticket_quantity", nullable = false)
-    private int ticketQuantity;
+    private Integer ticketQuantity;
 
     @Column(name = "current_ticket_quantity", nullable = false)
-    private int currentTicketQuantity;
+    private Integer currentTicketQuantity;
 
     @Column(name = "ticket_price")
     private BigDecimal ticketPrice;
 
     @Column(name = "ticket_buy_limit")
-    private int ticketBuyLimit;
+    private Integer ticketBuyLimit;
 
     private String details;
 
@@ -87,7 +87,7 @@ public class Travel extends BaseAuditEntity {
     public Travel() {
     }
 
-    public Travel(long id) {
+    public Travel(Long id) {
         super.id = id;
     }
 
@@ -123,19 +123,19 @@ public class Travel extends BaseAuditEntity {
         this.endDate = endDate;
     }
 
-    public int getTicketQuantity() {
+    public Integer getTicketQuantity() {
         return ticketQuantity;
     }
 
-    public void setTicketQuantity(int ticketQuantity) {
+    public void setTicketQuantity(Integer ticketQuantity) {
         this.ticketQuantity = ticketQuantity;
     }
 
-    public int getCurrentTicketQuantity() {
+    public Integer getCurrentTicketQuantity() {
         return currentTicketQuantity;
     }
 
-    public void setCurrentTicketQuantity(int currentTicketQuantity) {
+    public void setCurrentTicketQuantity(Integer currentTicketQuantity) {
         this.currentTicketQuantity = currentTicketQuantity;
     }
 
@@ -147,11 +147,11 @@ public class Travel extends BaseAuditEntity {
         this.ticketPrice = ticketPrice;
     }
 
-    public int getTicketBuyLimit() {
+    public Integer getTicketBuyLimit() {
         return ticketBuyLimit;
     }
 
-    public void setTicketBuyLimit(int ticketBuyLimit) {
+    public void setTicketBuyLimit(Integer ticketBuyLimit) {
         this.ticketBuyLimit = ticketBuyLimit;
     }
 
@@ -179,15 +179,6 @@ public class Travel extends BaseAuditEntity {
     //    this.distributorRequests = distributorRequests;
     //}
 
-    @Override
-    public User getCreatedBy() {
-        return super.getCreatedBy();
-    }
-
-    @Override
-    public OffsetDateTime getCreatedAt() {
-        return super.getCreatedAt();
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -203,21 +194,12 @@ public class Travel extends BaseAuditEntity {
                 Objects.equals(currentTicketQuantity, travel.currentTicketQuantity) &&
                 Objects.equals(ticketPrice, travel.ticketPrice) &&
                 Objects.equals(ticketBuyLimit, travel.ticketBuyLimit) &&
-                Objects.equals(details, travel.details);
+                Objects.equals(details, travel.details) &&
+                Objects.equals(travelRoutes, travel.travelRoutes);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(
-                super.hashCode(),
-                travelType,
-                startDate,
-                endDate,
-                ticketQuantity,
-                currentTicketQuantity,
-                ticketPrice,
-                ticketBuyLimit,
-                details
-        );
+        return Objects.hash(super.hashCode(), travelType, travelStatus, startDate, endDate, ticketQuantity, currentTicketQuantity, ticketPrice, ticketBuyLimit, details, travelRoutes);
     }
 }

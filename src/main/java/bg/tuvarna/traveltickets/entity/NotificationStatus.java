@@ -17,10 +17,10 @@ public class NotificationStatus extends BaseEntity {
 
     private static final long serialVersionUID = -5904733920359559595L;
 
-    public enum Enum {SEEN, NOTSEEN};
+    public enum Enum { SEEN, NOT_SEEN }
 
-    @Enumerated (EnumType.STRING)
-    @Column (nullable = false, unique = true)
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, unique = true)
     private NotificationStatus.Enum name;
 
     public NotificationStatus() {

@@ -43,10 +43,6 @@ public class TravelDistributorRequest implements Serializable {
         return travelDistributorID;
     }
 
-    public void setTravelDistributorID(TravelDistributorID travelDistributorID) {
-        this.travelDistributorID = travelDistributorID;
-    }
-
     public Travel getTravel() {
         return travel;
     }

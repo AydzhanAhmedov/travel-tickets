@@ -3,6 +3,7 @@ package bg.tuvarna.traveltickets.entity.base;
 import bg.tuvarna.traveltickets.entity.User;
 
 import javax.persistence.Column;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
@@ -20,7 +21,7 @@ public abstract class BaseAuditEntity extends BaseEntity {
 
     private static final long serialVersionUID = -3330059911789806595L;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by", updatable = false, nullable = false)
     protected User createdBy;
 

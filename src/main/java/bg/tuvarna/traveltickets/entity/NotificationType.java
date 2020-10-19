@@ -17,10 +17,10 @@ public class NotificationType extends BaseEntity {
 
     private static final long serialVersionUID = 7514162606074788391L;
 
-    public enum Enum {NEW_TRAVEL, TRAVEL_STATUS_CHANGED};
+    public enum Enum { NEW_TRAVEL, TRAVEL_STATUS_CHANGED }
 
     @Enumerated(EnumType.STRING)
-    @Column (nullable = false, unique = false)
+    @Column(nullable = false, unique = true)
     private NotificationType.Enum name;
 
     public NotificationType() {
@@ -30,7 +30,7 @@ public class NotificationType extends BaseEntity {
         this.name = name;
     }
 
-    public NotificationType(Long id,Enum name) {
+    public NotificationType(Long id, Enum name) {
         this(name);
         super.id = id;
     }

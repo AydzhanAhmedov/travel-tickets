@@ -28,16 +28,8 @@ public class TravelDistributorID implements Serializable {
         return travelID;
     }
 
-    public void setTravelID(Long travelID) {
-        this.travelID = travelID;
-    }
-
     public Long getDistributorID() {
         return distributorID;
-    }
-
-    public void setDistributorID(Long distributorID) {
-        this.distributorID = distributorID;
     }
 
     @Override
