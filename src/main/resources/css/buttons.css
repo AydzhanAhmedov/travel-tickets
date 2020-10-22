@@ -1,0 +1,73 @@
+.loginBtn {
+    -fx-background-color: radial-gradient(center 50% 50%, radius 100%, #7076ba, #444484);
+    -fx-text-fill: #d3d3ed;
+    -fx-background-radius: 10px;
+}
+.loginBtn:hover {
+    -fx-background-color: transparent;
+    -fx-background-radius: 10px;
+    -fx-text-fill: #444484;
+    -fx-border-color: #444484;
+    -fx-border-width: 2px;
+    -fx-border-radius: 10px;
+    -fx-border-style: solid;
+}
+.loginBtn:pressed {
+    -fx-background-color: transparent;
+    -fx-background-radius: 10px;
+    -fx-text-fill: #444484;
+    -fx-border-color: #444484;
+    -fx-border-width: 2px;
+    -fx-border-radius: 10px;
+    -fx-border-style: solid;
+    -fx-rotate: 0.5
+}
+
+.exitButton {
+    -fx-background-color: transparent;
+    -fx-graphic: url('../images/exit_button.png');
+}
+.exitButton:hover {
+    -fx-background-color: transparent;
+    -fx-graphic: url('../images/hovered_exit_button.png');
+}
+
+.menuButton {
+    -fx-background-color: transparent;
+}
+.menuButton:hover {
+    -fx-background-color: #444484;
+    -fx-text-fill: #080814;
+}
+.menuButton:pressed {
+    -fx-background-color: #4d4d94;
+    -fx-text-fill: #6a6a7a;
+}
+
+.notificationsButton {
+    -fx-background-color: transparent;
+    -fx-background-size: 40px;
+    -fx-background-image: url('../images/notification_bell.png');
+}
+.notificationsButton:hover {
+    -fx-background-color: transparent;
+    -fx-background-size: 40px;
+    -fx-background-image: url('../images/notification_bell_hover.png');
+}
+.notificationsButton:pressed {
+    -fx-rotate: 2.5
+}
+
+.activeNotificationsButton {
+    -fx-background-color: transparent;
+    -fx-background-size: 40px;
+    -fx-background-image: url('../images/notification_bell_active.png');
+}
+.activeNotificationsButton:hover {
+    -fx-background-color: transparent;
+    -fx-background-size: 40px;
+    -fx-background-image: url('../images/notification_bell_hover_active.png');
+}
+.activeNotificationsButton:pressed {
+    -fx-rotate: 2.5
+}

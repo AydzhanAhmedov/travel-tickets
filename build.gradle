@@ -14,6 +14,7 @@ ext {
     hibernateVersion = '5.4.21'
     postgrsDriverVersion = '42.2.16'
     junitVersion = '4.12'
+    log4jVersion = '2.13.3'
 }
 
 repositories {
@@ -21,9 +22,15 @@ repositories {
 }
 
 dependencies {
+    // Database
     implementation "org.hibernate:hibernate-core:${hibernateVersion}.Final"
     implementation "org.postgresql:postgresql:${postgrsDriverVersion}"
 
+    // Logging
+    implementation "org.apache.logging.log4j:log4j-api:${log4jVersion}"
+    implementation "org.apache.logging.log4j:log4j-core:${log4jVersion}"
+
+    // Testing
     testImplementation group: 'junit', name: 'junit', version: "${junitVersion}"
 }
 

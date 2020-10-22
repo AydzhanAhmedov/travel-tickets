@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.0"
+             xmlns="http://java.sun.com/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence
+             http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+
+    <persistence-unit name="travel-ticket-persistence-unit">
+        <description>The base persistence unit of ticket-travel application.</description>
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+
+        <!-- explicit entity mapping -->
+        <class>bg.tuvarna.traveltickets.entity.User</class>
+        <class>bg.tuvarna.traveltickets.entity.Role</class>
+        <class>bg.tuvarna.traveltickets.entity.Client</class>
+        <class>bg.tuvarna.traveltickets.entity.ClientType</class>
+        <class>bg.tuvarna.traveltickets.entity.Company</class>
+        <class>bg.tuvarna.traveltickets.entity.Cashier</class>
+        <class>bg.tuvarna.traveltickets.entity.Distributor</class>
+        <class>bg.tuvarna.traveltickets.entity.Region</class>
+        <class>bg.tuvarna.traveltickets.entity.City</class>
+        <class>bg.tuvarna.traveltickets.entity.Address</class>
+        <class>bg.tuvarna.traveltickets.entity.TravelType</class>
+        <class>bg.tuvarna.traveltickets.entity.TransportType</class>
+        <class>bg.tuvarna.traveltickets.entity.TravelStatus</class>
+        <class>bg.tuvarna.traveltickets.entity.Travel</class>
+        <class>bg.tuvarna.traveltickets.entity.Ticket</class>
+        <class>bg.tuvarna.traveltickets.entity.TravelCityID</class>
+        <class>bg.tuvarna.traveltickets.entity.TravelRoute</class>
+        <class>bg.tuvarna.traveltickets.entity.TravelDistributorID</class>
+        <class>bg.tuvarna.traveltickets.entity.TravelDistributorRequest</class>
+        <class>bg.tuvarna.traveltickets.entity.RequestStatus</class>
+        <class>bg.tuvarna.traveltickets.entity.NotificationStatus</class>
+        <class>bg.tuvarna.traveltickets.entity.NotificationType</class>
+        <class>bg.tuvarna.traveltickets.entity.Notification</class>
+        <class>bg.tuvarna.traveltickets.entity.NotificationRecipient</class>
+        <class>bg.tuvarna.traveltickets.entity.NotificationRecipientID</class>
+
+
+
+        <properties>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL10Dialect"/>
+            <!-- connection properties -->
+            <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
+            <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost/test"/>
+            <property name="javax.persistence.jdbc.user" value="postgres"/>
+            <property name="javax.persistence.jdbc.password" value="admin"/>
+            <!-- SQL & logging -->
+            <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.format_sql" value="true"/>
+            <property name="hibernate.generate_statistics" value="true"/>
+        </properties>
+
+    </persistence-unit>
+
+</persistence>
