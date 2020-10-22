@@ -11,7 +11,7 @@ import javafx.stage.WindowEvent;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import static bg.tuvarna.traveltickets.App.getPrimaryStage;
+import static bg.tuvarna.traveltickets.common.AppConfig.getPrimaryStage;
 
 /**
  * Base class for each controller. Each fxml file should define the id of the {@link Parent} as 'root'
