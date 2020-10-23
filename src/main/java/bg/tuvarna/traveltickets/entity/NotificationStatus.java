@@ -17,7 +17,7 @@ public class NotificationStatus extends BaseEntity {
 
     private static final long serialVersionUID = -5904733920359559595L;
 
-    public enum Enum { SEEN, NOT_SEEN }
+    public enum Enum {SEEN, NOT_SEEN}
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, unique = true)
@@ -44,8 +44,8 @@ public class NotificationStatus extends BaseEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-        NotificationStatus notificationStatus = (NotificationStatus) o;
-        return Objects.equals(name, notificationStatus.name);
+        NotificationStatus that = (NotificationStatus) o;
+        return name == that.name;
     }
 
     @Override

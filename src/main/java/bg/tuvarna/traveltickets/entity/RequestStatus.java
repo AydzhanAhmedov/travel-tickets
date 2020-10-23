@@ -20,8 +20,8 @@ public class RequestStatus extends BaseEntity {
 
     public enum Enum {PENDING, APPROVED, REJECTED}
 
-    @Enumerated (EnumType.STRING)
-    @Column (nullable = false, unique = true)
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, unique = true)
     private RequestStatus.Enum name;
 
     public RequestStatus() {
@@ -45,8 +45,8 @@ public class RequestStatus extends BaseEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-        RequestStatus requestStatus = (RequestStatus) o;
-        return Objects.equals(name, requestStatus.name);
+        RequestStatus that = (RequestStatus) o;
+        return name == that.name;
     }
 
     @Override

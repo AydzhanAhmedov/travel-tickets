@@ -17,7 +17,7 @@ public class NotificationType extends BaseEntity {
 
     private static final long serialVersionUID = 7514162606074788391L;
 
-    public enum Enum { NEW_TRAVEL, TRAVEL_STATUS_CHANGED }
+    public enum Enum {NEW_TRAVEL, TRAVEL_STATUS_CHANGED}
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, unique = true)
@@ -44,8 +44,8 @@ public class NotificationType extends BaseEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-        NotificationType notificationType = (NotificationType) o;
-        return Objects.equals(name, notificationType.name);
+        NotificationType that = (NotificationType) o;
+        return name == that.name;
     }
 
     @Override

@@ -36,14 +36,13 @@ public class NotificationRecipientID implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        NotificationRecipientID notificationRecipientID = (NotificationRecipientID) o;
-        return Objects.equals(notificationID, notificationRecipientID.notificationID) &&
-                Objects.equals(recipientID, notificationRecipientID.recipientID);
+        NotificationRecipientID that = (NotificationRecipientID) o;
+        return Objects.equals(notificationID, that.notificationID) &&
+                Objects.equals(recipientID, that.recipientID);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), notificationID, recipientID);
+        return Objects.hash(notificationID, recipientID);
     }
 }

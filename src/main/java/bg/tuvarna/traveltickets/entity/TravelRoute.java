@@ -82,15 +82,16 @@ public class TravelRoute implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        TravelRoute travelRoute = (TravelRoute) o;
-        return Objects.equals(travel, travelRoute.travel) &&
-                Objects.equals(transportType, travelRoute.transportType) &&
-                Objects.equals(city, travelRoute.city);
+        TravelRoute that = (TravelRoute) o;
+        return Objects.equals(travelCityID, that.travelCityID) &&
+                Objects.equals(travel, that.travel) &&
+                Objects.equals(city, that.city) &&
+                Objects.equals(transportType, that.transportType) &&
+                Objects.equals(arrivalDate, that.arrivalDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), travel, transportType, city);
+        return Objects.hash(travelCityID, travel, city, transportType, arrivalDate);
     }
 }
