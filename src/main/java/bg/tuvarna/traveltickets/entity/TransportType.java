@@ -18,6 +18,7 @@ public class TransportType extends BaseEntity {
     private static final long serialVersionUID = -7545179502426967324L;
 
     public enum Enum {BUSS, AIRPLANE, SHIP, CAR, TRAIN}
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, unique = true)
     private TransportType.Enum name;
@@ -44,8 +45,8 @@ public class TransportType extends BaseEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-        TransportType transportType = (TransportType) o;
-        return Objects.equals(name, transportType.name);
+        TransportType that = (TransportType) o;
+        return name == that.name;
     }
 
     @Override

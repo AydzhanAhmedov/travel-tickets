@@ -53,9 +53,9 @@ public class Notification extends BaseAuditEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-        Notification notification = (Notification) o;
-        return Objects.equals(notificationType,notification.notificationType) &&
-                Objects.equals(message, notification.message);
+        Notification that = (Notification) o;
+        return Objects.equals(notificationType, that.notificationType) &&
+                Objects.equals(message, that.message);
     }
 
     @Override

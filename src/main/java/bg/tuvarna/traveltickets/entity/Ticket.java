@@ -30,10 +30,10 @@ public class Ticket extends BaseAuditEntity {
     @Column(name = "buyer_email")
     private String buyerEmail;
 
-    public Ticket(){
+    public Ticket() {
     }
 
-    public Ticket(long id){
+    public Ticket(long id) {
         super.id = id;
     }
 
@@ -85,13 +85,14 @@ public class Ticket extends BaseAuditEntity {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Ticket ticket = (Ticket) o;
-        return Objects.equals(buyerName,ticket.buyerName) &&
-                Objects.equals(buyerEmail,ticket.buyerEmail) &&
-                Objects.equals(buyerPhone,ticket.buyerPhone);
+        return Objects.equals(travel, ticket.travel) &&
+                Objects.equals(buyerName, ticket.buyerName) &&
+                Objects.equals(buyerPhone, ticket.buyerPhone) &&
+                Objects.equals(buyerEmail, ticket.buyerEmail);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), buyerName, buyerEmail, buyerPhone);
+        return Objects.hash(super.hashCode(), travel, buyerName, buyerPhone, buyerEmail);
     }
 }
