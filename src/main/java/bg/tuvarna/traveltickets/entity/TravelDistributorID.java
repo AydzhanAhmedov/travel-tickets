@@ -36,14 +36,13 @@ public class TravelDistributorID implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        TravelDistributorID travelDistributorID = (TravelDistributorID) o;
-        return Objects.equals(travelID, travelDistributorID.travelID) &&
-                Objects.equals(distributorID, travelDistributorID.distributorID);
+        TravelDistributorID that = (TravelDistributorID) o;
+        return Objects.equals(travelID, that.travelID) &&
+                Objects.equals(distributorID, that.distributorID);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), travelID, distributorID);
+        return Objects.hash(travelID, distributorID);
     }
 }

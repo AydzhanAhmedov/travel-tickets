@@ -1,4 +1,5 @@
 package bg.tuvarna.traveltickets.entity;
+
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -71,14 +72,15 @@ public class TravelDistributorRequest implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        TravelDistributorRequest travelDistributorRequest = (TravelDistributorRequest) o;
-        return Objects.equals(travel, travelDistributorRequest.travel)  &&
-                Objects.equals(user, travelDistributorRequest.user);
+        TravelDistributorRequest that = (TravelDistributorRequest) o;
+        return Objects.equals(travelDistributorID, that.travelDistributorID) &&
+                Objects.equals(travel, that.travel) &&
+                Objects.equals(user, that.user) &&
+                Objects.equals(requestStatus, that.requestStatus);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), travel);// distributor, requestStatus);
+        return Objects.hash(travelDistributorID, travel, user, requestStatus);
     }
 }

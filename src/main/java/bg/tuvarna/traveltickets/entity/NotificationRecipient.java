@@ -65,20 +65,22 @@ public class NotificationRecipient implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        NotificationRecipient notificationRecipient = (NotificationRecipient) o;
-        return Objects.equals(notification, notificationRecipient.notification) &&
-                Objects.equals(recipient, notificationRecipient.recipient);
+        NotificationRecipient that = (NotificationRecipient) o;
+        return Objects.equals(notificationRecipientID, that.notificationRecipientID) &&
+                Objects.equals(notification, that.notification) &&
+                Objects.equals(recipient, that.recipient) &&
+                Objects.equals(notificationStatus, that.notificationStatus);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), notification, recipient, notification);
+        return Objects.hash(notificationRecipientID, notification, recipient, notificationStatus);
     }
 
     @PrePersist
-    protected final void prePersist(){
+    protected final void prePersist() {
         if (notificationStatus == null)
+            //TODO Get status from database
             notificationStatus = new NotificationStatus(1L, NotificationStatus.Enum.NOT_SEEN);
     }
 }

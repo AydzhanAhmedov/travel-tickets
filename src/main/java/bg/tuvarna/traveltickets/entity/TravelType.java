@@ -30,7 +30,7 @@ public class TravelType extends BaseEntity {
         this.name = name;
     }
 
-    public TravelType(long id,Enum name) {
+    public TravelType(long id, Enum name) {
         this(name);
         super.id = id;
     }
@@ -44,8 +44,8 @@ public class TravelType extends BaseEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-        TravelType travelType = (TravelType) o;
-        return Objects.equals(name, travelType.name);
+        TravelType that = (TravelType) o;
+        return name == that.name;
     }
 
     @Override

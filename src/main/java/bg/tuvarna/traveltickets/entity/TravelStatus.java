@@ -44,8 +44,8 @@ public class TravelStatus extends BaseEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-        TravelStatus travelStatus = (TravelStatus) o;
-        return Objects.equals(name, travelStatus.name);
+        TravelStatus that = (TravelStatus) o;
+        return name == that.name;
     }
 
     @Override

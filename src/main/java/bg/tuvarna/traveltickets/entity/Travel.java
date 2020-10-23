@@ -56,11 +56,11 @@ public class Travel extends BaseAuditEntity {
     //@OneToMany(mappedBy = "travel")
     //private List<TravelDistributorRequest> distributorRequests = new ArrayList<>();
 
-   //public void addDistributorRequest(Distributor distributor, RequestStatus requestStatus) {
-   //    TravelDistributorRequest distributorRequest = new TravelDistributorRequest(this, distributor);
-   //    distributorRequest.setRequestStatus(requestStatus);
-   //    distributorRequests.add(distributorRequest);
-   //}
+    //public void addDistributorRequest(Distributor distributor, RequestStatus requestStatus) {
+    //    TravelDistributorRequest distributorRequest = new TravelDistributorRequest(this, distributor);
+    //    distributorRequest.setRequestStatus(requestStatus);
+    //    distributorRequests.add(distributorRequest);
+    //}
 
     public void addTravelRoute(City city, OffsetDateTime date, TransportType type) {
         TravelRoute travelRoute = new TravelRoute(this, city);
