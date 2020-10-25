@@ -35,21 +35,21 @@
                         <Rectangle2D />
                      </viewport>
                   </ImageView>
-                  <Text cache="true" cacheHint="SPEED" fill="#01233f" layoutX="54.0" layoutY="175.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Admin Panel" textAlignment="CENTER">
+                  <Text cache="true" cacheHint="SPEED" fill="#01233f" layoutX="50.0" layoutY="174.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Admin Panel" textAlignment="CENTER">
                      <font>
                         <Font name="System Bold" size="30.0" />
                      </font>
                   </Text>
                </children>
             </AnchorPane>
-            <Button alignment="BASELINE_LEFT" cache="true" cacheHint="SPEED" graphicTextGap="20.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="320.0" styleClass="menuButton" stylesheets="@../css/buttons.css" text="Users">
+            <Button alignment="BASELINE_LEFT" cache="true" cacheHint="SPEED" graphicTextGap="20.0" mnemonicParsing="false" onMouseClicked="#onLogoutButtonClicked" prefHeight="50.0" prefWidth="320.0" styleClass="menuButton" stylesheets="@../css/buttons.css" text="Users">
                <font>
                   <Font name="System Bold" size="15.0" />
                </font>
                <graphic>
                   <ImageView fitHeight="30.0" fitWidth="30.0" opacity="0.63" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../images/user_management.png" />
+                        <Image url="@../images/baseline_people_black_18dp.png" />
                      </image>
                   </ImageView>
                </graphic>
@@ -57,50 +57,50 @@
                   <Insets left="50.0" />
                </padding>
             </Button>
-            <Button alignment="BASELINE_LEFT" cache="true" cacheHint="SPEED" graphicTextGap="20.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="320.0" styleClass="menuButton" stylesheets="@../css/buttons.css" text="Add Clients">
+            <Button alignment="BASELINE_LEFT" cache="true" cacheHint="SPEED" graphicTextGap="20.0" layoutX="10.0" layoutY="320.0" mnemonicParsing="false" onMouseClicked="#onLogoutButtonClicked" prefHeight="50.0" prefWidth="320.0" styleClass="menuButton" stylesheets="@../css/buttons.css" text="Add Clients">
                <font>
                   <Font name="System Bold" size="15.0" />
                </font>
-               <graphic>
-                  <ImageView fitHeight="30.0" fitWidth="30.0" opacity="0.63" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../images/add_client.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
                <padding>
                   <Insets left="50.0" />
                </padding>
-            </Button>
-            <Button alignment="BASELINE_LEFT" cache="true" cacheHint="SPEED" graphicTextGap="22.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="320.0" styleClass="menuButton" stylesheets="@../css/buttons.css" text="Settings">
-               <font>
-                  <Font name="System Bold" size="15.0" />
-               </font>
                <graphic>
-                  <ImageView fitHeight="25.0" fitWidth="25.0" opacity="0.63" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="30.0" fitWidth="30.0" opacity="0.63" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../images/settings.png" />
+                        <Image url="@../images/baseline_person_add_black_18dp.png" />
                      </image>
                   </ImageView>
                </graphic>
-               <padding>
-                  <Insets left="53.0" />
-               </padding>
             </Button>
-            <Button alignment="BASELINE_LEFT" cache="true" cacheHint="SPEED" graphicTextGap="22.0" mnemonicParsing="false" onMouseClicked="#onLogoutButtonClicked" prefHeight="50.0" prefWidth="320.0" styleClass="menuButton" stylesheets="@../css/buttons.css" text="Logout">
+            <Button alignment="BASELINE_LEFT" cache="true" cacheHint="SPEED" graphicTextGap="20.0" layoutX="10.0" layoutY="320.0" mnemonicParsing="false" onMouseClicked="#onLogoutButtonClicked" prefHeight="50.0" prefWidth="320.0" styleClass="menuButton" stylesheets="@../css/buttons.css" text="Settings">
                <font>
                   <Font name="System Bold" size="15.0" />
                </font>
+               <padding>
+                  <Insets left="50.0" />
+               </padding>
                <graphic>
-                  <ImageView fitHeight="25.0" fitWidth="25.0" opacity="0.63" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="30.0" fitWidth="30.0" opacity="0.63" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../images/logout.png" />
+                        <Image url="@../images/baseline_settings_black_18dp.png" />
                      </image>
                   </ImageView>
                </graphic>
+            </Button>
+            <Button alignment="BASELINE_LEFT" cache="true" cacheHint="SPEED" graphicTextGap="20.0" layoutX="10.0" layoutY="371.0" mnemonicParsing="false" onMouseClicked="#onLogoutButtonClicked" prefHeight="50.0" prefWidth="320.0" styleClass="menuButton" stylesheets="@../css/buttons.css" text="Logout">
+               <font>
+                  <Font name="System Bold" size="15.0" />
+               </font>
                <padding>
-                  <Insets left="55.0" />
+                  <Insets left="50.0" />
                </padding>
+               <graphic>
+                  <ImageView fitHeight="30.0" fitWidth="30.0" opacity="0.63" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../images/baseline_exit_to_app_black_18dp.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
             </Button>
          </children>
       </VBox>
