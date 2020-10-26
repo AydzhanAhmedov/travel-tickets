@@ -38,4 +38,7 @@ public class UserServiceImpl implements UserService {
         super();
     }
 
+    public User getCurrentlyLoggedUser() {
+        return currentlyLoggedUser;
+    }
 }
