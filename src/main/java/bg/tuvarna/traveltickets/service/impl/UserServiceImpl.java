@@ -4,23 +4,42 @@ import bg.tuvarna.traveltickets.entity.User;
 import bg.tuvarna.traveltickets.repository.UserRepository;
 import bg.tuvarna.traveltickets.repository.impl.UserRepositoryImpl;
 import bg.tuvarna.traveltickets.service.UserService;
+import org.mindrot.jbcrypt.BCrypt;
 
-import java.util.Optional;
+import static bg.tuvarna.traveltickets.entity.Role.Enum.ADMIN;
 
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository = UserRepositoryImpl.getInstance();
 
-    private User currentlyLoggedUser;
+    private User loggedUser;
 
     @Override
-    public boolean login(final String usernameOrEmail, final String password) {
-        final Optional<User> user = userRepository.findByUsernameOrEmail(usernameOrEmail)
-                .filter(u -> u.getPassword().equals(password));
+    public User getLoggedUser() {
+        return loggedUser;
+    }
 
-        user.ifPresent(u -> currentlyLoggedUser = u);
+    @Override
+    public boolean loggedUserIsAdmin() {
+        return loggedUser != null && ADMIN.equals(loggedUser.getRole().getName());
+    }
 
-        return user.isPresent();
+    // TODO uncomment this and use for user creation:// BCrypt.hashpw(password, BCrypt.gensalt());
+    @Override
+    public User login(final String usernameOrEmail, final String password) {
+        final User user = userRepository.findByUsernameOrEmail(usernameOrEmail);
+        loggedUser = user != null && BCrypt.checkpw(password, user.getPassword()) ? user : null;
+
+        if (!loggedUserIsAdmin()) {
+
+        }
+
+        return loggedUser;
+    }
+
+    @Override
+    public void logout() {
+        loggedUser = null;
     }
 
     private static UserServiceImpl instance;
@@ -38,7 +57,4 @@ public class UserServiceImpl implements UserService {
         super();
     }
 
-    public User getCurrentlyLoggedUser() {
-        return currentlyLoggedUser;
-    }
 }

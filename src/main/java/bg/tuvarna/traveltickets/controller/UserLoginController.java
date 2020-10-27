@@ -5,7 +5,6 @@ import bg.tuvarna.traveltickets.common.SupportedLanguage;
 import bg.tuvarna.traveltickets.controller.base.BaseController;
 import bg.tuvarna.traveltickets.service.UserService;
 import bg.tuvarna.traveltickets.service.impl.UserServiceImpl;
-import bg.tuvarna.traveltickets.util.JpaOperationsUtil;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.fxml.FXML;
@@ -27,6 +26,7 @@ import static bg.tuvarna.traveltickets.common.Constants.BAD_CREDENTIALS_KEY;
 import static bg.tuvarna.traveltickets.common.Constants.BLANK_USERNAME_OR_PASSWORD_KEY;
 import static bg.tuvarna.traveltickets.common.Constants.EMPTY_STRING;
 import static bg.tuvarna.traveltickets.common.Constants.UNEXPECTED_ERROR_KEY;
+import static bg.tuvarna.traveltickets.util.JpaOperationsUtil.createTask;
 
 public class UserLoginController extends BaseController {
 
@@ -69,7 +69,7 @@ public class UserLoginController extends BaseController {
             return;
         }
 
-        final Task<Boolean> loginTask = JpaOperationsUtil.createTask(() -> userService.login(usernameOrEmail, password));
+        final Task<Boolean> loginTask = createTask(() -> userService.login(usernameOrEmail, password) != null);
 
         loginTask.setOnFailed(this::onLoginTaskFailed);
         loginTask.setOnRunning(this::onLoginTaskRunning);

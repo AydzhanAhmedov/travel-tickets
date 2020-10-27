@@ -15,7 +15,7 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public ClientType.Enum getClientType() {
-        User user = UserServiceImpl.getInstance().getCurrentlyLoggedUser();
+        User user = UserServiceImpl.getInstance().getLoggedUser();
         Optional<Client> client = clientRepository.findById(user.getId());
         return client.get().getClientType().getName();
     }
