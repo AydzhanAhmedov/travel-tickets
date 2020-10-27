@@ -5,7 +5,6 @@ import bg.tuvarna.traveltickets.util.JpaOperationsUtil;
 
 import javax.persistence.EntityManager;
 import java.lang.reflect.ParameterizedType;
-import java.util.Optional;
 
 /**
  * Implementation of {@link GenericCrudRepository}.
@@ -28,8 +27,8 @@ public abstract class GenericCrudRepositoryImpl<E, ID> implements GenericCrudRep
     }
 
     @Override
-    public Optional<E> findById(final ID id) {
-        return Optional.ofNullable(EntityManagerUtil.getEntityManager().find(entityClass, id));
+    public E findById(final ID id) {
+        return EntityManagerUtil.getEntityManager().find(entityClass, id);
     }
 
     @Override
