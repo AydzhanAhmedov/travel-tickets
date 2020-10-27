@@ -1,10 +1,37 @@
 package bg.tuvarna.traveltickets.repository.impl;
 
 import bg.tuvarna.traveltickets.entity.Client;
+import bg.tuvarna.traveltickets.entity.ClientType;
 import bg.tuvarna.traveltickets.repository.ClientRepository;
 import bg.tuvarna.traveltickets.repository.base.GenericCrudRepositoryImpl;
+import bg.tuvarna.traveltickets.util.EntityManagerUtil;
+import bg.tuvarna.traveltickets.util.JpaOperationsUtil;
+
+import javax.persistence.TypedQuery;
+
+import static bg.tuvarna.traveltickets.common.Constants.USER_ID_PARAM;
 
 public class ClientRepositoryImpl extends GenericCrudRepositoryImpl<Client, Long> implements ClientRepository {
+
+    private static final String FIND_TYPE_BY_ID_HQL = """
+                SELECT ct FROM ClientType ct
+                RIGHT JOIN Client c ON c.clientType.id = ct.id
+                WHERE c.userId = :userId
+            """;
+
+    @Override
+    public ClientType findTypeByUserId(final Long userId) {
+        final TypedQuery<ClientType> query = EntityManagerUtil.getEntityManager()
+                .createQuery(FIND_TYPE_BY_ID_HQL, ClientType.class)
+                .setParameter(USER_ID_PARAM, userId);
+
+        return JpaOperationsUtil.getSingleResultOrNull(query);
+    }
+
+    @Override
+    public <T extends Client> T findById(final Class<T> clientClass, final Long userId) {
+        return EntityManagerUtil.getEntityManager().find(clientClass, userId);
+    }
 
     private static ClientRepositoryImpl instance;
 
@@ -21,4 +48,5 @@ public class ClientRepositoryImpl extends GenericCrudRepositoryImpl<Client, Long
     public ClientRepositoryImpl() {
         super();
     }
+
 }

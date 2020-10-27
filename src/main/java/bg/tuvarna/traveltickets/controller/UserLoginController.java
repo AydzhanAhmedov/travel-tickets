@@ -3,8 +3,8 @@ package bg.tuvarna.traveltickets.controller;
 import bg.tuvarna.traveltickets.common.AppConfig;
 import bg.tuvarna.traveltickets.common.SupportedLanguage;
 import bg.tuvarna.traveltickets.controller.base.BaseController;
-import bg.tuvarna.traveltickets.service.UserService;
-import bg.tuvarna.traveltickets.service.impl.UserServiceImpl;
+import bg.tuvarna.traveltickets.service.AuthService;
+import bg.tuvarna.traveltickets.service.impl.AuthServiceImpl;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.fxml.FXML;
@@ -26,11 +26,11 @@ import static bg.tuvarna.traveltickets.common.Constants.BAD_CREDENTIALS_KEY;
 import static bg.tuvarna.traveltickets.common.Constants.BLANK_USERNAME_OR_PASSWORD_KEY;
 import static bg.tuvarna.traveltickets.common.Constants.EMPTY_STRING;
 import static bg.tuvarna.traveltickets.common.Constants.UNEXPECTED_ERROR_KEY;
-import static bg.tuvarna.traveltickets.util.JpaOperationsUtil.createTask;
+import static bg.tuvarna.traveltickets.util.JpaOperationsUtil.createTransactionTask;
 
 public class UserLoginController extends BaseController {
 
-    private final UserService userService = UserServiceImpl.getInstance();
+    private final AuthService authService = AuthServiceImpl.getInstance();
 
     @FXML
     private TextField usernameTextField;
@@ -69,7 +69,7 @@ public class UserLoginController extends BaseController {
             return;
         }
 
-        final Task<Boolean> loginTask = createTask(() -> userService.login(usernameOrEmail, password) != null);
+        final Task<Boolean> loginTask = createTransactionTask(() -> authService.login(usernameOrEmail, password) != null);
 
         loginTask.setOnFailed(this::onLoginTaskFailed);
         loginTask.setOnRunning(this::onLoginTaskRunning);
@@ -88,8 +88,7 @@ public class UserLoginController extends BaseController {
         if (successfullyLoggedIn) {
             clearTextFields();
             getPrimaryStage().setScene(HOME.getScene());
-        }
-        else setErrorText(getLangBundle().getString(BAD_CREDENTIALS_KEY));
+        } else setErrorText(getLangBundle().getString(BAD_CREDENTIALS_KEY));
     }
 
     private void onLoginTaskFailed(final WorkerStateEvent event) {

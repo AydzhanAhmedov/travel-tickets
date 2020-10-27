@@ -6,9 +6,11 @@ public final class Constants {
     public static final String CANNOT_BE_INSTANTIATED_FORMAT = "%s cannot be instantiated!";
     public static final String CANNOT_BE_NULL_FORMAT = "%s cannot be null!";
     public static final String ACTION_CANNOT_BE_NULL_MESSAGE = CANNOT_BE_NULL_FORMAT.formatted("action");
+    public static final String CLIENT_NOT_FOUND_FORMAT = "client with id %d not found in database!";
 
     // Params
     public static final String USERNAME_OR_EMAIL_PARAM = "usernameOrEmail";
+    public static final String USER_ID_PARAM = "userId";
 
     // Bundles
     public static final String BAD_CREDENTIALS_KEY = "label.error.bad_credentials";

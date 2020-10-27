@@ -1,8 +1,9 @@
 package bg.tuvarna.traveltickets.service;
 
-import bg.tuvarna.traveltickets.entity.ClientType;
+import bg.tuvarna.traveltickets.entity.Client;
 
 public interface ClientService {
 
-    ClientType.Enum getClientType();
+    Client findByUserId(Long userId);
+
 }
