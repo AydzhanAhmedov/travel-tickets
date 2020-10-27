@@ -12,109 +12,88 @@
 <?import javafx.scene.text.Text?>
 
 <BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="bg.tuvarna.traveltickets.controller.HomeController">
-   <left>
-      <VBox alignment="TOP_CENTER" prefHeight="800.0" prefWidth="320.0" style="-fx-background-color: radial-gradient(focus-distance 0% , center 50% 50% , radius 85% ,#7076ba,#444484);" BorderPane.alignment="CENTER">
-         <children>
+    <left>
+        <VBox alignment="TOP_CENTER" prefHeight="800.0" prefWidth="320.0" style="-fx-background-color: radial-gradient(focus-distance 0% , center 50% 50% , radius 85% ,#7076ba,#444484);" BorderPane.alignment="CENTER">
             <AnchorPane prefHeight="60.0" prefWidth="320.0">
-               <children>
-                  <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="14.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0">
-                     <image>
-                        <Image url="@../images/logo.png" />
-                     </image>
-                  </ImageView>
-                  <Button fx:id="notificationButton" layoutX="244.0" layoutY="17.0" maxHeight="40.0" maxWidth="40.0" minHeight="40.0" minWidth="40.0" mnemonicParsing="false" onMouseClicked="#onNotificationButtonClicked" prefHeight="40.0" prefWidth="40.0" styleClass="notificationsButton" stylesheets="@../css/buttons.css" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
-               </children>
+                <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="14.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0">
+                    <Image url="@../images/logo.png" />
+                </ImageView>
+                <Button fx:id="notificationButton" layoutX="244.0" layoutY="17.0" maxHeight="40.0" maxWidth="40.0" minHeight="40.0" minWidth="40.0" mnemonicParsing="false" onMouseClicked="#onNotificationButtonClicked" prefHeight="40.0" prefWidth="40.0" styleClass="notificationsButton" stylesheets="@../css/buttons.css" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
             </AnchorPane>
             <AnchorPane prefHeight="250.0" prefWidth="200.0">
-               <children>
-                  <ImageView cache="true" cacheHint="SPEED" fitHeight="102.0" fitWidth="105.0" layoutX="109.0" layoutY="22.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../images/admin.png" />
-                     </image>
-                     <viewport>
+                <ImageView cache="true" cacheHint="SPEED" fitHeight="102.0" fitWidth="105.0" layoutX="109.0" layoutY="22.0" pickOnBounds="true" preserveRatio="true">
+                    <viewport>
                         <Rectangle2D />
-                     </viewport>
-                  </ImageView>
-                  <Text cache="true" cacheHint="SPEED" fill="#01233f" layoutX="50.0" layoutY="174.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Admin Panel" textAlignment="CENTER">
-                     <font>
+                    </viewport>
+                    <Image url="@../images/admin.png" />
+                </ImageView>
+                <Text cache="true" cacheHint="SPEED" fill="#01233f" layoutX="50.0" layoutY="174.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Admin Panel" textAlignment="CENTER">
+                    <font>
                         <Font name="System Bold" size="30.0" />
-                     </font>
-                  </Text>
-               </children>
+                    </font>
+                </Text>
             </AnchorPane>
             <Button alignment="BASELINE_LEFT" cache="true" cacheHint="SPEED" graphicTextGap="20.0" mnemonicParsing="false" onMouseClicked="#onLogoutButtonClicked" prefHeight="50.0" prefWidth="320.0" styleClass="menuButton" stylesheets="@../css/buttons.css" text="Users">
-               <font>
-                  <Font name="System Bold" size="15.0" />
-               </font>
-               <graphic>
-                  <ImageView fitHeight="30.0" fitWidth="30.0" opacity="0.63" pickOnBounds="true" preserveRatio="true">
-                     <image>
+                <font>
+                    <Font name="System Bold" size="15.0" />
+                </font>
+                <graphic>
+                    <ImageView fitHeight="30.0" fitWidth="30.0" opacity="0.63" pickOnBounds="true" preserveRatio="true">
                         <Image url="@../images/baseline_people_black_18dp.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-               <padding>
-                  <Insets left="50.0" />
-               </padding>
+                    </ImageView>
+                </graphic>
+                <padding>
+                    <Insets left="50.0" />
+                </padding>
             </Button>
             <Button alignment="BASELINE_LEFT" cache="true" cacheHint="SPEED" graphicTextGap="20.0" layoutX="10.0" layoutY="320.0" mnemonicParsing="false" onMouseClicked="#onLogoutButtonClicked" prefHeight="50.0" prefWidth="320.0" styleClass="menuButton" stylesheets="@../css/buttons.css" text="Add Clients">
-               <font>
-                  <Font name="System Bold" size="15.0" />
-               </font>
-               <padding>
-                  <Insets left="50.0" />
-               </padding>
-               <graphic>
-                  <ImageView fitHeight="30.0" fitWidth="30.0" opacity="0.63" pickOnBounds="true" preserveRatio="true">
-                     <image>
+                <font>
+                    <Font name="System Bold" size="15.0" />
+                </font>
+                <padding>
+                    <Insets left="50.0" />
+                </padding>
+                <graphic>
+                    <ImageView fitHeight="30.0" fitWidth="30.0" opacity="0.63" pickOnBounds="true" preserveRatio="true">
                         <Image url="@../images/baseline_person_add_black_18dp.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
+                    </ImageView>
+                </graphic>
             </Button>
             <Button alignment="BASELINE_LEFT" cache="true" cacheHint="SPEED" graphicTextGap="20.0" layoutX="10.0" layoutY="320.0" mnemonicParsing="false" onMouseClicked="#onLogoutButtonClicked" prefHeight="50.0" prefWidth="320.0" styleClass="menuButton" stylesheets="@../css/buttons.css" text="Settings">
-               <font>
-                  <Font name="System Bold" size="15.0" />
-               </font>
-               <padding>
-                  <Insets left="50.0" />
-               </padding>
-               <graphic>
-                  <ImageView fitHeight="30.0" fitWidth="30.0" opacity="0.63" pickOnBounds="true" preserveRatio="true">
-                     <image>
+                <font>
+                    <Font name="System Bold" size="15.0" />
+                </font>
+                <padding>
+                    <Insets left="50.0" />
+                </padding>
+                <graphic>
+                    <ImageView fitHeight="30.0" fitWidth="30.0" opacity="0.63" pickOnBounds="true" preserveRatio="true">
                         <Image url="@../images/baseline_settings_black_18dp.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
+                    </ImageView>
+                </graphic>
             </Button>
             <Button alignment="BASELINE_LEFT" cache="true" cacheHint="SPEED" graphicTextGap="20.0" layoutX="10.0" layoutY="371.0" mnemonicParsing="false" onMouseClicked="#onLogoutButtonClicked" prefHeight="50.0" prefWidth="320.0" styleClass="menuButton" stylesheets="@../css/buttons.css" text="Logout">
-               <font>
-                  <Font name="System Bold" size="15.0" />
-               </font>
-               <padding>
-                  <Insets left="50.0" />
-               </padding>
-               <graphic>
-                  <ImageView fitHeight="30.0" fitWidth="30.0" opacity="0.63" pickOnBounds="true" preserveRatio="true">
-                     <image>
+                <font>
+                    <Font name="System Bold" size="15.0" />
+                </font>
+                <padding>
+                    <Insets left="50.0" />
+                </padding>
+                <graphic>
+                    <ImageView fitHeight="30.0" fitWidth="30.0" opacity="0.63" pickOnBounds="true" preserveRatio="true">
                         <Image url="@../images/baseline_exit_to_app_black_18dp.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
+                    </ImageView>
+                </graphic>
             </Button>
-         </children>
-      </VBox>
-   </left>
+        </VBox>
+    </left>
    <center>
-      <VBox prefHeight="775.0" prefWidth="863.0" BorderPane.alignment="CENTER">
-         <children>
-            <AnchorPane prefHeight="120.0" prefWidth="880.0" style="-fx-background-color: #d3d3ed;">
-               <children>
-                  <Button fx:id="exitButton" layoutX="846.0" layoutY="14.0" maxHeight="20.0" maxWidth="20.0" minHeight="20.0" minWidth="20.0" mnemonicParsing="false" onMouseClicked="#onExitButtonClicked" prefHeight="20.0" prefWidth="20.0" styleClass="exitButton" stylesheets="@../css/buttons.css" />
-               </children>
-            </AnchorPane>
-            <AnchorPane prefHeight="757.0" prefWidth="880.0" style="-fx-background-color: #d3d3ed;" />
-         </children>
-      </VBox>
+      <BorderPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #d3d3ed;" BorderPane.alignment="CENTER">
+         <top>
+               <AnchorPane prefHeight="120.0" prefWidth="880.0" BorderPane.alignment="CENTER">
+                   <Button fx:id="exitButton" layoutX="846.0" layoutY="14.0" maxHeight="20.0" maxWidth="20.0" minHeight="20.0" minWidth="20.0" mnemonicParsing="false" onMouseClicked="#onExitButtonClicked" prefHeight="20.0" prefWidth="20.0" styleClass="exitButton" stylesheets="@../css/buttons.css" />
+               </AnchorPane>
+         </top>
+      </BorderPane>
    </center>
 </BorderPane>
