@@ -39,6 +39,9 @@ public abstract class Client implements Serializable {
     @Column(nullable = false)
     private String phone;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    private Address address;
+
     public Client() {
         super();
     }
@@ -78,6 +81,14 @@ public abstract class Client implements Serializable {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(final Address address) {
+        this.address = address;
     }
 
     @Override
