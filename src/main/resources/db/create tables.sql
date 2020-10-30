@@ -97,7 +97,7 @@ CREATE TABLE cashiers(
 	client_id int8 NOT NULL PRIMARY KEY,
 	created_by int8 NOT NULL,
 	created_at timestamp NOT NULL,
-	honorarium money NOT NULL
+	honorarium real NOT NULL
 );
 
 DROP TABLE IF EXISTS clients;
