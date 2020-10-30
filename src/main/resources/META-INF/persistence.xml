@@ -25,18 +25,13 @@
         <class>bg.tuvarna.traveltickets.entity.TravelStatus</class>
         <class>bg.tuvarna.traveltickets.entity.Travel</class>
         <class>bg.tuvarna.traveltickets.entity.Ticket</class>
-        <class>bg.tuvarna.traveltickets.entity.TravelCityID</class>
         <class>bg.tuvarna.traveltickets.entity.TravelRoute</class>
-        <class>bg.tuvarna.traveltickets.entity.TravelDistributorID</class>
         <class>bg.tuvarna.traveltickets.entity.TravelDistributorRequest</class>
         <class>bg.tuvarna.traveltickets.entity.RequestStatus</class>
         <class>bg.tuvarna.traveltickets.entity.NotificationStatus</class>
         <class>bg.tuvarna.traveltickets.entity.NotificationType</class>
         <class>bg.tuvarna.traveltickets.entity.Notification</class>
         <class>bg.tuvarna.traveltickets.entity.NotificationRecipient</class>
-        <class>bg.tuvarna.traveltickets.entity.NotificationRecipientID</class>
-
-
 
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL10Dialect"/>
