@@ -1,5 +1,6 @@
 package bg.tuvarna.traveltickets.service.impl;
 
+import bg.tuvarna.traveltickets.common.MenuContent;
 import bg.tuvarna.traveltickets.entity.Client;
 import bg.tuvarna.traveltickets.entity.ClientType;
 import bg.tuvarna.traveltickets.entity.User;
@@ -8,6 +9,8 @@ import bg.tuvarna.traveltickets.repository.impl.UserRepositoryImpl;
 import bg.tuvarna.traveltickets.service.AuthService;
 import bg.tuvarna.traveltickets.service.ClientService;
 import org.mindrot.jbcrypt.BCrypt;
+
+import java.util.EnumSet;
 
 import static bg.tuvarna.traveltickets.common.Constants.CLIENT_NOT_FOUND_FORMAT;
 import static bg.tuvarna.traveltickets.entity.Role.Enum.ADMIN;
@@ -19,6 +22,34 @@ public final class AuthServiceImpl implements AuthService {
 
     private User loggedUser;
     private Client loggedClient;
+
+
+    private final EnumSet<MenuContent> adminContent = EnumSet.of(
+            MenuContent.BTN_CLIENTS,
+            MenuContent.BTN_STATISTIC
+    );
+
+    private final EnumSet<MenuContent> companyContent = EnumSet.of(
+            MenuContent.BTN_STATISTIC,
+            MenuContent.BTN_NOTIFICATIONS,
+            MenuContent.BTN_TRAVELS,
+            MenuContent.BTN_REQUESTS,
+            MenuContent.BTN_SOLD_TICKETS
+    );
+
+    private final EnumSet<MenuContent> distributorContent = EnumSet.of(
+            MenuContent.BTN_CLIENTS,
+            MenuContent.BTN_STATISTIC,
+            MenuContent.BTN_NOTIFICATIONS,
+            MenuContent.BTN_TRAVELS,
+            MenuContent.BTN_SOLD_TICKETS
+    );
+
+    private final EnumSet<MenuContent> cashierContent = EnumSet.of(
+            MenuContent.BTN_NOTIFICATIONS,
+            MenuContent.BTN_TRAVELS,
+            MenuContent.BTN_SOLD_TICKETS
+    );
 
     @Override
     public User getLoggedUser() {
@@ -59,6 +90,18 @@ public final class AuthServiceImpl implements AuthService {
     public void logout() {
         loggedUser = null;
         loggedClient = null;
+    }
+
+    @Override
+    public EnumSet<MenuContent> getLoggedUserMenuContent() {
+        if (loggedUserIsAdmin())
+            return adminContent;
+
+        return switch (getLoggedClientTypeName()) {
+            case COMPANY -> companyContent;
+            case DISTRIBUTOR -> distributorContent;
+            case CASHIER -> cashierContent;
+        };
     }
 
     private static AuthServiceImpl instance;

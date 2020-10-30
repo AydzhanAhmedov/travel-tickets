@@ -22,31 +22,35 @@ public enum AppScreens {
 
     AppScreens(final String fxmlPath) {
         this.fxmlPath = fxmlPath;
-        reload();
     }
 
     public Scene getScene() {
+
+        if (scene == null) {
+            try {
+                final Parent parent = new FXMLLoader(getClass().getResource(fxmlPath), AppConfig.getLangBundle()).load();
+                this.parent = parent;
+                scene = new Scene(parent);
+            }
+            catch (IOException exception) {
+                exception.printStackTrace();
+            }
+        }
         return scene;
     }
 
     static void reloadScreens() {
-        Arrays.stream(values()).forEach(AppScreens::reload);
+        Arrays.stream(values()).filter(scr -> scr.scene != null).forEach(AppScreens::reload);
     }
 
     void reload() {
         try {
             final Parent parent = new FXMLLoader(getClass().getResource(fxmlPath), AppConfig.getLangBundle()).load();
-            if (scene == null) {
-                this.parent = parent;
-                scene = new Scene(parent);
-            } else {
-                this.parent.getScene().setRoot(parent);
-                this.parent = parent;
-            }
+            this.parent.getScene().setRoot(parent);
+            this.parent = parent;
         }
-        catch (IOException e) {
-            throw new RuntimeException(e);
+        catch (IOException exception) {
+            exception.printStackTrace();
         }
     }
-
 }

@@ -1,8 +1,11 @@
 package bg.tuvarna.traveltickets.service;
 
+import bg.tuvarna.traveltickets.common.MenuContent;
 import bg.tuvarna.traveltickets.entity.Client;
 import bg.tuvarna.traveltickets.entity.ClientType;
 import bg.tuvarna.traveltickets.entity.User;
+
+import java.util.EnumSet;
 
 public interface AuthService {
 
@@ -18,4 +21,5 @@ public interface AuthService {
 
     void logout();
 
+    EnumSet<MenuContent> getLoggedUserMenuContent();
 }
