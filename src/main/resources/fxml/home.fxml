@@ -10,7 +10,6 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
-
 <BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="bg.tuvarna.traveltickets.controller.HomeController">
     <left>
         <VBox fx:id="leftVBox" alignment="TOP_CENTER" prefHeight="800.0" prefWidth="320.0" style="-fx-background-color: radial-gradient(focus-distance 0% , center 50% 50% , radius 85% ,#7076ba,#444484);" BorderPane.alignment="CENTER">
@@ -33,7 +32,7 @@
                     </font>
                 </Text>
             </AnchorPane>
-            <Button alignment="BASELINE_LEFT" cache="true" cacheHint="SPEED" graphicTextGap="20.0" mnemonicParsing="false" onMouseClicked="#onLogoutButtonClicked" prefHeight="50.0" prefWidth="320.0" styleClass="menuButton" stylesheets="@../css/buttons.css" text="Profile">
+            <Button alignment="BASELINE_LEFT" cache="true" cacheHint="SPEED" graphicTextGap="20.0" mnemonicParsing="false" onMouseClicked="#onLogoutButtonClicked" prefHeight="50.0" prefWidth="320.0" styleClass="menuButton" stylesheets="@../css/buttons.css" text="%label.profile">
                 <font>
                     <Font name="System Bold" size="15.0" />
                 </font>
@@ -46,7 +45,7 @@
                     <Insets left="50.0" />
                 </padding>
             </Button>
-            <Button fx:id="logoutButton" alignment="BASELINE_LEFT" cache="true" cacheHint="SPEED" graphicTextGap="20.0" layoutX="10.0" layoutY="371.0" mnemonicParsing="false" onMouseClicked="#onLogoutButtonClicked" prefHeight="50.0" prefWidth="320.0" styleClass="menuButton" stylesheets="@../css/buttons.css" text="Logout">
+            <Button fx:id="logoutButton" alignment="BASELINE_LEFT" cache="true" cacheHint="SPEED" graphicTextGap="20.0" layoutX="10.0" layoutY="371.0" mnemonicParsing="false" onMouseClicked="#onLogoutButtonClicked" prefHeight="50.0" prefWidth="320.0" styleClass="menuButton" stylesheets="@../css/buttons.css" text="%label.logout">
                 <font>
                     <Font name="System Bold" size="15.0" />
                 </font>

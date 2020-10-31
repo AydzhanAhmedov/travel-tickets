@@ -53,4 +53,8 @@ public enum AppScreens {
             exception.printStackTrace();
         }
     }
+
+    public void delete() {
+        scene = null;
+    }
 }

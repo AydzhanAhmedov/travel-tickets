@@ -1,5 +1,6 @@
 package bg.tuvarna.traveltickets.service.impl;
 
+import bg.tuvarna.traveltickets.common.AppScreens;
 import bg.tuvarna.traveltickets.common.MenuContent;
 import bg.tuvarna.traveltickets.entity.Client;
 import bg.tuvarna.traveltickets.entity.ClientType;
@@ -90,6 +91,7 @@ public final class AuthServiceImpl implements AuthService {
     public void logout() {
         loggedUser = null;
         loggedClient = null;
+        AppScreens.HOME.delete();
     }
 
     @Override

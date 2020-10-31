@@ -21,7 +21,7 @@ public enum MenuContent {
         this.imagePath = imagePath;
     }
 
-    static private final String buttonPath = "/fxml/menu_button.fxml";
+    private static final String buttonPath = "/fxml/menu_button.fxml";
 
     private final String btnText;
     private final String imagePath;
@@ -30,14 +30,15 @@ public enum MenuContent {
     public Button getButton() {
         if (button == null) {
             try {
-                button = FXMLLoader.load(getClass().getResource("/fxml/menu_button.fxml"));
-                button.setText(AppConfig.getLangBundle().getString(btnText));
+                button = FXMLLoader.load(getClass().getResource(buttonPath));
                 ((ImageView) button.getGraphic()).setImage(new Image(imagePath));
             }
             catch (IOException exception) {
                 exception.printStackTrace();
             }
         }
+        button.setText(AppConfig.getLangBundle().getString(btnText));
+
         return button;
     }
 }
