@@ -7,12 +7,15 @@ import bg.tuvarna.traveltickets.service.AuthService;
 import bg.tuvarna.traveltickets.service.impl.AuthServiceImpl;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 
@@ -60,7 +63,7 @@ public class UserLoginController extends BaseController {
     }
 
     @FXML
-    private void onLoginButtonClicked(final MouseEvent event) {
+    private void onLoginButtonClicked(final Event event) {
         final String usernameOrEmail = usernameTextField.getText();
         final String password = passwordField.getText();
 
@@ -113,4 +116,8 @@ public class UserLoginController extends BaseController {
         loginButton.setDisable(value);
     }
 
+    public void onKeyPressed(final KeyEvent keyEvent) {
+        if (keyEvent.getCode() == KeyCode.ENTER)
+        onLoginButtonClicked(keyEvent);
+    }
 }

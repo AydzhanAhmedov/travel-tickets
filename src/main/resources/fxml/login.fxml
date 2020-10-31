@@ -15,16 +15,14 @@
 
 <BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="bg.tuvarna.traveltickets.controller.UserLoginController">
    <left>
-      <AnchorPane prefHeight="600.0" prefWidth="300.0"
-                  style="-fx-background-color: radial-gradient(focus-distance 0% , center 50% 50% , radius 85% ,#7076ba,#444484);"
-                  BorderPane.alignment="CENTER">
+      <AnchorPane prefHeight="600.0" prefWidth="300.0" style="-fx-background-color: radial-gradient(focus-distance 0% , center 50% 50% , radius 85% ,#7076ba,#444484);" BorderPane.alignment="CENTER">
          <ImageView cache="true" cacheHint="SPEED" fitHeight="200.0" fitWidth="200.0" layoutX="50.0" layoutY="200.0">
-            <Image url="@../images/logo_name.png"/>
+            <Image url="@../images/logo_name.png" />
          </ImageView>
       </AnchorPane>
    </left>
    <center>
-      <AnchorPane focusTraversable="true" prefHeight="600.0" prefWidth="603.0" style="-fx-background-color: #d3d3ed;" BorderPane.alignment="CENTER">
+      <AnchorPane focusTraversable="true" onKeyPressed="#onKeyPressed" prefHeight="600.0" prefWidth="603.0" style="-fx-background-color: #d3d3ed;" BorderPane.alignment="CENTER">
          <TextField fx:id="usernameTextField" layoutX="137.0" layoutY="257.0" prefHeight="30.0" prefWidth="250.0" promptText="%label.user_name" style="-fx-background-color: transparent; -fx-border-color: #7076ba#7076ba; -fx-border-width: 0px 0px 2px 0px;">
             <opaqueInsets>
                <Insets />
@@ -38,15 +36,14 @@
             <effect>
                <DropShadow blurType="ONE_PASS_BOX" color="#5c5c5c7a" offsetX="1.5" offsetY="1.5" />
             </effect></Button>
-         <ImageView cache="true" cacheHint="SPEED" fitHeight="80.0" fitWidth="80.0" focusTraversable="true"
-                    layoutX="210.0" layoutY="100.0">
-            <Image url="@../images/users.png"/>
+         <ImageView cache="true" cacheHint="SPEED" fitHeight="80.0" fitWidth="80.0" focusTraversable="true" layoutX="210.0" layoutY="100.0">
+            <Image url="@../images/users.png" />
          </ImageView>
          <ImageView cache="true" cacheHint="SPEED" fitHeight="20.0" fitWidth="20.0" layoutX="111.0" layoutY="317.0">
-            <Image url="@../images/password_icon.png"/>
+            <Image url="@../images/password_icon.png" />
          </ImageView>
          <ImageView cache="true" cacheHint="SPEED" fitHeight="20.0" fitWidth="20.0" layoutX="111.0" layoutY="265.0">
-            <Image url="@../images/username_icon.png"/>
+            <Image url="@../images/username_icon.png" />
          </ImageView>
          <Text fill="#444484" layoutX="123.0" layoutY="194.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-text-alignment: center;" text="%label.user_login" textAlignment="CENTER" textOrigin="CENTER" wrappingWidth="253.2890625" AnchorPane.leftAnchor="123.0" AnchorPane.rightAnchor="123.7109375" AnchorPane.topAnchor="180.03125">
             <font>
@@ -58,9 +55,8 @@
             <font>
                <Font name="System Bold" size="11.0" />
             </font></Text>
-         <ImageView fx:id="errorImageView" fitHeight="17.0" fitWidth="17.0" layoutX="113.0" layoutY="355.0"
-                    opacity="0.75" visible="false">
-            <Image url="@../images/error.png"/>
+         <ImageView fx:id="errorImageView" fitHeight="17.0" fitWidth="17.0" layoutX="113.0" layoutY="355.0" opacity="0.75" visible="false">
+            <Image url="@../images/error.png" />
          </ImageView>
          <ChoiceBox fx:id="languageChoiceBox" layoutX="14.0" layoutY="11.0" opacity="0.75" prefHeight="26.0" prefWidth="5.0" style="-fx-background-color: transparent;" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="11.0" />
       </AnchorPane>
