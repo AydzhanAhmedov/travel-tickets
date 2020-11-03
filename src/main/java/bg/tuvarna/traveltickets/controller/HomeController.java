@@ -1,16 +1,19 @@
 package bg.tuvarna.traveltickets.controller;
 
+import bg.tuvarna.traveltickets.common.AppConfig;
 import bg.tuvarna.traveltickets.common.MenuContent;
 import bg.tuvarna.traveltickets.controller.base.BaseController;
 import bg.tuvarna.traveltickets.service.AuthService;
 import bg.tuvarna.traveltickets.service.impl.AuthServiceImpl;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.EnumSet;
 import java.util.ResourceBundle;
@@ -61,7 +64,7 @@ public class HomeController extends BaseController {
     private EventHandler<MouseEvent> getEventHandler(MenuContent content) {
         return switch (content) {
             case BTN_CLIENTS -> event -> {
-                System.out.println("click client");
+                btnClients();
             };
             case BTN_NOTIFICATIONS -> event -> {
             };
@@ -74,5 +77,20 @@ public class HomeController extends BaseController {
             case BTN_SOLD_TICKETS -> event -> {
             };
         };
+    }
+
+    public void btnClients() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/table_clients.fxml"),
+                    AppConfig.getLangBundle());
+            BorderPane borderPane = loader.load();
+            ClientsTableController controller = loader.getController();
+            // Use controller to set data
+            childBorderPane.setCenter(borderPane);
+        }
+
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

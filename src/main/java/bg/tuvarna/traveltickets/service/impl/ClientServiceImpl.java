@@ -9,6 +9,8 @@ import bg.tuvarna.traveltickets.repository.ClientRepository;
 import bg.tuvarna.traveltickets.repository.impl.ClientRepositoryImpl;
 import bg.tuvarna.traveltickets.service.ClientService;
 
+import java.util.List;
+
 public class ClientServiceImpl implements ClientService {
 
     private final ClientRepository clientRepository = ClientRepositoryImpl.getInstance();
@@ -28,6 +30,11 @@ public class ClientServiceImpl implements ClientService {
         };
 
         return clientRepository.findById(clientClass, userId);
+    }
+
+    @Override
+    public List<Client> findAll() {
+        return clientRepository.findAll();
     }
 
     private static ClientServiceImpl instance;

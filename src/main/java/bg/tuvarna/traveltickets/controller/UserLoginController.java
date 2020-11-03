@@ -9,6 +9,7 @@ import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.PasswordField;
@@ -16,8 +17,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
+import javafx.stage.Screen;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -91,6 +92,10 @@ public class UserLoginController extends BaseController {
         if (successfullyLoggedIn) {
             clearTextFields();
             getPrimaryStage().setScene(HOME.getScene());
+            // Center stage on screen
+            Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
+            getPrimaryStage().setX((primScreenBounds.getWidth() - getPrimaryStage().getWidth()) / 2);
+            getPrimaryStage().setY((primScreenBounds.getHeight() - getPrimaryStage().getHeight()) / 2);
         } else setErrorText(getLangBundle().getString(BAD_CREDENTIALS_KEY));
     }
 
@@ -118,6 +123,6 @@ public class UserLoginController extends BaseController {
 
     public void onKeyPressed(final KeyEvent keyEvent) {
         if (keyEvent.getCode() == KeyCode.ENTER)
-        onLoginButtonClicked(keyEvent);
+            onLoginButtonClicked(keyEvent);
     }
 }

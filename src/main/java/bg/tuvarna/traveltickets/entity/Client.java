@@ -1,5 +1,7 @@
 package bg.tuvarna.traveltickets.entity;
 
+import javafx.beans.property.StringProperty;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -17,7 +19,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "clients")
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class Client implements Serializable {
+public class Client implements Serializable {
 
     private static final long serialVersionUID = -9066096581032000088L;
 

@@ -8,6 +8,7 @@ import bg.tuvarna.traveltickets.util.EntityManagerUtil;
 import bg.tuvarna.traveltickets.util.JpaOperationsUtil;
 
 import javax.persistence.TypedQuery;
+import java.util.List;
 
 import static bg.tuvarna.traveltickets.common.Constants.USER_ID_PARAM;
 
@@ -17,6 +18,10 @@ public class ClientRepositoryImpl extends GenericCrudRepositoryImpl<Client, Long
                 SELECT ct FROM ClientType ct
                 RIGHT JOIN Client c ON c.clientType.id = ct.id
                 WHERE c.userId = :userId
+            """;
+
+    private static final String FIND_ALL_CLIENTS = """
+                FROM Client
             """;
 
     @Override
@@ -31,6 +36,14 @@ public class ClientRepositoryImpl extends GenericCrudRepositoryImpl<Client, Long
     @Override
     public <T extends Client> T findById(final Class<T> clientClass, final Long userId) {
         return EntityManagerUtil.getEntityManager().find(clientClass, userId);
+    }
+
+    @Override
+    public List<Client> findAll() {
+        //TODO Transaction not closed.
+        final TypedQuery<Client> query = EntityManagerUtil.getEntityManager()
+                .createQuery(FIND_ALL_CLIENTS, Client.class);
+        return query.getResultList();
     }
 
     private static ClientRepositoryImpl instance;
