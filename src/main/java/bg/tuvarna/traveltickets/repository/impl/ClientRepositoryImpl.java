@@ -40,7 +40,6 @@ public class ClientRepositoryImpl extends GenericCrudRepositoryImpl<Client, Long
 
     @Override
     public List<Client> findAll() {
-        //TODO Transaction not closed.
         final TypedQuery<Client> query = EntityManagerUtil.getEntityManager()
                 .createQuery(FIND_ALL_CLIENTS, Client.class);
         return query.getResultList();

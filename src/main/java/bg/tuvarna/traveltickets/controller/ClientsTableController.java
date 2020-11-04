@@ -5,11 +5,10 @@ import bg.tuvarna.traveltickets.entity.Address;
 import bg.tuvarna.traveltickets.entity.Client;
 import bg.tuvarna.traveltickets.entity.ClientType;
 import bg.tuvarna.traveltickets.service.impl.ClientServiceImpl;
+import bg.tuvarna.traveltickets.util.JpaOperationsUtil;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -87,9 +86,8 @@ public class ClientsTableController implements Initializable {
         columnCity.setCellValueFactory(addressProperty);
         columnRegion.setCellValueFactory(addressProperty);
 
-        List<Client> clients = ClientServiceImpl.getInstance().findAll();
-        ObservableList<Client> personData = FXCollections.observableArrayList(clients);
-        tableClients.setItems(personData);
+        List<Client> clients = JpaOperationsUtil.executeInTransaction(() -> ClientServiceImpl.getInstance().findAll());
+        tableClients.setItems(FXCollections.observableArrayList(clients));
 
     }
 

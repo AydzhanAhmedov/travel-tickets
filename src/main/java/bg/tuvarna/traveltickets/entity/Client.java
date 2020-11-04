@@ -31,7 +31,7 @@ public class Client implements Serializable {
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "client_type_id", nullable = false)
     private ClientType clientType;
 
@@ -41,7 +41,7 @@ public class Client implements Serializable {
     @Column(nullable = false)
     private String phone;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     private Address address;
 
     public Client() {
