@@ -22,6 +22,8 @@ public final class Constants {
     public static final String LANG_BUNDLE_NAME = "bundles.lang_bundle";
     public static final String PERSISTENT_UNIT_NAME = "travel-ticket-persistence-unit";
 
+    // FXML
+    public static final String CLIENT_DIALOG = "/fxml/client_dialog.fxml";
     private Constants() {
         throw new UnsupportedOperationException(CANNOT_BE_INSTANTIATED_FORMAT.formatted(getClass().toString()));
     }

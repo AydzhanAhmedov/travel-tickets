@@ -18,6 +18,7 @@ import java.net.URL;
 import java.util.EnumSet;
 import java.util.ResourceBundle;
 
+import static bg.tuvarna.traveltickets.common.AppConfig.getLangBundle;
 import static bg.tuvarna.traveltickets.common.AppConfig.getPrimaryStage;
 import static bg.tuvarna.traveltickets.common.AppScreens.LOGIN;
 
@@ -82,7 +83,7 @@ public class HomeController extends BaseController {
     public void btnClients() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/table_clients.fxml"),
-                    AppConfig.getLangBundle());
+                    getLangBundle());
             BorderPane borderPane = loader.load();
             ClientsTableController controller = loader.getController();
             // Use controller to set data

@@ -28,7 +28,7 @@ public class Client implements Serializable {
     private Long userId;
 
     @MapsId("user_id")
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @OneToOne(fetch = FetchType.EAGER, optional = false)
     private User user;
 
     @ManyToOne(fetch = FetchType.EAGER)
