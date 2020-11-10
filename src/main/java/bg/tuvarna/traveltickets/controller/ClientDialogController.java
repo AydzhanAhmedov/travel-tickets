@@ -1,13 +1,17 @@
 package bg.tuvarna.traveltickets.controller;
 
+import bg.tuvarna.traveltickets.entity.Address;
 import bg.tuvarna.traveltickets.entity.Cashier;
+import bg.tuvarna.traveltickets.entity.City;
 import bg.tuvarna.traveltickets.entity.Client;
 import bg.tuvarna.traveltickets.entity.ClientType;
 import bg.tuvarna.traveltickets.entity.Company;
+import bg.tuvarna.traveltickets.entity.Region;
 import bg.tuvarna.traveltickets.entity.User;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
@@ -25,6 +29,8 @@ import static bg.tuvarna.traveltickets.common.AppConfig.getLangBundle;
 public class ClientDialogController implements Initializable {
 
     public enum DialogMode {VIEW, ADD, EDIT}
+
+    private Client client;
 
     @FXML
     private DialogPane dialogPane;
@@ -84,16 +90,31 @@ public class ClientDialogController implements Initializable {
         clientTypeComboBox.getSelectionModel().select(0);
     }
 
+    public void initDialog(Client client, DialogMode mode){
+        setMode(mode);
+        if (mode != DialogMode.ADD)
+            setData(client);
+    }
+
     private void addCancelButton() {
         ButtonType cancel = new ButtonType(getLangBundle().getString("button.cancel"), ButtonBar.ButtonData.CANCEL_CLOSE);
         dialogPane.getButtonTypes().add(cancel);
     }
 
-    public void setMode(DialogMode mode) {
+    private void setMode(DialogMode mode) {
         switch (mode) {
             case ADD: {
                 ButtonType OK = new ButtonType(getLangBundle().getString("button.apply"), ButtonBar.ButtonData.OK_DONE);
                 dialogPane.getButtonTypes().add(OK);
+
+                Button btOk = (Button) dialogPane.lookupButton(OK);
+                if (btOk == null)
+                    return;
+
+                btOk.addEventFilter(ActionEvent.ACTION, event -> {
+                    readData();
+                    System.out.println("data read");
+                });
                 break;
             }
             case EDIT: {
@@ -151,7 +172,24 @@ public class ClientDialogController implements Initializable {
         }
     }
 
-    public void setData(Client client) {
+    private void readData() {
+
+        client.setClientType(new ClientType(clientTypeComboBox.getValue()));
+        Region region = new Region(regionComboBox.getValue());
+        City city = new City(cityComboBox.getValue(), region);
+        Address address = new Address(city, addressTextField.getText());
+        client.setAddress(address);
+        client.setName(nameTextField.getText());
+        client.setPhone(phoneTextField.getText());
+        client.getUser().setEmail(emailTextField.getText());
+        client.getUser().setUsername(emailTextField.getText());
+        client.getUser().setPassword(passwordField.getText());
+
+    }
+
+    private void setData(Client client) {
+        this.client = client;
+
         ClientType.Enum clientType = client.getClientType().getName();
         User user = client.getUser();
 

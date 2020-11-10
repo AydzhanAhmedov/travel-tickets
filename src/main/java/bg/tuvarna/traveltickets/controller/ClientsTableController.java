@@ -56,12 +56,24 @@ public class ClientsTableController implements Initializable {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(CLIENT_DIALOG), AppConfig.getLangBundle());
         DialogPane dialogPane = loader.load();
         ClientDialogController clientDialogController = loader.getController();
-        clientDialogController.setMode(ClientDialogController.DialogMode.VIEW);
         Client client = tableClients.getSelectionModel().getSelectedItem();
-        clientDialogController.setData(client);
+        clientDialogController.initDialog(client, ClientDialogController.DialogMode.VIEW);
         Dialog dialog = new Dialog();
         dialog.setDialogPane(dialogPane);
         dialog.showAndWait();
+    }
+
+    @FXML
+    void onAddClicked(ActionEvent event) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(CLIENT_DIALOG), AppConfig.getLangBundle());
+        DialogPane dialogPane = loader.load();
+        ClientDialogController clientDialogController = loader.getController();
+        Client client = new Client();
+        clientDialogController.initDialog(client, ClientDialogController.DialogMode.ADD);
+        Dialog dialog = new Dialog();
+        dialog.setDialogPane(dialogPane);
+        dialog.showAndWait();
+        //Add client to database
     }
 
     @Override

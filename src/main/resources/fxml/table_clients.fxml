@@ -12,7 +12,7 @@
     <top>
         <HBox prefHeight="40.0" prefWidth="600.0" BorderPane.alignment="CENTER">
             <children>
-                <Button mnemonicParsing="false" text="Add" />
+                <Button mnemonicParsing="false" onAction="#onAddClicked" text="Add" />
                 <Separator orientation="VERTICAL" prefHeight="200.0" />
                 <Button mnemonicParsing="false" text="Delete" />
                 <Separator orientation="VERTICAL" prefHeight="200.0" />

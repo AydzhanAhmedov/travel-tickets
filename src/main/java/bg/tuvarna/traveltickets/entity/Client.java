@@ -45,7 +45,7 @@ public class Client implements Serializable {
     private Address address;
 
     public Client() {
-        super();
+        user = new User();
     }
 
     public Client(final User user) {
