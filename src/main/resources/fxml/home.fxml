@@ -13,26 +13,37 @@
 
 <BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="bg.tuvarna.traveltickets.controller.HomeController">
     <left>
-        <VBox fx:id="leftVBox" alignment="TOP_CENTER" prefHeight="800.0" prefWidth="320.0" style="-fx-background-color: radial-gradient(focus-distance 0% , center 50% 50% , radius 85% ,#7076ba,#444484);" BorderPane.alignment="CENTER">
+        <VBox fx:id="leftVBox" alignment="TOP_CENTER" minWidth="320.0" prefHeight="800.0" prefWidth="320.0" style="-fx-background-color: radial-gradient(focus-distance 0% , center 50% 50% , radius 85% ,#7076ba,#444484);" BorderPane.alignment="CENTER">
             <AnchorPane prefHeight="60.0" prefWidth="320.0">
                 <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="14.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0">
                     <Image url="@../images/logo.png" />
                 </ImageView>
                 <Button fx:id="notificationButton" layoutX="244.0" layoutY="17.0" maxHeight="40.0" maxWidth="40.0" minHeight="40.0" minWidth="40.0" mnemonicParsing="false" onMouseClicked="#onNotificationButtonClicked" prefHeight="40.0" prefWidth="40.0" styleClass="notificationsButton" stylesheets="@../css/buttons.css" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
             </AnchorPane>
-            <AnchorPane prefHeight="250.0" prefWidth="200.0">
-                <ImageView cache="true" cacheHint="SPEED" fitHeight="102.0" fitWidth="105.0" layoutX="109.0" layoutY="22.0" pickOnBounds="true" preserveRatio="true">
-                    <viewport>
-                        <Rectangle2D />
-                    </viewport>
-                    <Image url="@../images/admin.png" />
-                </ImageView>
-                <Text cache="true" cacheHint="SPEED" fill="#01233f" layoutX="50.0" layoutY="174.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Admin Panel" textAlignment="CENTER">
-                    <font>
-                        <Font name="System Bold" size="30.0" />
-                    </font>
-                </Text>
-            </AnchorPane>
+         <VBox alignment="TOP_CENTER" prefHeight="200.0" spacing="10.0">
+            <children>
+                   <ImageView fx:id="userImageView" cache="true" cacheHint="SPEED" fitHeight="105.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+                       <viewport>
+                           <Rectangle2D />
+                       </viewport>
+                       <Image url="@../images/admin.png" />
+                   </ImageView>
+                   <Text fx:id="userText" cache="true" cacheHint="SPEED" fill="#01233f" strokeType="OUTSIDE" strokeWidth="0.0" text="Admin Panel" textAlignment="CENTER">
+                       <font>
+                           <Font name="System Bold" size="30.0" />
+                       </font>
+                   </Text>
+            </children>
+            <VBox.margin>
+               <Insets />
+            </VBox.margin>
+            <padding>
+               <Insets top="20.0" />
+            </padding>
+            <opaqueInsets>
+               <Insets />
+            </opaqueInsets>
+         </VBox>
             <Button alignment="BASELINE_LEFT" cache="true" cacheHint="SPEED" graphicTextGap="20.0" mnemonicParsing="false" onMouseClicked="#onLogoutButtonClicked" prefHeight="50.0" prefWidth="320.0" styleClass="menuButton" stylesheets="@../css/buttons.css" text="%label.profile">
                 <font>
                     <Font name="System Bold" size="15.0" />

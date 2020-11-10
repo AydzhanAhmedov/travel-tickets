@@ -1,17 +1,21 @@
 package bg.tuvarna.traveltickets.controller;
 
-import bg.tuvarna.traveltickets.common.AppConfig;
 import bg.tuvarna.traveltickets.common.MenuContent;
 import bg.tuvarna.traveltickets.controller.base.BaseController;
+import bg.tuvarna.traveltickets.entity.ClientType;
+import bg.tuvarna.traveltickets.entity.Company;
 import bg.tuvarna.traveltickets.service.AuthService;
 import bg.tuvarna.traveltickets.service.impl.AuthServiceImpl;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 
 import java.io.IOException;
 import java.net.URL;
@@ -25,6 +29,12 @@ import static bg.tuvarna.traveltickets.common.AppScreens.LOGIN;
 public class HomeController extends BaseController {
 
     private final AuthService authService = AuthServiceImpl.getInstance();
+
+    @FXML
+    private ImageView userImageView;
+
+    @FXML
+    private Text userText;
 
     @FXML
     private Button logoutButton;
@@ -60,6 +70,40 @@ public class HomeController extends BaseController {
             button.setOnMouseClicked(getEventHandler(c));
             leftVBox.getChildren().add(leftVBox.getChildren().size() - 1, button);
         });
+
+        initUserSpecificView();
+    }
+
+    private void initUserSpecificView() {
+        if (authService.loggedUserIsAdmin())
+            return;
+
+        ClientType.Enum clienType = authService.getLoggedClientTypeName();
+
+        switch (clienType) {
+            case DISTRIBUTOR: {
+                Image image = new Image("images/logo_distributor.png");
+                userImageView.setImage(image);
+                userText.setText(getLangBundle().getString("label.distributor"));
+            }
+            break;
+
+            case CASHIER: {
+                Image image = new Image("images/logo_cashier.png");
+                userImageView.setImage(image);
+                userText.setText(getLangBundle().getString("label.cashier"));
+            }
+            break;
+
+            case COMPANY: {
+                Company company = (Company) AuthServiceImpl.getInstance().getLoggedClient();
+
+                // check if image is laoded
+                Image image = new Image(company.getLogoUrl());
+                userImageView.setImage(image);
+                userText.setText(company.getName());
+            }
+        }
     }
 
     private EventHandler<MouseEvent> getEventHandler(MenuContent content) {
