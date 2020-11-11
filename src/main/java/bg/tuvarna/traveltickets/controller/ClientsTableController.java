@@ -57,7 +57,7 @@ public class ClientsTableController implements Initializable {
         DialogPane dialogPane = loader.load();
         ClientDialogController clientDialogController = loader.getController();
         Client client = tableClients.getSelectionModel().getSelectedItem();
-        clientDialogController.initDialog(client, ClientDialogController.DialogMode.VIEW);
+        clientDialogController.initDialog(client, ClientDialogController.DialogMode.VIEW, c -> tableClients.getItems().add(c));
         Dialog dialog = new Dialog();
         dialog.setDialogPane(dialogPane);
         dialog.showAndWait();
@@ -69,10 +69,11 @@ public class ClientsTableController implements Initializable {
         DialogPane dialogPane = loader.load();
         ClientDialogController clientDialogController = loader.getController();
         Client client = new Client();
-        clientDialogController.initDialog(client, ClientDialogController.DialogMode.ADD);
+        clientDialogController.initDialog(client, ClientDialogController.DialogMode.ADD, c -> tableClients.getItems().add(c));
         Dialog dialog = new Dialog();
         dialog.setDialogPane(dialogPane);
         dialog.showAndWait();
+
         //Add client to database
     }
 

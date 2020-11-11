@@ -23,6 +23,7 @@ import javafx.scene.layout.GridPane;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.function.Consumer;
 
 import static bg.tuvarna.traveltickets.common.AppConfig.getLangBundle;
 
@@ -31,6 +32,8 @@ public class ClientDialogController implements Initializable {
     public enum DialogMode {VIEW, ADD, EDIT}
 
     private Client client;
+
+    private Consumer<Client> clientConsumer;
 
     @FXML
     private DialogPane dialogPane;
@@ -90,7 +93,8 @@ public class ClientDialogController implements Initializable {
         clientTypeComboBox.getSelectionModel().select(0);
     }
 
-    public void initDialog(Client client, DialogMode mode){
+    public void initDialog(Client client, DialogMode mode, Consumer<Client> newClientConsumer){
+        this.clientConsumer = newClientConsumer;
         setMode(mode);
         if (mode != DialogMode.ADD)
             setData(client);
@@ -112,7 +116,9 @@ public class ClientDialogController implements Initializable {
                     return;
 
                 btOk.addEventFilter(ActionEvent.ACTION, event -> {
+                    // validator
                     readData();
+                    clientConsumer.accept(client);
                     System.out.println("data read");
                 });
                 break;
@@ -176,6 +182,7 @@ public class ClientDialogController implements Initializable {
 
         client.setClientType(new ClientType(clientTypeComboBox.getValue()));
         Region region = new Region(regionComboBox.getValue());
+
         City city = new City(cityComboBox.getValue(), region);
         Address address = new Address(city, addressTextField.getText());
         client.setAddress(address);
