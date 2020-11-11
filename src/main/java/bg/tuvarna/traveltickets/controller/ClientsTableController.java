@@ -48,9 +48,6 @@ public class ClientsTableController implements Initializable {
     private TableColumn<Client, Address> columnCity;
 
     @FXML
-    private TableColumn<Client, Address> columnRegion;
-
-    @FXML
     void onViewClicked(ActionEvent event) throws IOException {
         // View clients
         FXMLLoader loader = new FXMLLoader(getClass().getResource(CLIENT_DIALOG), AppConfig.getLangBundle());
@@ -115,20 +112,8 @@ public class ClientsTableController implements Initializable {
             }
         });
 
-        columnRegion.setCellFactory(col -> new TableCell<>() {
-            @Override
-            protected void updateItem(final Address item, final boolean empty) {
-                super.updateItem(item, empty);
-                if (empty) {
-                    // some logic
-                } else {
-                    setText(item.getCity().getRegion().getName());
-                }
-            }
-        });
         PropertyValueFactory addressProperty = new PropertyValueFactory("address");
         columnCity.setCellValueFactory(addressProperty);
-        columnRegion.setCellValueFactory(addressProperty);
     }
 
     public void setData() {

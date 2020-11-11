@@ -6,7 +6,6 @@ import bg.tuvarna.traveltickets.entity.City;
 import bg.tuvarna.traveltickets.entity.Client;
 import bg.tuvarna.traveltickets.entity.ClientType;
 import bg.tuvarna.traveltickets.entity.Company;
-import bg.tuvarna.traveltickets.entity.Region;
 import bg.tuvarna.traveltickets.entity.User;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -70,9 +69,6 @@ public class ClientDialogController implements Initializable {
 
     @FXML
     private ComboBox<String> cityComboBox;
-
-    @FXML
-    private ComboBox<String> regionComboBox;
 
     @FXML
     private TextField detail1TextField;
@@ -141,8 +137,6 @@ public class ClientDialogController implements Initializable {
                 addressTextField.setEditable(false);
                 cityComboBox.setDisable(true);
                 cityComboBox.setStyle("-fx-opacity: 1");
-                regionComboBox.setDisable(true);
-                regionComboBox.setStyle("-fx-opacity: 1");
                 detail1TextField.setEditable(false);
                 detail2TextField.setEditable(false);
                 break;
@@ -181,9 +175,8 @@ public class ClientDialogController implements Initializable {
     private void readData() {
 
         client.setClientType(new ClientType(clientTypeComboBox.getValue()));
-        Region region = new Region(regionComboBox.getValue());
 
-        City city = new City(cityComboBox.getValue(), region);
+        City city = new City(cityComboBox.getValue());
         Address address = new Address(city, addressTextField.getText());
         client.setAddress(address);
         client.setName(nameTextField.getText());
@@ -209,7 +202,6 @@ public class ClientDialogController implements Initializable {
         phoneTextField.setText(client.getPhone());
         addressTextField.setText(client.getAddress().getAddress());
         cityComboBox.getSelectionModel().select(client.getAddress().getCity().getName());
-        regionComboBox.getSelectionModel().select(client.getAddress().getCity().getRegion().getName());
 
         if (clientType == ClientType.Enum.COMPANY) {
             Company company = (Company) client;
