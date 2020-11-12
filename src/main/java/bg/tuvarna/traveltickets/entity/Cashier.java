@@ -2,16 +2,17 @@ package bg.tuvarna.traveltickets.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
-import javax.persistence.PrePersist;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.Objects;
 
+@EntityListeners(CashierEntityListener.class)
 @Entity
 @Table(name = "cashiers")
 @PrimaryKeyJoinColumn(name = "client_id")
@@ -24,10 +25,10 @@ public class Cashier extends Client {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by", updatable = false, nullable = false)
-    private User createdBy;
+    User createdBy;
 
     @Column(name = "created_at", updatable = false, nullable = false)
-    private OffsetDateTime createdAt;
+    OffsetDateTime createdAt;
 
     public Cashier() {
         super();
@@ -67,13 +68,6 @@ public class Cashier extends Client {
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), honorarium, createdBy, createdAt);
-    }
-
-    //TODO: implement with BaseAuditEntity in sprint 3
-    @PrePersist
-    protected final void prePersist() {
-        createdBy = new User(1L, null);
-        createdAt = OffsetDateTime.now();
     }
 
 }

@@ -2,15 +2,16 @@ package bg.tuvarna.traveltickets.entity;
 
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
-import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Objects;
 
+@EntityListeners(NotificationRecipientEntityListener.class)
 @Entity
 @Table(name = "notifications_recipients")
 public class NotificationRecipient implements Serializable {
@@ -77,11 +78,5 @@ public class NotificationRecipient implements Serializable {
         return Objects.hash(notificationRecipientID, notification, recipient, notificationStatus);
     }
 
-    @PrePersist
-    protected final void prePersist() {
-        if (notificationStatus == null)
-            //TODO Get status from database
-            notificationStatus = new NotificationStatus(1L, NotificationStatus.Enum.NOT_SEEN);
-    }
 }
 
