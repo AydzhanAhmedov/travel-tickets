@@ -7,6 +7,8 @@ public final class Constants {
     public static final String CANNOT_BE_NULL_FORMAT = "%s cannot be null!";
     public static final String ACTION_CANNOT_BE_NULL_MESSAGE = CANNOT_BE_NULL_FORMAT.formatted("action");
     public static final String CLIENT_NOT_FOUND_FORMAT = "client with id %d not found in database!";
+    public static final String CANNOT_BE_EMPTY_FORMAT = "%s cannot be empty!";
+    public static final String RECIPIENT_LIST_CANNOT_BE_EMPTY = CANNOT_BE_EMPTY_FORMAT.formatted("recipient ids list");
 
     // Params
     public static final String USERNAME_OR_EMAIL_PARAM = "usernameOrEmail";
@@ -24,6 +26,7 @@ public final class Constants {
 
     // FXML
     public static final String CLIENT_DIALOG = "/fxml/client_dialog.fxml";
+
     private Constants() {
         throw new UnsupportedOperationException(CANNOT_BE_INSTANTIATED_FORMAT.formatted(getClass().toString()));
     }

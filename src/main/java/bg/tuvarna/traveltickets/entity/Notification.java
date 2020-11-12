@@ -1,7 +1,6 @@
 package bg.tuvarna.traveltickets.entity;
 
 import bg.tuvarna.traveltickets.entity.base.BaseAuditEntity;
-import bg.tuvarna.traveltickets.entity.base.BaseEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -21,18 +20,19 @@ public class Notification extends BaseAuditEntity {
     @JoinColumn(name = "type_id", nullable = false)
     private NotificationType notificationType;
 
-    @Column(nullable = false)
+    @Column(nullable = false, updatable = false)
     private String message;
 
     public Notification() {
     }
 
-    public Notification(final NotificationType notificationType) {
+    public Notification(final String message, final NotificationType notificationType) {
+        this.message = message;
         this.notificationType = notificationType;
     }
 
-    public Notification(final Long id, final NotificationType notificationType) {
-        this(notificationType);
+    public Notification(final Long id, final String message, final NotificationType notificationType) {
+        this(message, notificationType);
         this.id = id;
     }
 
@@ -42,10 +42,6 @@ public class Notification extends BaseAuditEntity {
 
     public String getMessage() {
         return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
     }
 
     @Override
