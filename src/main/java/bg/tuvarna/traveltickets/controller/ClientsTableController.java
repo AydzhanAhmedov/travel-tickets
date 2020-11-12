@@ -80,7 +80,7 @@ public class ClientsTableController implements Initializable {
     public void initialize(final URL location, final ResourceBundle resources) {
         initColumns();
 
-        List<Client> clients = JpaOperationsUtil.executeInTransaction(() -> ClientServiceImpl.getInstance().findAll());
+        List<Client> clients = JpaOperationsUtil.executeInTransaction(em -> ClientServiceImpl.getInstance().findAll());
         tableClients.setItems(FXCollections.observableArrayList(clients));
     }
 

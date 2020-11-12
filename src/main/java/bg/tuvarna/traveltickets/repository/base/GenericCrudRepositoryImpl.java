@@ -33,15 +33,15 @@ public abstract class GenericCrudRepositoryImpl<E, ID> implements GenericCrudRep
 
     @Override
     public E save(final E entity) {
-        return JpaOperationsUtil.executeInTransaction(() -> persistOrMerge(entity), false);
+        return JpaOperationsUtil.executeInTransaction(em -> persistOrMerge(em, entity));
     }
 
     @Override
     public void delete(final E entity) {
-        JpaOperationsUtil.executeInTransaction(() -> {
-            EntityManagerUtil.getEntityManager().remove(entity);
+        JpaOperationsUtil.executeInTransaction(em -> {
+            em.remove(entity);
             return null;
-        }, false);
+        });
     }
 
     @SuppressWarnings("unchecked")
@@ -49,9 +49,7 @@ public abstract class GenericCrudRepositoryImpl<E, ID> implements GenericCrudRep
         return (ID) EntityManagerUtil.getEntityManagerFactory().getPersistenceUnitUtil().getIdentifier(entity);
     }
 
-    private E persistOrMerge(final E entity) {
-        final EntityManager entityManager = EntityManagerUtil.getEntityManager();
-
+    private E persistOrMerge(final EntityManager entityManager, final E entity) {
         if (getEntityId(entity) != null) {
             return entityManager.merge(entity);
         }

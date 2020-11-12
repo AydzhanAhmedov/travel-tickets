@@ -73,7 +73,7 @@ public class UserLoginController extends BaseController {
             return;
         }
 
-        final Task<Boolean> loginTask = createTransactionTask(() -> authService.login(usernameOrEmail, password) != null);
+        final Task<Boolean> loginTask = createTransactionTask(em -> authService.login(usernameOrEmail, password) != null);
 
         loginTask.setOnFailed(this::onLoginTaskFailed);
         loginTask.setOnRunning(this::onLoginTaskRunning);

@@ -29,6 +29,10 @@ public final class EntityManagerUtil {
         return EMF_INSTANCE.createEntityManager();
     }
 
+    public static boolean entityManagerIsInstantiated() {
+        return EM_THREAD_LOCAL.get() != null;
+    }
+
     public static EntityManager getEntityManager() {
         EntityManager entityManager = EM_THREAD_LOCAL.get();
 

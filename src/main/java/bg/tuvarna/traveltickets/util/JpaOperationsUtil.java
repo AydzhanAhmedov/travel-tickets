@@ -25,21 +25,24 @@ public final class JpaOperationsUtil {
      */
     @FunctionalInterface
     public interface PersistentFunction<T> {
-        T execute();
+        T execute(EntityManager em);
     }
 
     public static <T> T execute(final PersistentFunction<T> action) {
-        final T actionResult = Objects.requireNonNull(action, ACTION_CANNOT_BE_NULL_MESSAGE).execute();
-        EntityManagerUtil.closeEntityManager();
+        final boolean closeEntityManager = !EntityManagerUtil.entityManagerIsInstantiated();
+        final EntityManager entityManager = EntityManagerUtil.getEntityManager();
+
+        final T actionResult = Objects.requireNonNull(action, ACTION_CANNOT_BE_NULL_MESSAGE).execute(entityManager);
+
+        if (closeEntityManager) EntityManagerUtil.closeEntityManager();
+
         return actionResult;
     }
 
     public static <T> T executeInTransaction(final PersistentFunction<T> action) {
-        return executeInTransaction(action, true);
-    }
-
-    public static <T> T executeInTransaction(final PersistentFunction<T> action, final boolean closeEntityManager) {
         Objects.requireNonNull(action, ACTION_CANNOT_BE_NULL_MESSAGE);
+
+        final boolean closeEntityManager = !EntityManagerUtil.entityManagerIsInstantiated();
 
         final EntityManager entityManager = EntityManagerUtil.getEntityManager();
         final EntityTransaction transaction = entityManager.getTransaction();
@@ -50,7 +53,7 @@ public final class JpaOperationsUtil {
         try {
             if (commitTransaction = !transaction.isActive()) transaction.begin();
 
-            actionResult = action.execute();
+            actionResult = action.execute(entityManager);
 
             if (commitTransaction) transaction.commit();
         }
