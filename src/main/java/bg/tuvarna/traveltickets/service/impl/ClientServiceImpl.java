@@ -49,8 +49,7 @@ public class ClientServiceImpl implements ClientService {
         return instance;
     }
 
-
-    public ClientServiceImpl() {
+    private ClientServiceImpl() {
         super();
     }
 

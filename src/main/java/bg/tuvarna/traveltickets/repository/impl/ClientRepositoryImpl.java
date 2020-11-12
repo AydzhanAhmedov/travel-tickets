@@ -20,7 +20,7 @@ public class ClientRepositoryImpl extends GenericCrudRepositoryImpl<Client, Long
                 WHERE c.userId = :userId
             """;
 
-    private static final String FIND_ALL_CLIENTS = """
+    private static final String FIND_ALL_CLIENTS_HQL = """
                 FROM Client
             """;
 
@@ -41,7 +41,7 @@ public class ClientRepositoryImpl extends GenericCrudRepositoryImpl<Client, Long
     @Override
     public List<Client> findAll() {
         final TypedQuery<Client> query = EntityManagerUtil.getEntityManager()
-                .createQuery(FIND_ALL_CLIENTS, Client.class);
+                .createQuery(FIND_ALL_CLIENTS_HQL, Client.class);
         return query.getResultList();
     }
 
@@ -57,7 +57,7 @@ public class ClientRepositoryImpl extends GenericCrudRepositoryImpl<Client, Long
         return instance;
     }
 
-    public ClientRepositoryImpl() {
+    private ClientRepositoryImpl() {
         super();
     }
 
