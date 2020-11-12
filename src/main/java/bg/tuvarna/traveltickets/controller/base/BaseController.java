@@ -2,10 +2,12 @@ package bg.tuvarna.traveltickets.controller.base;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 
 import java.net.URL;
@@ -19,8 +21,8 @@ import static bg.tuvarna.traveltickets.common.AppConfig.getPrimaryStage;
  */
 public abstract class BaseController implements Initializable {
 
-    private double xOffset = 0;
-    private double yOffset = 0;
+    double xOffset = 0;
+    double yOffset = 0;
 
     @FXML
     protected Parent root;
@@ -30,7 +32,8 @@ public abstract class BaseController implements Initializable {
 
     @FXML
     protected void onExitButtonClicked(final MouseEvent event) {
-        getPrimaryStage().fireEvent(new WindowEvent(getPrimaryStage(), WindowEvent.WINDOW_CLOSE_REQUEST));
+        final Window window = ((Node) event.getTarget()).getScene().getWindow();
+        window.fireEvent(new WindowEvent(getPrimaryStage(), WindowEvent.WINDOW_CLOSE_REQUEST));
     }
 
     @Override

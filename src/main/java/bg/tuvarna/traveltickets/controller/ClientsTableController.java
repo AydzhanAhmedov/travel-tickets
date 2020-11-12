@@ -1,6 +1,7 @@
 package bg.tuvarna.traveltickets.controller;
 
 import bg.tuvarna.traveltickets.common.AppConfig;
+import bg.tuvarna.traveltickets.control.UndecoratedDialog;
 import bg.tuvarna.traveltickets.entity.Address;
 import bg.tuvarna.traveltickets.entity.Client;
 import bg.tuvarna.traveltickets.entity.ClientType;
@@ -18,6 +19,7 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.BorderPane;
 
 import java.io.IOException;
 import java.net.URL;
@@ -25,9 +27,12 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import static bg.tuvarna.traveltickets.common.AppConfig.getLangBundle;
-import static bg.tuvarna.traveltickets.common.Constants.CLIENT_DIALOG;
+import static bg.tuvarna.traveltickets.common.Constants.CLIENT_DIALOG_FXML_PATH;
 
 public class ClientsTableController implements Initializable {
+
+    @FXML
+    private BorderPane root;
 
     @FXML
     private Button buttonView;
@@ -50,25 +55,25 @@ public class ClientsTableController implements Initializable {
     @FXML
     void onViewClicked(ActionEvent event) throws IOException {
         // View clients
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(CLIENT_DIALOG), AppConfig.getLangBundle());
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(CLIENT_DIALOG_FXML_PATH), AppConfig.getLangBundle());
         DialogPane dialogPane = loader.load();
         ClientDialogController clientDialogController = loader.getController();
         Client client = tableClients.getSelectionModel().getSelectedItem();
         clientDialogController.initDialog(client, ClientDialogController.DialogMode.VIEW, c -> tableClients.getItems().add(c));
-        Dialog dialog = new Dialog();
-        dialog.setDialogPane(dialogPane);
+
+        Dialog<Void> dialog = new UndecoratedDialog<>(root.getParent().getParent(), dialogPane);
         dialog.showAndWait();
     }
 
     @FXML
     void onAddClicked(ActionEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(CLIENT_DIALOG), AppConfig.getLangBundle());
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(CLIENT_DIALOG_FXML_PATH), AppConfig.getLangBundle());
         DialogPane dialogPane = loader.load();
         ClientDialogController clientDialogController = loader.getController();
         Client client = new Client();
         clientDialogController.initDialog(client, ClientDialogController.DialogMode.ADD, c -> tableClients.getItems().add(c));
-        Dialog dialog = new Dialog();
-        dialog.setDialogPane(dialogPane);
+
+        Dialog<Void> dialog = new UndecoratedDialog<>(root.getParent().getParent(), dialogPane);
         dialog.showAndWait();
 
         //Add client to database

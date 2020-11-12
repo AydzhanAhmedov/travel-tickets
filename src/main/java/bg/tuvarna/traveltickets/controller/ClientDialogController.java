@@ -1,5 +1,6 @@
 package bg.tuvarna.traveltickets.controller;
 
+import bg.tuvarna.traveltickets.controller.base.BaseDialogController;
 import bg.tuvarna.traveltickets.entity.Address;
 import bg.tuvarna.traveltickets.entity.Cashier;
 import bg.tuvarna.traveltickets.entity.City;
@@ -9,7 +10,6 @@ import bg.tuvarna.traveltickets.entity.Company;
 import bg.tuvarna.traveltickets.entity.User;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
@@ -26,16 +26,13 @@ import java.util.function.Consumer;
 
 import static bg.tuvarna.traveltickets.common.AppConfig.getLangBundle;
 
-public class ClientDialogController implements Initializable {
+public class ClientDialogController extends BaseDialogController {
 
     public enum DialogMode {VIEW, ADD, EDIT}
 
     private Client client;
 
     private Consumer<Client> clientConsumer;
-
-    @FXML
-    private DialogPane dialogPane;
 
     @FXML
     private GridPane gridPane;
@@ -83,31 +80,27 @@ public class ClientDialogController implements Initializable {
 
     @Override
     public void initialize(final URL location, final ResourceBundle resources) {
+        super.initialize(location, resources);
+
         setDetailsInvisible();
-        addCancelButton();
         clientTypeComboBox.getItems().setAll(ClientType.Enum.values());
         clientTypeComboBox.getSelectionModel().select(0);
     }
 
-    public void initDialog(Client client, DialogMode mode, Consumer<Client> newClientConsumer){
+    public void initDialog(Client client, DialogMode mode, Consumer<Client> newClientConsumer) {
         this.clientConsumer = newClientConsumer;
         setMode(mode);
         if (mode != DialogMode.ADD)
             setData(client);
     }
 
-    private void addCancelButton() {
-        ButtonType cancel = new ButtonType(getLangBundle().getString("button.cancel"), ButtonBar.ButtonData.CANCEL_CLOSE);
-        dialogPane.getButtonTypes().add(cancel);
-    }
-
     private void setMode(DialogMode mode) {
         switch (mode) {
-            case ADD: {
-                ButtonType OK = new ButtonType(getLangBundle().getString("button.apply"), ButtonBar.ButtonData.OK_DONE);
-                dialogPane.getButtonTypes().add(OK);
+            case ADD -> {
+                ButtonType OK = new ButtonType(getLangBundle().getString("label.button.apply"), ButtonBar.ButtonData.OK_DONE);
+                getDialogPane().getButtonTypes().add(OK);
 
-                Button btOk = (Button) dialogPane.lookupButton(OK);
+                Button btOk = (Button) getDialogPane().lookupButton(OK);
                 if (btOk == null)
                     return;
 
@@ -117,16 +110,14 @@ public class ClientDialogController implements Initializable {
                     clientConsumer.accept(client);
                     System.out.println("data read");
                 });
-                break;
             }
-            case EDIT: {
-                ButtonType OK = new ButtonType(getLangBundle().getString("button.apply"), ButtonBar.ButtonData.OK_DONE);
-                dialogPane.getButtonTypes().add(OK);
+            case EDIT -> {
+                ButtonType OK = new ButtonType(getLangBundle().getString("label.button.apply"), ButtonBar.ButtonData.OK_DONE);
+                getDialogPane().getButtonTypes().add(OK);
                 clientTypeComboBox.setDisable(true);
                 clientTypeComboBox.setStyle("-fx-opacity: 1");
-                break;
             }
-            case VIEW: {
+            case VIEW -> {
                 clientTypeComboBox.setDisable(true);
                 clientTypeComboBox.setStyle("-fx-opacity: 1");
                 emailTextField.setEditable(false);
@@ -139,7 +130,6 @@ public class ClientDialogController implements Initializable {
                 cityComboBox.setStyle("-fx-opacity: 1");
                 detail1TextField.setEditable(false);
                 detail2TextField.setEditable(false);
-                break;
             }
         }
     }
@@ -154,20 +144,18 @@ public class ClientDialogController implements Initializable {
     private void configureDetails(ClientType.Enum type) {
         setDetailsInvisible();
         switch (type) {
-            case CASHIER: {
+            case CASHIER -> {
                 detail1Label.setText("Honorarium");
                 detail1Label.setVisible(true);
                 detail1TextField.setVisible(true);
-                break;
             }
-            case COMPANY: {
+            case COMPANY -> {
                 detail1Label.setText("Image URL");
                 detail1Label.setVisible(true);
                 detail1TextField.setVisible(true);
                 detail2Label.setText("Description");
                 detail2Label.setVisible(true);
                 detail2TextField.setVisible(true);
-                break;
             }
         }
     }
@@ -213,4 +201,5 @@ public class ClientDialogController implements Initializable {
             detail1TextField.setText(cashier.getHonorarium().toString());
         }
     }
+
 }

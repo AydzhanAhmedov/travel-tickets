@@ -1,6 +1,8 @@
 package bg.tuvarna.traveltickets.controller;
 
+import bg.tuvarna.traveltickets.common.AppConfig;
 import bg.tuvarna.traveltickets.common.MenuContent;
+import bg.tuvarna.traveltickets.control.UndecoratedDialog;
 import bg.tuvarna.traveltickets.controller.base.BaseController;
 import bg.tuvarna.traveltickets.entity.ClientType;
 import bg.tuvarna.traveltickets.entity.Company;
@@ -10,6 +12,8 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.DialogPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -23,8 +27,9 @@ import java.util.EnumSet;
 import java.util.ResourceBundle;
 
 import static bg.tuvarna.traveltickets.common.AppConfig.getLangBundle;
-import static bg.tuvarna.traveltickets.common.AppConfig.getPrimaryStage;
+import static bg.tuvarna.traveltickets.common.AppConfig.setPrimaryStageScene;
 import static bg.tuvarna.traveltickets.common.AppScreens.LOGIN;
+import static bg.tuvarna.traveltickets.common.Constants.NOTIFICATIONS_DIALOG_FXML_PATH;
 
 public class HomeController extends BaseController {
 
@@ -51,12 +56,15 @@ public class HomeController extends BaseController {
     @FXML
     private void onLogoutButtonClicked(final MouseEvent event) {
         authService.logout();
-        getPrimaryStage().setScene(LOGIN.getScene());
+        setPrimaryStageScene(LOGIN.getScene());
     }
 
     @FXML
-    private void onNotificationButtonClicked(final MouseEvent event) {
+    private void onNotificationButtonClicked(final MouseEvent event) throws IOException {
+        final DialogPane dialogPane = new FXMLLoader(getClass().getResource(NOTIFICATIONS_DIALOG_FXML_PATH), AppConfig.getLangBundle()).load();
+        final Dialog<Void> dialog = new UndecoratedDialog<>(root, dialogPane);
 
+        dialog.showAndWait();
     }
 
     @Override
@@ -78,24 +86,20 @@ public class HomeController extends BaseController {
         if (authService.loggedUserIsAdmin())
             return;
 
-        ClientType.Enum clienType = authService.getLoggedClientTypeName();
+        ClientType.Enum clientType = authService.getLoggedClientTypeName();
 
-        switch (clienType) {
-            case DISTRIBUTOR: {
+        switch (clientType) {
+            case DISTRIBUTOR -> {
                 Image image = new Image("images/logo_distributor.png");
                 userImageView.setImage(image);
                 userText.setText(getLangBundle().getString("label.distributor"));
             }
-            break;
-
-            case CASHIER: {
+            case CASHIER -> {
                 Image image = new Image("images/logo_cashier.png");
                 userImageView.setImage(image);
                 userText.setText(getLangBundle().getString("label.cashier"));
             }
-            break;
-
-            case COMPANY: {
+            case COMPANY -> {
                 Company company = (Company) AuthServiceImpl.getInstance().getLoggedClient();
 
                 // check if image is laoded

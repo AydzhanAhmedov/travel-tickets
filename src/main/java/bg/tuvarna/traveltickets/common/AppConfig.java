@@ -2,6 +2,9 @@ package bg.tuvarna.traveltickets.common;
 
 import bg.tuvarna.traveltickets.util.EntityManagerUtil;
 import javafx.application.Platform;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.Scene;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -36,6 +39,14 @@ public final class AppConfig {
 
     public static Stage getPrimaryStage() {
         return primaryStage;
+    }
+
+    public static void setPrimaryStageScene(final Scene stageScene) {
+        primaryStage.setScene(stageScene);
+        // Center stage on screen
+        final Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
+        primaryStage.setX((primScreenBounds.getWidth() - primaryStage.getWidth()) / 2);
+        primaryStage.setY((primScreenBounds.getHeight() - primaryStage.getHeight()) / 2);
     }
 
     public static void configure(final Stage primaryStage) {

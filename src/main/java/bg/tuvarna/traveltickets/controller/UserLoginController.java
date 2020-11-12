@@ -9,7 +9,6 @@ import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.PasswordField;
@@ -18,13 +17,12 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Text;
-import javafx.stage.Screen;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
 import static bg.tuvarna.traveltickets.common.AppConfig.getLangBundle;
-import static bg.tuvarna.traveltickets.common.AppConfig.getPrimaryStage;
+import static bg.tuvarna.traveltickets.common.AppConfig.setPrimaryStageScene;
 import static bg.tuvarna.traveltickets.common.AppScreens.HOME;
 import static bg.tuvarna.traveltickets.common.Constants.BAD_CREDENTIALS_KEY;
 import static bg.tuvarna.traveltickets.common.Constants.BLANK_USERNAME_OR_PASSWORD_KEY;
@@ -91,11 +89,7 @@ public class UserLoginController extends BaseController {
 
         if (successfullyLoggedIn) {
             clearTextFields();
-            getPrimaryStage().setScene(HOME.getScene());
-            // Center stage on screen
-            Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
-            getPrimaryStage().setX((primScreenBounds.getWidth() - getPrimaryStage().getWidth()) / 2);
-            getPrimaryStage().setY((primScreenBounds.getHeight() - getPrimaryStage().getHeight()) / 2);
+            setPrimaryStageScene(HOME.getScene());
         } else setErrorText(getLangBundle().getString(BAD_CREDENTIALS_KEY));
     }
 

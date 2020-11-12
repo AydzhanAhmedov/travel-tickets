@@ -20,30 +20,30 @@
                 </ImageView>
                 <Button fx:id="notificationButton" layoutX="244.0" layoutY="17.0" maxHeight="40.0" maxWidth="40.0" minHeight="40.0" minWidth="40.0" mnemonicParsing="false" onMouseClicked="#onNotificationButtonClicked" prefHeight="40.0" prefWidth="40.0" styleClass="notificationsButton" stylesheets="@../css/buttons.css" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
             </AnchorPane>
-         <VBox alignment="TOP_CENTER" prefHeight="200.0" spacing="10.0">
-            <children>
-                   <ImageView fx:id="userImageView" cache="true" cacheHint="SPEED" fitHeight="105.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
-                       <viewport>
-                           <Rectangle2D />
-                       </viewport>
-                       <Image url="@../images/admin.png" />
-                   </ImageView>
-                   <Text fx:id="userText" cache="true" cacheHint="SPEED" fill="#01233f" strokeType="OUTSIDE" strokeWidth="0.0" text="Admin Panel" textAlignment="CENTER">
-                       <font>
-                           <Font name="System Bold" size="30.0" />
-                       </font>
-                   </Text>
-            </children>
-            <VBox.margin>
-               <Insets />
-            </VBox.margin>
-            <padding>
-               <Insets top="20.0" />
-            </padding>
-            <opaqueInsets>
-               <Insets />
-            </opaqueInsets>
-         </VBox>
+            <VBox alignment="TOP_CENTER" prefHeight="200.0" spacing="10.0">
+                <VBox.margin>
+                    <Insets/>
+                </VBox.margin>
+                <padding>
+                    <Insets top="20.0"/>
+                </padding>
+                <opaqueInsets>
+                    <Insets/>
+                </opaqueInsets>
+                <ImageView fx:id="userImageView" cache="true" cacheHint="SPEED" fitHeight="105.0" fitWidth="150.0"
+                           pickOnBounds="true" preserveRatio="true">
+                    <viewport>
+                        <Rectangle2D/>
+                    </viewport>
+                    <Image url="@../images/admin.png"/>
+                </ImageView>
+                <Text fx:id="userText" cache="true" cacheHint="SPEED" fill="#01233f" strokeType="OUTSIDE"
+                      strokeWidth="0.0" text="Admin Panel" textAlignment="CENTER">
+                    <font>
+                        <Font name="System Bold" size="30.0"/>
+                    </font>
+                </Text>
+            </VBox>
             <Button alignment="BASELINE_LEFT" cache="true" cacheHint="SPEED" graphicTextGap="20.0" mnemonicParsing="false" onMouseClicked="#onLogoutButtonClicked" prefHeight="50.0" prefWidth="320.0" styleClass="menuButton" stylesheets="@../css/buttons.css" text="%label.profile">
                 <font>
                     <Font name="System Bold" size="15.0" />
