@@ -17,7 +17,6 @@
         <class>bg.tuvarna.traveltickets.entity.Company</class>
         <class>bg.tuvarna.traveltickets.entity.Cashier</class>
         <class>bg.tuvarna.traveltickets.entity.Distributor</class>
-        <class>bg.tuvarna.traveltickets.entity.Region</class>
         <class>bg.tuvarna.traveltickets.entity.City</class>
         <class>bg.tuvarna.traveltickets.entity.Address</class>
         <class>bg.tuvarna.traveltickets.entity.TravelType</class>

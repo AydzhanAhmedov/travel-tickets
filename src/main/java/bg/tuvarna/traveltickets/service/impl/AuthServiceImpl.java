@@ -78,7 +78,7 @@ public final class AuthServiceImpl implements AuthService {
         final User user = userRepository.findByUsernameOrEmail(usernameOrEmail);
 
         loggedUser = user != null && BCrypt.checkpw(password, user.getPassword()) ? user : null;
-        loggedClient = !loggedUserIsAdmin() ? clientService.findByUserId(loggedUser.getId()) : null;
+        loggedClient = loggedUser != null && !loggedUserIsAdmin()? clientService.findByUserId(loggedUser.getId()) : null;
 
         if (loggedUser != null && !loggedUserIsAdmin() && loggedClient == null) {
             throw new RuntimeException(CLIENT_NOT_FOUND_FORMAT.formatted(loggedUser.getId()));

@@ -152,14 +152,7 @@ CREATE TABLE addresses(
 DROP TABLE IF EXISTS cities;
 CREATE TABLE cities(
 	id bigserial NOT NULL PRIMARY KEY,
-	name varchar(50) NOT NULL,
-	region_id int8 NOT NULL
-);
-
-DROP TABLE IF EXISTS regions;
-CREATE TABLE regions(
-	id bigserial NOT NULL PRIMARY KEY,
-	name varchar(50) NOT NULL UNIQUE
+	name varchar(50) NOT NULL
 );
 
 ALTER TABLE notifications_recipients
@@ -235,7 +228,3 @@ ALTER TABLE users
 ALTER TABLE addresses
 	ADD CONSTRAINT fk_addresses_city_id FOREIGN KEY
 (city_id) REFERENCES cities(id);
-
-ALTER TABLE cities 
-	ADD CONSTRAINT fk_cities_region_id FOREIGN KEY 
-(region_id) REFERENCES regions(id);
