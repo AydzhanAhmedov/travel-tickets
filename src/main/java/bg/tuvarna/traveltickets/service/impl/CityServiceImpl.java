@@ -5,21 +5,25 @@ import bg.tuvarna.traveltickets.service.CityService;
 
 public class CityServiceImpl implements CityService {
 
-    CityServiceImpl instance;
-
     @Override
     public City findOrAddByName(final String name) {
         return null;
     }
 
-    public CityServiceImpl getInstance() {
+    private static CityServiceImpl instance;
+
+    public static CityServiceImpl getInstance() {
         if (instance == null) {
             synchronized (CityServiceImpl.class) {
                 if (instance == null)
                     instance = new CityServiceImpl();
             }
         }
-
         return instance;
     }
+
+    private CityServiceImpl() {
+        super();
+    }
+
 }
