@@ -22,7 +22,7 @@
         </HBox>
     </top>
    <center>
-          <TableView fx:id="tableClients" fixedCellSize="1.0" prefHeight="360.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+          <TableView fx:id="tableClients" prefHeight="360.0" prefWidth="600.0" BorderPane.alignment="CENTER">
               <columns>
                   <TableColumn fx:id="columnType" editable="false" prefWidth="75.0" reorderable="false" sortable="false" text="Type" />
                   <TableColumn fx:id="columnName" editable="false" prefWidth="75.0" reorderable="false" sortable="false" text="Name" />

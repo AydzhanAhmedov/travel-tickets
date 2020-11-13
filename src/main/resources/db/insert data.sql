@@ -1,7 +1,7 @@
 INSERT INTO travel_statuses(name)
 	VALUES
 	('INCOMING'),
-	('OINGOIN'),
+	('ONGOING'),
 	('CANCELLED'),
 	('ENDED');
 	
