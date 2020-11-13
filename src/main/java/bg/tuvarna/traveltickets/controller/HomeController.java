@@ -3,16 +3,20 @@ package bg.tuvarna.traveltickets.controller;
 import bg.tuvarna.traveltickets.common.AppConfig;
 import bg.tuvarna.traveltickets.common.MenuContent;
 import bg.tuvarna.traveltickets.control.UndecoratedDialog;
-import bg.tuvarna.traveltickets.controller.base.BaseController;
+import bg.tuvarna.traveltickets.controller.base.BaseUndecoratedController;
 import bg.tuvarna.traveltickets.entity.ClientType;
 import bg.tuvarna.traveltickets.entity.Company;
+import bg.tuvarna.traveltickets.entity.NotificationRecipient;
 import bg.tuvarna.traveltickets.service.AuthService;
+import bg.tuvarna.traveltickets.service.NotificationService;
 import bg.tuvarna.traveltickets.service.impl.AuthServiceImpl;
+import bg.tuvarna.traveltickets.service.impl.NotificationServiceImpl;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
-import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -23,17 +27,21 @@ import javafx.scene.text.Text;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.EnumSet;
 import java.util.ResourceBundle;
 
 import static bg.tuvarna.traveltickets.common.AppConfig.getLangBundle;
 import static bg.tuvarna.traveltickets.common.AppConfig.setPrimaryStageScene;
 import static bg.tuvarna.traveltickets.common.AppScreens.LOGIN;
+import static bg.tuvarna.traveltickets.common.Constants.ACTIVE_NOTIFICATIONS_BTN_CSS;
+import static bg.tuvarna.traveltickets.common.Constants.NOTIFICATIONS_BTN_CSS;
 import static bg.tuvarna.traveltickets.common.Constants.NOTIFICATIONS_DIALOG_FXML_PATH;
 
-public class HomeController extends BaseController {
+public class HomeController extends BaseUndecoratedController {
 
     private final AuthService authService = AuthServiceImpl.getInstance();
+    private final NotificationService notificationService = NotificationServiceImpl.getInstance();
+
+    private final ObservableList<NotificationRecipient> notifications = FXCollections.observableArrayList();
 
     @FXML
     private ImageView userImageView;
@@ -53,6 +61,21 @@ public class HomeController extends BaseController {
     @FXML
     private VBox leftVBox;
 
+    @Override
+    public void initialize(final URL location, final ResourceBundle resources) {
+        super.initialize(location, resources);
+
+        authService.getLoggedUserMenuContent().forEach(c -> {
+            Button button = c.getButton();
+            button.setOnMouseClicked(getEventHandler(c));
+            leftVBox.getChildren().add(leftVBox.getChildren().size() - 1, button);
+        });
+        notifications.addAll(notificationService.findAllByRecipientId(authService.getLoggedUser().getId()));
+
+        updateNotificationButton();
+        initUserSpecificView();
+    }
+
     @FXML
     private void onLogoutButtonClicked(final MouseEvent event) {
         authService.logout();
@@ -61,25 +84,14 @@ public class HomeController extends BaseController {
 
     @FXML
     private void onNotificationButtonClicked(final MouseEvent event) throws IOException {
-        final DialogPane dialogPane = new FXMLLoader(getClass().getResource(NOTIFICATIONS_DIALOG_FXML_PATH), AppConfig.getLangBundle()).load();
-        final Dialog<Void> dialog = new UndecoratedDialog<>(root, dialogPane);
+        final FXMLLoader loader = new FXMLLoader(getClass().getResource(NOTIFICATIONS_DIALOG_FXML_PATH), AppConfig.getLangBundle());
+
+        final DialogPane dialogPane = loader.load();
+        final UndecoratedDialog<Void> dialog = new UndecoratedDialog<>(root, dialogPane);
+
+        loader.<NotificationsDialogController>getController().injectNotifications(notifications, this::updateNotificationButton);
 
         dialog.showAndWait();
-    }
-
-    @Override
-    public void initialize(final URL location, final ResourceBundle resources) {
-        super.initialize(location, resources);
-
-        EnumSet<MenuContent> menuContents = authService.getLoggedUserMenuContent();
-
-        menuContents.forEach(c -> {
-            Button button = c.getButton();
-            button.setOnMouseClicked(getEventHandler(c));
-            leftVBox.getChildren().add(leftVBox.getChildren().size() - 1, button);
-        });
-
-        initUserSpecificView();
     }
 
     private void initUserSpecificView() {
@@ -142,4 +154,11 @@ public class HomeController extends BaseController {
             e.printStackTrace();
         }
     }
+
+    private void updateNotificationButton() {
+        final boolean noNewNotifications = notifications.isEmpty() || notifications.stream().allMatch(notificationService::isSeen);
+        notificationButton.getStyleClass().clear();
+        notificationButton.getStyleClass().add(noNewNotifications ? NOTIFICATIONS_BTN_CSS : ACTIVE_NOTIFICATIONS_BTN_CSS);
+    }
+
 }

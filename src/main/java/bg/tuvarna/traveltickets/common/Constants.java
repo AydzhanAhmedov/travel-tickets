@@ -15,18 +15,22 @@ public final class Constants {
     public static final String USER_ID_PARAM = "userId";
 
     // Bundles
+    public static final String SEEN_BUTTON_KEY = "label.button.seen";
+
     public static final String BAD_CREDENTIALS_KEY = "label.error.bad_credentials";
     public static final String UNEXPECTED_ERROR_KEY = "label.error.unexpected_error_try_again";
     public static final String BLANK_USERNAME_OR_PASSWORD_KEY = "label.error.blank_username_or_password";
+
+    // FXML
+    public static final String CLIENT_DIALOG_FXML_PATH = "/fxml/client_dialog.fxml";
+    public static final String NOTIFICATIONS_DIALOG_FXML_PATH = "/fxml/notifications_dialog.fxml";
 
     // Other constants
     public static final String EMPTY_STRING = "";
     public static final String LANG_BUNDLE_NAME = "bundles.lang_bundle";
     public static final String PERSISTENT_UNIT_NAME = "travel-ticket-persistence-unit";
-
-    // FXML
-    public static final String CLIENT_DIALOG_FXML_PATH = "/fxml/client_dialog.fxml";
-    public static final String NOTIFICATIONS_DIALOG_FXML_PATH = "/fxml/notifications_dialog.fxml";
+    public static final String ACTIVE_NOTIFICATIONS_BTN_CSS = "activeNotificationsButton";
+    public static final String NOTIFICATIONS_BTN_CSS = "notificationsButton";
 
     private Constants() {
         throw new UnsupportedOperationException(CANNOT_BE_INSTANTIATED_FORMAT.formatted(getClass().toString()));

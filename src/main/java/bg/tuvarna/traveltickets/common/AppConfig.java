@@ -9,6 +9,8 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 import javax.persistence.EntityManagerFactory;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -24,6 +26,9 @@ public final class AppConfig {
     private static SupportedLanguage language = SupportedLanguage.findByLocale(Locale.getDefault()).orElse(ENGLISH);
     private static Stage primaryStage;
 
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter
+            .ofLocalizedDateTime(FormatStyle.SHORT, FormatStyle.MEDIUM).withLocale(language.getLocale());
+
     public static ResourceBundle getLangBundle() {
         return language.getBundle();
     }
@@ -34,7 +39,12 @@ public final class AppConfig {
 
     public static void setLanguage(final SupportedLanguage language) {
         AppConfig.language = language;
+        DATE_TIME_FORMATTER.withLocale(language.getLocale());
         AppScreens.reloadScreens();
+    }
+
+    public static DateTimeFormatter getDateTimeFormatter() {
+        return DATE_TIME_FORMATTER;
     }
 
     public static Stage getPrimaryStage() {

@@ -20,7 +20,7 @@
     -fx-background-color: transparent;
 }
 
-.table-view .column-header .label, .table-view .filler .label,
+.table-view .column-header .label, .table-view .filler .label, .table-column,
 .table-view .column-drag-header .label, .tree-table-view .column-header .label,
 .tree-table-view .filler .label, .tree-table-view .column-drag-header .label
 {

@@ -1,6 +1,6 @@
 package bg.tuvarna.traveltickets.controller;
 
-import bg.tuvarna.traveltickets.controller.base.BaseDialogController;
+import bg.tuvarna.traveltickets.controller.base.BaseUndecoratedController;
 import bg.tuvarna.traveltickets.entity.Address;
 import bg.tuvarna.traveltickets.entity.Cashier;
 import bg.tuvarna.traveltickets.entity.City;
@@ -26,7 +26,7 @@ import java.util.function.Consumer;
 
 import static bg.tuvarna.traveltickets.common.AppConfig.getLangBundle;
 
-public class ClientDialogController extends BaseDialogController {
+public class ClientDialogController extends BaseUndecoratedController {
 
     public enum DialogMode {VIEW, ADD, EDIT}
 
@@ -200,6 +200,10 @@ public class ClientDialogController extends BaseDialogController {
             Cashier cashier = (Cashier) client;
             detail1TextField.setText(cashier.getHonorarium().toString());
         }
+    }
+
+    private DialogPane getDialogPane() {
+        return (DialogPane) root;
     }
 
 }

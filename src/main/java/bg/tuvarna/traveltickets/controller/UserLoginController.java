@@ -2,7 +2,7 @@ package bg.tuvarna.traveltickets.controller;
 
 import bg.tuvarna.traveltickets.common.AppConfig;
 import bg.tuvarna.traveltickets.common.SupportedLanguage;
-import bg.tuvarna.traveltickets.controller.base.BaseController;
+import bg.tuvarna.traveltickets.controller.base.BaseUndecoratedController;
 import bg.tuvarna.traveltickets.service.AuthService;
 import bg.tuvarna.traveltickets.service.impl.AuthServiceImpl;
 import javafx.concurrent.Task;
@@ -30,7 +30,7 @@ import static bg.tuvarna.traveltickets.common.Constants.EMPTY_STRING;
 import static bg.tuvarna.traveltickets.common.Constants.UNEXPECTED_ERROR_KEY;
 import static bg.tuvarna.traveltickets.util.JpaOperationsUtil.createTransactionTask;
 
-public class UserLoginController extends BaseController {
+public class UserLoginController extends BaseUndecoratedController {
 
     private final AuthService authService = AuthServiceImpl.getInstance();
 

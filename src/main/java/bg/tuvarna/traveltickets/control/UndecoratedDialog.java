@@ -1,5 +1,6 @@
 package bg.tuvarna.traveltickets.control;
 
+import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.scene.Parent;
 import javafx.scene.control.Dialog;
@@ -9,16 +10,13 @@ import javafx.scene.effect.Effect;
 import javafx.scene.effect.GaussianBlur;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.stage.WindowEvent;
 
 import static bg.tuvarna.traveltickets.common.AppConfig.getPrimaryStage;
 
 public class UndecoratedDialog<R> extends Dialog<R> {
 
-    private final Parent parentSceneRoot;
-
     public UndecoratedDialog(final Parent parentSceneRoot) {
-        this.parentSceneRoot = parentSceneRoot;
-
         initOwner(parentSceneRoot.getScene().getWindow());
         initStyle(StageStyle.UNDECORATED);
 
@@ -32,7 +30,7 @@ public class UndecoratedDialog<R> extends Dialog<R> {
 
     private void onShowing(final DialogEvent event) {
         centerDialog();
-        addBlurEffect();
+        setOnCloseWindowRequest(this::onCloseWindowRequest);
     }
 
     private void centerDialog() {
@@ -45,13 +43,11 @@ public class UndecoratedDialog<R> extends Dialog<R> {
         stage.setY(getPrimaryStage().getY() + (mainBounds.getHeight() - rootBounds.getHeight()) / 2);
     }
 
-    private void addBlurEffect() {
-        final Effect prevEffect = parentSceneRoot.getEffect();
+    public void setOnCloseWindowRequest(final EventHandler<WindowEvent> onCloseRequest) {
+        getDialogPane().getScene().getWindow().setOnCloseRequest(onCloseRequest);
+    }
 
-        getDialogPane().getScene().getWindow().setOnCloseRequest(e -> parentSceneRoot.setEffect(prevEffect));
-        setOnCloseRequest(e -> parentSceneRoot.setEffect(prevEffect));
-
-        parentSceneRoot.setEffect(new GaussianBlur(5));
+    protected void onCloseWindowRequest(final WindowEvent event) {
     }
 
 }
