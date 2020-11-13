@@ -17,8 +17,6 @@ public class ClientTypeServiceImpl implements ClientTypeService {
     private final List<ClientType> clientTypesCache;
     private final Map<ClientType.Enum, ClientType> clientTypeByNameCache;
 
-    private static ClientTypeServiceImpl instance;
-
     @Override
     public List<ClientType> findAll() {
         return clientTypesCache;
@@ -29,9 +27,11 @@ public class ClientTypeServiceImpl implements ClientTypeService {
         return clientTypeByNameCache.get(Objects.requireNonNull(clientTypeName));
     }
 
-    public static ClientTypeServiceImpl getInstance(){
-        if (instance == null){
-            synchronized (ClientTypeServiceImpl.class){
+    private static ClientTypeServiceImpl instance;
+
+    public static ClientTypeServiceImpl getInstance() {
+        if (instance == null) {
+            synchronized (ClientTypeServiceImpl.class) {
                 if (instance == null)
                     instance = new ClientTypeServiceImpl();
             }
@@ -39,6 +39,7 @@ public class ClientTypeServiceImpl implements ClientTypeService {
 
         return instance;
     }
+
     private ClientTypeServiceImpl() {
         clientTypesCache = JpaOperationsUtil.execute(em ->
                 em.createQuery("FROM ClientType", ClientType.class)
@@ -49,4 +50,5 @@ public class ClientTypeServiceImpl implements ClientTypeService {
         clientTypeByNameCache = clientTypesCache.stream()
                 .collect(toUnmodifiableMap(ClientType::getName, Function.identity()));
     }
+
 }
