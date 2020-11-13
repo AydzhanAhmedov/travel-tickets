@@ -1,6 +1,8 @@
 package bg.tuvarna.traveltickets.util;
 
 import javafx.concurrent.Task;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -16,6 +18,8 @@ import static bg.tuvarna.traveltickets.common.Constants.CANNOT_BE_INSTANTIATED_F
  * This utility class provides a set of methods for working with JPA.
  */
 public final class JpaOperationsUtil {
+
+    private static final Logger LOG = LogManager.getLogger(JpaOperationsUtil.class);
 
     /**
      * This functional interface is used to encapsulate one or more database operations which
@@ -51,14 +55,24 @@ public final class JpaOperationsUtil {
         boolean commitTransaction = false;
 
         try {
-            if (commitTransaction = !transaction.isActive()) transaction.begin();
+            if (commitTransaction = !transaction.isActive()) {
+                transaction.begin();
+                LOG.debug("Transaction opened.");
+            }
 
             actionResult = action.execute(entityManager);
 
-            if (commitTransaction) transaction.commit();
+            if (commitTransaction) {
+                transaction.commit();
+                LOG.debug("Transaction successfully committed.");
+            }
         }
         catch (Exception e) {
-            if (commitTransaction) transaction.rollback();
+            if (commitTransaction) {
+                LOG.debug("Error caused transaction rollback: {}", e.getMessage());
+                transaction.rollback();
+                LOG.warn("Transaction rolled back.");
+            }
             throw e;
         }
         finally {
@@ -86,7 +100,7 @@ public final class JpaOperationsUtil {
         };
     }
 
-    public static <T> Task<T> createTransactionTask(final PersistentFunction<T> action) {
+    public static <T> Task<T> createTransactionalTask(final PersistentFunction<T> action) {
         return new Task<>() {
             @Override
             protected T call() {

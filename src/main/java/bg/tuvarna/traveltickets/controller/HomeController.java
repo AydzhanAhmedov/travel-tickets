@@ -4,7 +4,6 @@ import bg.tuvarna.traveltickets.common.AppConfig;
 import bg.tuvarna.traveltickets.common.MenuContent;
 import bg.tuvarna.traveltickets.control.UndecoratedDialog;
 import bg.tuvarna.traveltickets.controller.base.BaseUndecoratedController;
-import bg.tuvarna.traveltickets.entity.ClientType;
 import bg.tuvarna.traveltickets.entity.Company;
 import bg.tuvarna.traveltickets.entity.NotificationRecipient;
 import bg.tuvarna.traveltickets.service.AuthService;
@@ -24,6 +23,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.net.URL;
@@ -33,10 +34,13 @@ import static bg.tuvarna.traveltickets.common.AppConfig.getLangBundle;
 import static bg.tuvarna.traveltickets.common.AppConfig.setPrimaryStageScene;
 import static bg.tuvarna.traveltickets.common.AppScreens.LOGIN;
 import static bg.tuvarna.traveltickets.common.Constants.ACTIVE_NOTIFICATIONS_BTN_CSS;
+import static bg.tuvarna.traveltickets.common.Constants.CLIENTS_TABLE_FXML_PATH;
 import static bg.tuvarna.traveltickets.common.Constants.NOTIFICATIONS_BTN_CSS;
 import static bg.tuvarna.traveltickets.common.Constants.NOTIFICATIONS_DIALOG_FXML_PATH;
 
 public class HomeController extends BaseUndecoratedController {
+
+    private static final Logger LOG = LogManager.getLogger(HomeController.class);
 
     private final AuthService authService = AuthServiceImpl.getInstance();
     private final NotificationService notificationService = NotificationServiceImpl.getInstance();
@@ -65,11 +69,16 @@ public class HomeController extends BaseUndecoratedController {
     public void initialize(final URL location, final ResourceBundle resources) {
         super.initialize(location, resources);
 
+        LOG.info("Loading menu content.");
+
         authService.getLoggedUserMenuContent().forEach(c -> {
-            Button button = c.getButton();
+            final Button button = c.getButton();
             button.setOnMouseClicked(getEventHandler(c));
             leftVBox.getChildren().add(leftVBox.getChildren().size() - 1, button);
         });
+
+        LOG.debug("Loading user's notifications.");
+
         notifications.addAll(notificationService.findAllByRecipientId(authService.getLoggedUser().getId()));
 
         updateNotificationButton();
@@ -80,11 +89,15 @@ public class HomeController extends BaseUndecoratedController {
     private void onLogoutButtonClicked(final MouseEvent event) {
         authService.logout();
         setPrimaryStageScene(LOGIN.getScene());
+
+        LOG.info("User logged out.");
     }
 
     @FXML
     private void onNotificationButtonClicked(final MouseEvent event) throws IOException {
         final FXMLLoader loader = new FXMLLoader(getClass().getResource(NOTIFICATIONS_DIALOG_FXML_PATH), AppConfig.getLangBundle());
+
+        LOG.debug("Loading notifications dialog.");
 
         final DialogPane dialogPane = loader.load();
         final UndecoratedDialog<Void> dialog = new UndecoratedDialog<>(root, dialogPane);
@@ -95,24 +108,19 @@ public class HomeController extends BaseUndecoratedController {
     }
 
     private void initUserSpecificView() {
-        if (authService.loggedUserIsAdmin())
-            return;
+        if (authService.loggedUserIsAdmin()) return;
 
-        ClientType.Enum clientType = authService.getLoggedClientTypeName();
-
-        switch (clientType) {
+        switch (authService.getLoggedClientTypeName()) {
             case DISTRIBUTOR -> {
-                Image image = new Image("images/logo_distributor.png");
-                userImageView.setImage(image);
+                userImageView.setImage(new Image("images/logo_distributor.png"));
                 userText.setText(getLangBundle().getString("label.distributor"));
             }
             case CASHIER -> {
-                Image image = new Image("images/logo_cashier.png");
-                userImageView.setImage(image);
+                userImageView.setImage(new Image("images/logo_cashier.png"));
                 userText.setText(getLangBundle().getString("label.cashier"));
             }
             case COMPANY -> {
-                Company company = (Company) AuthServiceImpl.getInstance().getLoggedClient();
+                Company company = (Company) authService.getLoggedClient();
 
                 // check if image is laoded
                 Image image = new Image(company.getLogoUrl());
@@ -124,11 +132,7 @@ public class HomeController extends BaseUndecoratedController {
 
     private EventHandler<MouseEvent> getEventHandler(MenuContent content) {
         return switch (content) {
-            case BTN_CLIENTS -> event -> {
-                btnClients();
-            };
-            case BTN_NOTIFICATIONS -> event -> {
-            };
+            case BTN_CLIENTS -> this::clientsBtnHandler;
             case BTN_TRAVELS -> event -> {
             };
             case BTN_REQUESTS -> event -> {
@@ -140,18 +144,16 @@ public class HomeController extends BaseUndecoratedController {
         };
     }
 
-    public void btnClients() {
+    public void clientsBtnHandler(final MouseEvent mouseEvent) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/table_clients.fxml"),
-                    getLangBundle());
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(CLIENTS_TABLE_FXML_PATH), getLangBundle());
             BorderPane borderPane = loader.load();
             ClientsTableController controller = loader.getController();
             // Use controller to set data
             childBorderPane.setCenter(borderPane);
         }
-
         catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("Error loading clients table: ", e);
         }
     }
 

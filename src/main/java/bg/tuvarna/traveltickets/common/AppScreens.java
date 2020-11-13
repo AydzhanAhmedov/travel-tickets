@@ -3,6 +3,8 @@ package bg.tuvarna.traveltickets.common;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -12,8 +14,11 @@ import java.util.Arrays;
  * scene and takes care for reloading the fxml files on language change.
  */
 public enum AppScreens {
+
     LOGIN("/fxml/login.fxml"),
     HOME("/fxml/home.fxml");
+
+    private static final Logger LOG = LogManager.getLogger(AppScreens.class);
 
     private final String fxmlPath;
 
@@ -25,7 +30,6 @@ public enum AppScreens {
     }
 
     public Scene getScene() {
-
         if (scene == null) {
             try {
                 final Parent parent = new FXMLLoader(getClass().getResource(fxmlPath), AppConfig.getLangBundle()).load();
@@ -33,7 +37,7 @@ public enum AppScreens {
                 scene = new Scene(parent);
             }
             catch (IOException exception) {
-                exception.printStackTrace();
+                LOG.error("Error loading " + this.toString() + " screen: ", exception);
             }
         }
         return scene;
@@ -50,7 +54,7 @@ public enum AppScreens {
             this.parent = parent;
         }
         catch (IOException exception) {
-            exception.printStackTrace();
+            LOG.error("Error loading " + this.toString() + " screen: ", exception);
         }
     }
 

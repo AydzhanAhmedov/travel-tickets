@@ -17,6 +17,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Text;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -28,9 +30,11 @@ import static bg.tuvarna.traveltickets.common.Constants.BAD_CREDENTIALS_KEY;
 import static bg.tuvarna.traveltickets.common.Constants.BLANK_USERNAME_OR_PASSWORD_KEY;
 import static bg.tuvarna.traveltickets.common.Constants.EMPTY_STRING;
 import static bg.tuvarna.traveltickets.common.Constants.UNEXPECTED_ERROR_KEY;
-import static bg.tuvarna.traveltickets.util.JpaOperationsUtil.createTransactionTask;
+import static bg.tuvarna.traveltickets.util.JpaOperationsUtil.createTransactionalTask;
 
 public class UserLoginController extends BaseUndecoratedController {
+
+    private static final Logger LOG = LogManager.getLogger(UserLoginController.class);
 
     private final AuthService authService = AuthServiceImpl.getInstance();
 
@@ -71,8 +75,11 @@ public class UserLoginController extends BaseUndecoratedController {
             return;
         }
 
-        final Task<Boolean> loginTask = createTransactionTask(em -> authService.login(usernameOrEmail, password) != null);
+        final Task<Boolean> loginTask = createTransactionalTask(em -> authService.login(usernameOrEmail, password) != null);
 
+        loginTask.exceptionProperty().addListener((observable, oldEx, newEx) -> {
+            if (newEx != null) LOG.error("Error while user trying to login: ", newEx);
+        });
         loginTask.setOnFailed(this::onLoginTaskFailed);
         loginTask.setOnRunning(this::onLoginTaskRunning);
         loginTask.setOnSucceeded(e -> onLoginTaskSucceeded(loginTask.getValue()));
@@ -90,6 +97,7 @@ public class UserLoginController extends BaseUndecoratedController {
         if (successfullyLoggedIn) {
             clearTextFields();
             setPrimaryStageScene(HOME.getScene());
+            LOG.info("User with username '{}' successfully logged in.", authService.getLoggedUser().getUsername());
         } else setErrorText(getLangBundle().getString(BAD_CREDENTIALS_KEY));
     }
 
@@ -116,7 +124,7 @@ public class UserLoginController extends BaseUndecoratedController {
     }
 
     public void onKeyPressed(final KeyEvent keyEvent) {
-        if (keyEvent.getCode() == KeyCode.ENTER)
-            onLoginButtonClicked(keyEvent);
+        if (keyEvent.getCode() == KeyCode.ENTER) onLoginButtonClicked(keyEvent);
     }
+
 }

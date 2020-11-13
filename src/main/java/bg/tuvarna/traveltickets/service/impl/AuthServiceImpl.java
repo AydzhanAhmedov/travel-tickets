@@ -24,7 +24,6 @@ public final class AuthServiceImpl implements AuthService {
     private User loggedUser;
     private Client loggedClient;
 
-
     private final EnumSet<MenuContent> adminContent = EnumSet.of(
             MenuContent.BTN_CLIENTS,
             MenuContent.BTN_STATISTIC
@@ -32,7 +31,6 @@ public final class AuthServiceImpl implements AuthService {
 
     private final EnumSet<MenuContent> companyContent = EnumSet.of(
             MenuContent.BTN_STATISTIC,
-            MenuContent.BTN_NOTIFICATIONS,
             MenuContent.BTN_TRAVELS,
             MenuContent.BTN_REQUESTS,
             MenuContent.BTN_SOLD_TICKETS
@@ -41,13 +39,11 @@ public final class AuthServiceImpl implements AuthService {
     private final EnumSet<MenuContent> distributorContent = EnumSet.of(
             MenuContent.BTN_CLIENTS,
             MenuContent.BTN_STATISTIC,
-            MenuContent.BTN_NOTIFICATIONS,
             MenuContent.BTN_TRAVELS,
             MenuContent.BTN_SOLD_TICKETS
     );
 
     private final EnumSet<MenuContent> cashierContent = EnumSet.of(
-            MenuContent.BTN_NOTIFICATIONS,
             MenuContent.BTN_TRAVELS,
             MenuContent.BTN_SOLD_TICKETS
     );
@@ -78,7 +74,7 @@ public final class AuthServiceImpl implements AuthService {
         final User user = userRepository.findByUsernameOrEmail(usernameOrEmail);
 
         loggedUser = user != null && BCrypt.checkpw(password, user.getPassword()) ? user : null;
-        loggedClient = loggedUser != null && !loggedUserIsAdmin()? clientService.findByUserId(loggedUser.getId()) : null;
+        loggedClient = loggedUser != null && !loggedUserIsAdmin() ? clientService.findByUserId(loggedUser.getId()) : null;
 
         if (loggedUser != null && !loggedUserIsAdmin() && loggedClient == null) {
             throw new RuntimeException(CLIENT_NOT_FOUND_FORMAT.formatted(loggedUser.getId()));

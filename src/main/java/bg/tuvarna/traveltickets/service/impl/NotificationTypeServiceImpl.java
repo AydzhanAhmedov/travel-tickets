@@ -3,6 +3,8 @@ package bg.tuvarna.traveltickets.service.impl;
 import bg.tuvarna.traveltickets.entity.NotificationType;
 import bg.tuvarna.traveltickets.service.NotificationTypeService;
 import bg.tuvarna.traveltickets.util.JpaOperationsUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 import java.util.Map;
@@ -13,6 +15,8 @@ import static java.util.stream.Collectors.toUnmodifiableList;
 import static java.util.stream.Collectors.toUnmodifiableMap;
 
 public final class NotificationTypeServiceImpl implements NotificationTypeService {
+
+    private static final Logger LOG = LogManager.getLogger(NotificationTypeServiceImpl.class);
 
     private final List<NotificationType> notificationTypesCache;
     private final Map<NotificationType.Enum, NotificationType> notificationTypeByNameCache;
@@ -48,6 +52,8 @@ public final class NotificationTypeServiceImpl implements NotificationTypeServic
 
         notificationTypeByNameCache = notificationTypesCache.stream()
                 .collect(toUnmodifiableMap(NotificationType::getName, Function.identity()));
+
+        LOG.info("{} instantiated, notification types fetched and cached.", getClass());
     }
 
 }

@@ -24,6 +24,7 @@ public final class Constants {
     // FXML
     public static final String CLIENT_DIALOG_FXML_PATH = "/fxml/client_dialog.fxml";
     public static final String NOTIFICATIONS_DIALOG_FXML_PATH = "/fxml/notifications_dialog.fxml";
+    public static final String CLIENTS_TABLE_FXML_PATH = "/fxml/table_clients.fxml";
 
     // Other constants
     public static final String EMPTY_STRING = "";

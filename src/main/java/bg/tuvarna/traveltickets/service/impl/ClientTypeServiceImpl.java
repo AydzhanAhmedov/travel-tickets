@@ -3,6 +3,8 @@ package bg.tuvarna.traveltickets.service.impl;
 import bg.tuvarna.traveltickets.entity.ClientType;
 import bg.tuvarna.traveltickets.service.ClientTypeService;
 import bg.tuvarna.traveltickets.util.JpaOperationsUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 import java.util.Map;
@@ -13,6 +15,8 @@ import static java.util.stream.Collectors.toUnmodifiableList;
 import static java.util.stream.Collectors.toUnmodifiableMap;
 
 public class ClientTypeServiceImpl implements ClientTypeService {
+
+    private static final Logger LOG = LogManager.getLogger(ClientTypeServiceImpl.class);
 
     private final List<ClientType> clientTypesCache;
     private final Map<ClientType.Enum, ClientType> clientTypeByNameCache;
@@ -49,6 +53,8 @@ public class ClientTypeServiceImpl implements ClientTypeService {
 
         clientTypeByNameCache = clientTypesCache.stream()
                 .collect(toUnmodifiableMap(ClientType::getName, Function.identity()));
+
+        LOG.info("{} instantiated, client types fetched and cached.", getClass());
     }
 
 }

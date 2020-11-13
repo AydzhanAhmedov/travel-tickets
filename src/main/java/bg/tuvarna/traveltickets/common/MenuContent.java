@@ -4,6 +4,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 
@@ -11,10 +13,11 @@ public enum MenuContent {
 
     BTN_CLIENTS("label.clients", "/images/baseline_people_black_18dp.png"), // attach admin and distributor
     BTN_STATISTIC("label.statistics", "/images/baseline_insert_chart_black_18dp.png"), // statistic about cashiers attach admin, company and distributor
-    BTN_NOTIFICATIONS("label.notifications", "/images/baseline_notifications_none_black_18dp.png"),// all clients
     BTN_TRAVELS("label.travels", "/images/baseline_public_black_18dp.png"), // all clients
     BTN_REQUESTS("label.requests", "/images/baseline_rule_black_18dp.png"), // company and distributor
     BTN_SOLD_TICKETS("label.sold_tickets", "/images/baseline_receipt_black_18dp.png"); // all clients
+
+    private static final Logger LOG = LogManager.getLogger(MenuContent.class);
 
     MenuContent(String btnText, String imagePath) {
         this.btnText = btnText;
@@ -34,7 +37,7 @@ public enum MenuContent {
                 ((ImageView) button.getGraphic()).setImage(new Image(imagePath));
             }
             catch (IOException exception) {
-                exception.printStackTrace();
+                LOG.error("Error loading " + this.toString() + " menu content: ", exception);
             }
         }
         button.setText(AppConfig.getLangBundle().getString(btnText));

@@ -7,6 +7,8 @@ import javafx.scene.Scene;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.persistence.EntityManagerFactory;
 import java.time.format.DateTimeFormatter;
@@ -22,6 +24,8 @@ import static bg.tuvarna.traveltickets.common.SupportedLanguage.ENGLISH;
  * This class is responsible for all the configuration in the application.
  */
 public final class AppConfig {
+
+    private static final Logger LOG = LogManager.getLogger(AppConfig.class);
 
     private static SupportedLanguage language = SupportedLanguage.findByLocale(Locale.getDefault()).orElse(ENGLISH);
     private static Stage primaryStage;
@@ -63,11 +67,13 @@ public final class AppConfig {
         AppConfig.primaryStage = primaryStage;
         configureHibernate();
         configurePrimaryStage();
+        LOG.debug("Application configured.");
     }
 
     private static void configurePrimaryStage() {
         primaryStage.initStyle(StageStyle.UNDECORATED);
         primaryStage.setOnCloseRequest(e -> {
+            LOG.info("Exiting the application...");
             EntityManagerUtil.closeEntityManagerFactory();
             Platform.exit();
             System.exit(0);
@@ -82,7 +88,10 @@ public final class AppConfig {
      */
     @SuppressWarnings("all")
     private static void configureHibernate() {
-        new Thread(EntityManagerUtil::getEntityManagerFactory).start();
+        new Thread(() -> {
+            EntityManagerUtil.getEntityManagerFactory();
+            LOG.debug("Hibernate configured.");
+        }).start();
     }
 
     private AppConfig() {
