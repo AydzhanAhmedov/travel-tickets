@@ -1,13 +1,22 @@
 package bg.tuvarna.traveltickets.service.impl;
 
 import bg.tuvarna.traveltickets.entity.City;
+import bg.tuvarna.traveltickets.repository.CityRepository;
+import bg.tuvarna.traveltickets.repository.impl.CityRepositoryImpl;
 import bg.tuvarna.traveltickets.service.CityService;
 
 public class CityServiceImpl implements CityService {
 
+    CityRepository cityRepository = CityRepositoryImpl.getInstance();
+
     @Override
     public City findOrAddByName(final String name) {
-        return null;
+        City city = cityRepository.findByName(name);
+
+        if (city == null)
+            city = cityRepository.save(new City(name));
+
+        return  city;
     }
 
     private static CityServiceImpl instance;
