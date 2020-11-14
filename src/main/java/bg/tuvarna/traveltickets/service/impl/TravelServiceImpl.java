@@ -1,6 +1,7 @@
 package bg.tuvarna.traveltickets.service.impl;
 
 import bg.tuvarna.traveltickets.common.AppConfig;
+import bg.tuvarna.traveltickets.entity.Cashier;
 import bg.tuvarna.traveltickets.entity.Client;
 import bg.tuvarna.traveltickets.entity.ClientType;
 import bg.tuvarna.traveltickets.entity.Travel;
@@ -96,10 +97,18 @@ public class TravelServiceImpl implements TravelService {
         final String newStatus = getLangBundle().getString("label.travel_status_" + newStatusName.toString().toLowerCase());
         final String message = getLangBundle().getString("label.notification.travel_status_changed").formatted(travel.getDetails(), newStatus);
 
-        final List<User> recipients = travelRepository.findAllDistributorsByTravelId(travel.getId(), APPROVED_REQUEST_ID);
-        if (recipients.isEmpty()) return travel;
+        final List<User> distributorRecipients = travelRepository.findAllDistributorsByTravelId(travel.getId(), APPROVED_REQUEST_ID);
 
-        notificationService.createAndSend(message, TRAVEL_STATUS_CHANGED, recipients, (n, r) -> r.forEach(u -> {
+        final List<Long> distributorIds = distributorRecipients.stream().map(User::getId).collect(Collectors.toList());
+        final List<User> recipients = clientRepository.findAllCashiersByDistributorIds(distributorIds).stream()
+                .map(Cashier::getUser)
+                .collect(Collectors.toList());
+
+        recipients.addAll(distributorRecipients);
+
+        if (distributorRecipients.isEmpty()) return travel;
+
+        notificationService.createAndSend(message, TRAVEL_STATUS_CHANGED, recipients, (n, r) -> distributorRecipients.forEach(u -> {
             try {
                 ablyClient.channels.get(DISTRIBUTOR_TRAVELS_CHANNEL_FORMAT.formatted(u.getId())).publish("new", message);
                 LOG.info("New message published to {} channel.", NEW_TRAVELS_CHANNEL);

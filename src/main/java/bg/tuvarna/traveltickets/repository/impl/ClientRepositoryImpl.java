@@ -1,5 +1,6 @@
 package bg.tuvarna.traveltickets.repository.impl;
 
+import bg.tuvarna.traveltickets.entity.Cashier;
 import bg.tuvarna.traveltickets.entity.Client;
 import bg.tuvarna.traveltickets.entity.ClientType;
 import bg.tuvarna.traveltickets.repository.ClientRepository;
@@ -30,6 +31,11 @@ public class ClientRepositoryImpl extends GenericCrudRepositoryImpl<Client, Long
                 WHERE c.clientType.id = :clientTypeId
             """;
 
+    private static final String FIND_ALL_CASHIERS_BY_DISTRIBUTOR_ID_HQL = """
+                SELECT c FROM Cashier AS c
+                WHERE c.createdBy.id IN (:userId)
+            """;
+
     @Override
     public ClientType findTypeByUserId(final Long userId) {
         final TypedQuery<ClientType> query = EntityManagerUtil.getEntityManager()
@@ -56,6 +62,14 @@ public class ClientRepositoryImpl extends GenericCrudRepositoryImpl<Client, Long
         return EntityManagerUtil.getEntityManager()
                 .createQuery(FIND_ALL_IDS_BY_CLIENT_TYPE_ID_HQL, Client.class)
                 .setParameter(CLIENT_TYPE_ID_PARAM, clientTypeId)
+                .getResultList();
+    }
+
+    @Override
+    public List<Cashier> findAllCashiersByDistributorIds(final List<Long> distributorId) {
+        return EntityManagerUtil.getEntityManager()
+                .createQuery(FIND_ALL_CASHIERS_BY_DISTRIBUTOR_ID_HQL, Cashier.class)
+                .setParameter(USER_ID_PARAM, distributorId)
                 .getResultList();
     }
 

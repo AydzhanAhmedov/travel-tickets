@@ -68,6 +68,8 @@ public class HomeController extends BaseUndecoratedController {
 
     private static final Logger LOG = LogManager.getLogger(HomeController.class);
 
+    private OffsetDateTime initialNotificationLoadTime;
+
     private final AuthService authService = AuthServiceImpl.getInstance();
     private final NotificationService notificationService = NotificationServiceImpl.getInstance();
 
@@ -119,6 +121,7 @@ public class HomeController extends BaseUndecoratedController {
         LOG.debug("Loading user's notifications.");
 
         notifications.addAll(notificationService.findAllByRecipientId(authService.getLoggedUser().getId()));
+        initialNotificationLoadTime = OffsetDateTime.now();
         notificationButton.addEventHandler(NEW_NOTIFICATION, e -> updateNotificationButton(false));
 
         updateNotificationButton();
@@ -154,7 +157,8 @@ public class HomeController extends BaseUndecoratedController {
         final UndecoratedDialog<Void> dialog = new UndecoratedDialog<>(root, dialogPane);
 
         final Long recipientId = authService.getLoggedUser().getId();
-        final OffsetDateTime lastNotificationDate = notifications.get(0).getNotification().getCreatedAt();
+        final OffsetDateTime lastNotificationDate = notifications.isEmpty()
+                ? initialNotificationLoadTime : notifications.get(0).getNotification().getCreatedAt();
 
         final Task<List<NotificationRecipient>> fetchLastNotificationTask = JpaOperationsUtil
                 .createTask(em -> notificationService.findAllByRecipientIdAndDateAfter(recipientId, lastNotificationDate));
