@@ -9,8 +9,9 @@ import bg.tuvarna.traveltickets.repository.impl.NotificationRepositoryImpl;
 import bg.tuvarna.traveltickets.service.NotificationService;
 import bg.tuvarna.traveltickets.service.NotificationStatusService;
 import bg.tuvarna.traveltickets.service.NotificationTypeService;
-import bg.tuvarna.traveltickets.util.EntityManagerUtil;
 import bg.tuvarna.traveltickets.util.notifications.RecipientsNotifier;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -22,6 +23,8 @@ import static java.time.ZoneOffset.UTC;
 import static java.util.Collections.singleton;
 
 public class NotificationServiceImpl implements NotificationService {
+
+    private static final Logger LOG = LogManager.getLogger(NotificationServiceImpl.class);
 
     private final NotificationRepository notificationRepository = NotificationRepositoryImpl.getInstance();
 
@@ -51,7 +54,9 @@ public class NotificationServiceImpl implements NotificationService {
 
         recipients.stream()
                 .map(u -> new NotificationRecipient(notification, u))
-                .forEach(n -> EntityManagerUtil.getEntityManager().persist(n));
+                .forEach(notificationRepository::save);
+
+        notificationRepository.flush();
 
         if (notifier != null) notifier.notifyRecipients(singleton(notification), recipients);
 
@@ -72,6 +77,7 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public NotificationRecipient markAsSeen(final NotificationRecipient notificationRecipient) {
         notificationRecipient.setNotificationStatus(notificationStatusService.findByName(SEEN));
+        LOG.debug("Marking notification with id '{}' as seen.", notificationRecipient.getNotification().getId());
         return notificationRepository.save(notificationRecipient);
     }
 

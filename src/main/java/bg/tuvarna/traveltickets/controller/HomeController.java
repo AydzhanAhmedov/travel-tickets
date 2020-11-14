@@ -165,13 +165,12 @@ public class HomeController extends BaseUndecoratedController {
 
         fetchLastNotificationTask.setOnSucceeded(e -> Platform.runLater(() -> {
             fetchLastNotificationTask.getValue().forEach(n -> notifications.add(0, n));
+            dialog.showAndWait();
             LOG.info("New notifications fetched and added.");
         }));
 
         loader.<NotificationsDialogController>getController().injectNotifications(notifications, this::updateNotificationButton);
         new Thread(fetchLastNotificationTask).start();
-
-        dialog.showAndWait();
     }
 
     private void initUserSpecificView() {

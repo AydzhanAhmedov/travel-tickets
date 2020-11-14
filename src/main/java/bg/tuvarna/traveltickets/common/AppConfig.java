@@ -41,6 +41,7 @@ public final class AppConfig {
             .ofLocalizedDateTime(FormatStyle.SHORT, FormatStyle.MEDIUM).withLocale(language.getLocale());
 
     private static AblyRealtime ablyClient;
+    private static boolean ablyIsEnabled;
 
     public static AblyRealtime getAblyClient() {
         return ablyClient;
@@ -48,6 +49,14 @@ public final class AppConfig {
 
     public static ResourceBundle getLangBundle() {
         return language.getBundle();
+    }
+
+    public static boolean ablyIsEnabled() {
+        return ablyIsEnabled;
+    }
+
+    public static void setAblyIsEnabled(final boolean ablyIsEnabled) {
+        AppConfig.ablyIsEnabled = ablyIsEnabled;
     }
 
     public static SupportedLanguage getLanguage() {
@@ -86,7 +95,7 @@ public final class AppConfig {
 
     public static void configure(final Stage primaryStage) {
         AppConfig.primaryStage = primaryStage;
-        configureAbly();
+        //configureAbly();
         configureHibernate();
         configurePrimaryStage();
         LOG.debug("Application configured.");
@@ -96,9 +105,14 @@ public final class AppConfig {
         primaryStage.initStyle(StageStyle.UNDECORATED);
         primaryStage.setOnCloseRequest(e -> {
             LOG.warn("Exiting the application...");
-            EntityManagerUtil.closeEntityManagerFactory();
-            ablyClient.close();
-            Platform.exit();
+            try {
+                Platform.exit();
+                EntityManagerUtil.closeEntityManagerFactory();
+                // ablyClient.close();
+            }
+            catch (Exception ex) {
+                LOG.error("Error on closing app: ", ex);
+            }
             System.exit(0);
         });
         primaryStage.setScene(LOGIN.getScene());
@@ -120,6 +134,7 @@ public final class AppConfig {
     private static void configureAbly() {
         try {
             ablyClient = new AblyRealtime(new ClientOptions(ABLY_API_KEY));
+            ablyIsEnabled = true;
 
             ablyClient.connection.on(ConnectionState.connected, state -> {
                 switch (state.current) {

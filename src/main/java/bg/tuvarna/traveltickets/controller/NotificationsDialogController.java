@@ -87,7 +87,8 @@ public class NotificationsDialogController extends BaseUndecoratedController {
             protected void updateItem(final Notification item, final boolean empty) {
                 super.updateItem(item, empty);
 
-                if (!empty && notificationService.isSeen(getTableView().getItems().get(getIndex()))) onSeen(this);
+                setOpacity(1);
+                if (!empty && notificationService.isSeen(getTableView().getItems().get(getIndex()))) setOpacity(0.5);
 
                 final String from = empty ? null : item.getCreatedBy().getUsername();
                 setText(authService.getLoggedUser().getUsername().equals(from) ? getLangBundle().getString(SYSTEM_KEY) : from);
@@ -97,7 +98,8 @@ public class NotificationsDialogController extends BaseUndecoratedController {
             @Override
             protected void updateItem(final Notification item, final boolean empty) {
                 super.updateItem(item, empty);
-                if (!empty && notificationService.isSeen(getTableView().getItems().get(getIndex()))) onSeen(this);
+                setOpacity(1);
+                if (!empty && notificationService.isSeen(getTableView().getItems().get(getIndex()))) setOpacity(0.5);
                 setText(empty ? null : item.getMessage());
             }
         });
@@ -105,7 +107,9 @@ public class NotificationsDialogController extends BaseUndecoratedController {
             @Override
             protected void updateItem(final Notification item, final boolean empty) {
                 super.updateItem(item, empty);
-                if (!empty && notificationService.isSeen(getTableView().getItems().get(getIndex()))) onSeen(this);
+
+                setOpacity(1);
+                if (!empty && notificationService.isSeen(getTableView().getItems().get(getIndex()))) setOpacity(0.5);
 
                 String date = empty ? null : item.getCreatedAt().format(AppConfig.getDateTimeFormatter());
                 if (!empty) {
@@ -126,8 +130,6 @@ public class NotificationsDialogController extends BaseUndecoratedController {
             }
         });
         columnAction.setCellFactory(col -> new TableCell<>() {
-            private final Button btn = new Button(getLangBundle().getString(SEEN_BUTTON_KEY));
-
             @Override
             public void updateItem(NotificationRecipient item, boolean empty) {
                 super.updateItem(item, empty);
@@ -136,6 +138,7 @@ public class NotificationsDialogController extends BaseUndecoratedController {
                     setText(null);
                 } else {
                     final NotificationRecipient notification = getTableView().getItems().get(getIndex());
+                    final Button btn = new Button(getLangBundle().getString(SEEN_BUTTON_KEY));
 
                     btn.getStylesheets().addAll(markAllAsSeenButton.getStylesheets());
                     btn.getStyleClass().addAll(markAllAsSeenButton.getStyleClass());
@@ -155,10 +158,6 @@ public class NotificationsDialogController extends BaseUndecoratedController {
         columnFrom.setCellValueFactory(new PropertyValueFactory<>("notification"));
         columnMessage.setCellValueFactory(new PropertyValueFactory<>("notification"));
         columnDate.setCellValueFactory(new PropertyValueFactory<>("notification"));
-    }
-
-    private void onSeen(final TableCell<?, ?> cell) {
-        cell.setOpacity(0.5);
     }
 
 }

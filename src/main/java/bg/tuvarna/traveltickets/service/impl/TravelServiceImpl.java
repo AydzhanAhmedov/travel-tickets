@@ -69,12 +69,14 @@ public class TravelServiceImpl implements TravelService {
         if (recipients.isEmpty()) return travel;
 
         notificationService.createAndSend(message, NEW_TRAVEL, recipients, (n, r) -> {
-            try {
-                ablyClient.channels.get(NEW_TRAVELS_CHANNEL).publish("new", message);
-                LOG.info("New message published to {} channel.", NEW_TRAVELS_CHANNEL);
-            }
-            catch (AblyException e) {
-                LOG.error("Error while publishing message to ably: ", e);
+            if (AppConfig.ablyIsEnabled()) {
+                try {
+                    ablyClient.channels.get(NEW_TRAVELS_CHANNEL).publish("new", message);
+                    LOG.info("New message published to {} channel.", NEW_TRAVELS_CHANNEL);
+                }
+                catch (AblyException e) {
+                    LOG.error("Error while publishing message to ably: ", e);
+                }
             }
         });
 
@@ -108,15 +110,20 @@ public class TravelServiceImpl implements TravelService {
 
         if (distributorRecipients.isEmpty()) return travel;
 
-        notificationService.createAndSend(message, TRAVEL_STATUS_CHANGED, recipients, (n, r) -> distributorRecipients.forEach(u -> {
-            try {
-                ablyClient.channels.get(DISTRIBUTOR_TRAVELS_CHANNEL_FORMAT.formatted(u.getId())).publish("new", message);
-                LOG.info("New message published to {} channel.", NEW_TRAVELS_CHANNEL);
+        notificationService.createAndSend(message, TRAVEL_STATUS_CHANGED, recipients, (n, r) -> {
+            if (AppConfig.ablyIsEnabled()) {
+                distributorRecipients.forEach(u -> {
+                    try {
+                        final String channel = DISTRIBUTOR_TRAVELS_CHANNEL_FORMAT.formatted(u.getId());
+                        ablyClient.channels.get(channel).publish("new", message);
+                        LOG.info("New message published to {} channel.", channel);
+                    }
+                    catch (AblyException e) {
+                        LOG.error("Error while publishing message to ably: ", e);
+                    }
+                });
             }
-            catch (AblyException e) {
-                LOG.error("Error while publishing message to ably: ", e);
-            }
-        }));
+        });
 
         return travel;
     }

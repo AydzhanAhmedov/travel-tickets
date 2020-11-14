@@ -17,6 +17,8 @@ import bg.tuvarna.traveltickets.util.notifications.LoggedRecipientNotifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
@@ -68,29 +70,35 @@ public final class ScheduledTicketsNotificationCheck implements Runnable {
             LOG.warn("No notification check needs to be performed cause user is cashier.");
             return;
         }
-
-        executeInTransaction(em -> createNotificationsIfNeeded(clientId, clientType));
+        notifierFunction.notifyRecipient(executeInTransaction(em -> createNotificationsIfNeeded(clientId, clientType)));
     }
 
     // TODO: change .getDetails with Name getter when created
-    private boolean createNotificationsIfNeeded(final Long clientId, final ClientType.Enum clientType) {
+    private List<Notification> createNotificationsIfNeeded(final Long clientId, final ClientType.Enum clientType) {
         final List<Travel> travels = findTravels(clientId, clientType);
         if (travels.isEmpty()) {
             LOG.debug("No travels found for the client with id '{}', no notifications will be created.", clientId);
-            return false;
+            return Collections.emptyList();
         }
 
         final String soldFormat = getLangBundle().getString("label.notification.sold_tickets");
         final String unsoldFormat = getLangBundle().getString("label.notification.unsold_tickets");
 
+        final List<Notification> notifications = new ArrayList<>();
         if (clientType == COMPANY) {
             // ticketQuantity - currentQuantity = soldTicketsQuantity
-            createNotifications(travels, t -> soldFormat
-                    .formatted(t.getDetails(), t.getTicketQuantity() - t.getCurrentTicketQuantity()), SOLD_TICKETS);
-        }
-        createNotifications(travels, t -> unsoldFormat.formatted(t.getDetails(), t.getCurrentTicketQuantity()), UNSOLD_TICKETS);
+            notifications.addAll(createNotifications(travels, t -> soldFormat
+                    .formatted(t.getDetails(), t.getTicketQuantity() - t.getCurrentTicketQuantity()), SOLD_TICKETS));
 
-        return true;
+            LOG.debug("{} notifications of type {} created.", notifications.size(), SOLD_TICKETS.toString());
+        }
+
+        final List<Notification> unsoldNotifications = createNotifications(travels, t -> unsoldFormat.formatted(t.getDetails()), UNSOLD_TICKETS);
+        notifications.addAll(unsoldNotifications);
+
+        LOG.debug("{} notifications of type {} created.", unsoldNotifications.size(), UNSOLD_TICKETS.toString());
+
+        return notifications;
     }
 
     private List<Travel> findTravels(final Long clientId, final ClientType.Enum clientType) {
@@ -102,17 +110,14 @@ public final class ScheduledTicketsNotificationCheck implements Runnable {
         return travelRepository.findAllByDistributorIdAndTravelStatusId(clientId, INCOMING_STATUS_ID, APPROVED_STATUS_ID);
     }
 
-    private void createNotifications(final List<Travel> travels,
-                                     final Function<Travel, String> messageGenerator,
-                                     final NotificationType.Enum typeName) {
+    private List<Notification> createNotifications(final List<Travel> travels,
+                                                   final Function<Travel, String> messageGenerator,
+                                                   final NotificationType.Enum typeName) {
 
         final List<User> recipients = singletonList(authService.getLoggedUser());
-        final List<Notification> notifications = travels.stream()
+        return travels.stream()
                 .map(m -> notificationService.create(messageGenerator.apply(m), typeName, recipients))
                 .collect(Collectors.toList());
-
-        notifierFunction.notifyRecipient(notifications);
-        LOG.debug("{} notifications created.", typeName.toString());
     }
 
 }

@@ -49,15 +49,17 @@ public class SubscriberServiceImpl implements SubscriberService {
     }
 
     private void subscribeToChannel(final String channel, final LoggedRecipientNotifier<Message> notifier) {
-        try {
-            ablyClient.channels.get(channel).subscribe(message -> {
-                LOG.info("New notification received with message: {}", message.data);
-                notifier.notifyRecipient(Collections.singleton(message));
-            });
-            LOG.info("Subscribed to {} channel.", channel);
-        }
-        catch (Exception e) {
-            LOG.error("Error while subscribing to channel: ", e);
+        if (AppConfig.ablyIsEnabled()) {
+            try {
+                ablyClient.channels.get(channel).subscribe(message -> {
+                    LOG.info("New notification received with message: {}", message.data);
+                    notifier.notifyRecipient(Collections.singleton(message));
+                });
+                LOG.info("Subscribed to {} channel.", channel);
+            }
+            catch (Exception e) {
+                LOG.error("Error while subscribing to channel: ", e);
+            }
         }
     }
 

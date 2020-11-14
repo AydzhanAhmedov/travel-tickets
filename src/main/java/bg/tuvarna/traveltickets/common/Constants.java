@@ -45,7 +45,7 @@ public final class Constants {
     public static final String ACTIVE_NOTIFICATIONS_BTN_CSS = "activeNotificationsButton";
     public static final String NOTIFICATIONS_BTN_CSS = "notificationsButton";
 
-    public static final Long DEFAULT_NOTIFICATION_CHECK_PERIOD_MILLS = 60L * 60L * 1000L;
+    public static final Long DEFAULT_NOTIFICATION_CHECK_PERIOD_MILLS = 60L * 60L * 60L * 1000L;
     public static final String NEW_TRAVELS_CHANNEL = "new-travels";
     public static final String DISTRIBUTOR_TRAVELS_CHANNEL_FORMAT = "distributor-%s";
 
