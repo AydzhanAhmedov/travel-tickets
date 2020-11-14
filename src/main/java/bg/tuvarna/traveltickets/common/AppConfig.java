@@ -1,6 +1,10 @@
 package bg.tuvarna.traveltickets.common;
 
 import bg.tuvarna.traveltickets.util.EntityManagerUtil;
+import io.ably.lib.realtime.AblyRealtime;
+import io.ably.lib.realtime.ConnectionState;
+import io.ably.lib.types.AblyException;
+import io.ably.lib.types.ClientOptions;
 import javafx.application.Platform;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
@@ -17,7 +21,9 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import static bg.tuvarna.traveltickets.common.AppScreens.LOGIN;
+import static bg.tuvarna.traveltickets.common.Constants.ABLY_API_KEY;
 import static bg.tuvarna.traveltickets.common.Constants.CANNOT_BE_INSTANTIATED_FORMAT;
+import static bg.tuvarna.traveltickets.common.Constants.DEFAULT_NOTIFICATION_CHECK_PERIOD_MILLS;
 import static bg.tuvarna.traveltickets.common.SupportedLanguage.ENGLISH;
 
 /**
@@ -29,9 +35,16 @@ public final class AppConfig {
 
     private static SupportedLanguage language = SupportedLanguage.findByLocale(Locale.getDefault()).orElse(ENGLISH);
     private static Stage primaryStage;
+    private static Long notificationCheckPeriod = DEFAULT_NOTIFICATION_CHECK_PERIOD_MILLS;
 
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter
             .ofLocalizedDateTime(FormatStyle.SHORT, FormatStyle.MEDIUM).withLocale(language.getLocale());
+
+    private static AblyRealtime ablyClient;
+
+    public static AblyRealtime getAblyClient() {
+        return ablyClient;
+    }
 
     public static ResourceBundle getLangBundle() {
         return language.getBundle();
@@ -63,8 +76,17 @@ public final class AppConfig {
         primaryStage.setY((primScreenBounds.getHeight() - primaryStage.getHeight()) / 2);
     }
 
+    public static Long getNotificationCheckPeriod() {
+        return notificationCheckPeriod;
+    }
+
+    public static void setNotificationCheckPeriod(final Long notificationCheckPeriod) {
+        AppConfig.notificationCheckPeriod = notificationCheckPeriod;
+    }
+
     public static void configure(final Stage primaryStage) {
         AppConfig.primaryStage = primaryStage;
+        configureAbly();
         configureHibernate();
         configurePrimaryStage();
         LOG.debug("Application configured.");
@@ -73,8 +95,9 @@ public final class AppConfig {
     private static void configurePrimaryStage() {
         primaryStage.initStyle(StageStyle.UNDECORATED);
         primaryStage.setOnCloseRequest(e -> {
-            LOG.info("Exiting the application...");
+            LOG.warn("Exiting the application...");
             EntityManagerUtil.closeEntityManagerFactory();
+            ablyClient.close();
             Platform.exit();
             System.exit(0);
         });
@@ -92,6 +115,26 @@ public final class AppConfig {
             EntityManagerUtil.getEntityManagerFactory();
             LOG.debug("Hibernate configured.");
         }).start();
+    }
+
+    private static void configureAbly() {
+        try {
+            ablyClient = new AblyRealtime(new ClientOptions(ABLY_API_KEY));
+
+            ablyClient.connection.on(ConnectionState.connected, state -> {
+                switch (state.current) {
+                    case connected -> LOG.debug("Successfully connected to ably.");
+                    case disconnected -> LOG.error("Ably client is disconnected.");
+                    case closed -> LOG.debug("Ably client closed.");
+                    case failed -> LOG.error("Error connecting to ably.");
+                }
+            });
+
+            LOG.debug("Ably configured.");
+        }
+        catch (AblyException e) {
+            LOG.error("Error configuring Ably: ", e);
+        }
     }
 
     private AppConfig() {

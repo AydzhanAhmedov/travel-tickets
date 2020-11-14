@@ -16,6 +16,7 @@ ext {
     junitVersion = '4.12'
     log4jVersion = '2.13.3'
     jbcryptVersion = '0.4'
+    ablyVersion = '1.2.0'
 }
 
 repositories {
@@ -33,6 +34,7 @@ dependencies {
 
     // Other
     implementation "org.mindrot:jbcrypt:${jbcryptVersion}"
+    implementation "io.ably:ably-java:${ablyVersion}"
 
     // Testing
     testImplementation group: 'junit', name: 'junit', version: "${junitVersion}"

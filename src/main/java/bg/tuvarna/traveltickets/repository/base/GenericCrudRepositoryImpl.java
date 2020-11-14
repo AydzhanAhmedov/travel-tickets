@@ -44,6 +44,11 @@ public abstract class GenericCrudRepositoryImpl<E, ID> implements GenericCrudRep
         });
     }
 
+    @Override
+    public void flush() {
+        EntityManagerUtil.getEntityManager().flush();
+    }
+
     @SuppressWarnings("unchecked")
     protected final ID getEntityId(final E entity) {
         return (ID) EntityManagerUtil.getEntityManagerFactory().getPersistenceUnitUtil().getIdentifier(entity);

@@ -1,7 +1,6 @@
 package bg.tuvarna.traveltickets.entity;
 
 import javax.persistence.Column;
-import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -44,6 +43,10 @@ public class TravelRoute implements Serializable {
         this.travel = travel;
         this.city = city;
         this.travelCityID = new TravelCityID(travel.getId(), city.getId());
+    }
+
+    public TravelCityID getTravelCityID() {
+        return travelCityID;
     }
 
     public Travel getTravel() {

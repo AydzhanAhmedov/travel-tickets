@@ -28,6 +28,7 @@ public final class EntityManagerUtil {
 
     public static void closeEntityManagerFactory() {
         EMF_INSTANCE.close();
+        LOG.warn("EntityManagerFactory closed.");
     }
 
     public static EntityManager newEntityManager() {

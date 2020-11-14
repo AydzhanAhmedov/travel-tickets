@@ -17,7 +17,7 @@ public class NotificationType extends BaseEntity {
 
     private static final long serialVersionUID = 7514162606074788391L;
 
-    public enum Enum {NEW_TRAVEL, TRAVEL_STATUS_CHANGED}
+    public enum Enum {NEW_TRAVEL, TRAVEL_STATUS_CHANGED, SOLD_TICKETS, UNSOLD_TICKETS}
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, unique = true)

@@ -10,12 +10,14 @@ import bg.tuvarna.traveltickets.service.NotificationService;
 import bg.tuvarna.traveltickets.service.NotificationStatusService;
 import bg.tuvarna.traveltickets.service.NotificationTypeService;
 import bg.tuvarna.traveltickets.util.EntityManagerUtil;
+import bg.tuvarna.traveltickets.util.notifications.RecipientsNotifier;
 
 import java.util.List;
 import java.util.Objects;
 
 import static bg.tuvarna.traveltickets.common.Constants.RECIPIENT_LIST_CANNOT_BE_EMPTY;
 import static bg.tuvarna.traveltickets.entity.NotificationStatus.Enum.SEEN;
+import static java.util.Collections.singleton;
 
 public class NotificationServiceImpl implements NotificationService {
 
@@ -25,9 +27,15 @@ public class NotificationServiceImpl implements NotificationService {
     private final NotificationStatusService notificationStatusService = NotificationStatusServiceImpl.getInstance();
 
     @Override
-    public Notification create(final String message,
-                               final NotificationType.Enum notificationTypeName,
-                               final List<User> recipients) {
+    public Notification create(final String message, final NotificationType.Enum typeName, final List<User> recipients) {
+        return createAndSend(message, typeName, recipients, null);
+    }
+
+    @Override
+    public Notification createAndSend(final String message,
+                                      final NotificationType.Enum typeName,
+                                      final List<User> recipients,
+                                      final RecipientsNotifier<Notification, User> notifier) {
 
         Objects.requireNonNull(message);
         Objects.requireNonNull(recipients);
@@ -36,14 +44,14 @@ public class NotificationServiceImpl implements NotificationService {
             throw new IllegalArgumentException(RECIPIENT_LIST_CANNOT_BE_EMPTY);
         }
 
-        final NotificationType notificationType = notificationTypeService.findByName(notificationTypeName);
+        final NotificationType notificationType = notificationTypeService.findByName(typeName);
         final Notification notification = notificationRepository.save(new Notification(message, notificationType));
 
         recipients.stream()
-                .map(user -> new NotificationRecipient(notification, user))
+                .map(u -> new NotificationRecipient(notification, u))
                 .forEach(n -> EntityManagerUtil.getEntityManager().persist(n));
 
-        notifyRecipients(notification, recipients);
+        if (notifier != null) notifier.notifyRecipients(singleton(notification), recipients);
 
         return notification;
     }
@@ -68,10 +76,6 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public boolean isSeen(final NotificationRecipient notification) {
         return notificationStatusService.findByName(SEEN).getId().equals(notification.getNotificationStatus().getId());
-    }
-
-    private void notifyRecipients(final Notification notification, final List<User> recipients) {
-        //TODO: implement logic for notifying recipients
     }
 
     private static NotificationServiceImpl instance;

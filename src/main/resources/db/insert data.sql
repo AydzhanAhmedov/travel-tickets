@@ -40,7 +40,9 @@ INSERT INTO client_types(name)
 INSERT INTO notification_types(name)
 	VALUES 
 	('NEW_TRAVEL'),
-	('TRAVEL_STATUS_CHANGED');
+	('TRAVEL_STATUS_CHANGED'),
+	('SOLD_TICKETS'),
+	('UNSOLD_TICKETS');
 
 INSERT INTO notification_statuses(name)
 	VALUES

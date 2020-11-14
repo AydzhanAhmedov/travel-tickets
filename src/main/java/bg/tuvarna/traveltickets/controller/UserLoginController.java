@@ -96,8 +96,8 @@ public class UserLoginController extends BaseUndecoratedController {
 
         if (successfullyLoggedIn) {
             clearTextFields();
-            setPrimaryStageScene(HOME.getScene());
             LOG.info("User with username '{}' successfully logged in.", authService.getLoggedUser().getUsername());
+            setPrimaryStageScene(HOME.getScene());
         } else setErrorText(getLangBundle().getString(BAD_CREDENTIALS_KEY));
     }
 

@@ -4,7 +4,9 @@ import bg.tuvarna.traveltickets.common.AppConfig;
 import bg.tuvarna.traveltickets.controller.base.BaseUndecoratedController;
 import bg.tuvarna.traveltickets.entity.Notification;
 import bg.tuvarna.traveltickets.entity.NotificationRecipient;
+import bg.tuvarna.traveltickets.service.AuthService;
 import bg.tuvarna.traveltickets.service.NotificationService;
+import bg.tuvarna.traveltickets.service.impl.AuthServiceImpl;
 import bg.tuvarna.traveltickets.service.impl.NotificationServiceImpl;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -16,10 +18,17 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.net.URL;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.ResourceBundle;
 
 import static bg.tuvarna.traveltickets.common.AppConfig.getLangBundle;
+import static bg.tuvarna.traveltickets.common.Constants.HOURS_KEY;
+import static bg.tuvarna.traveltickets.common.Constants.MINUTES_KEY;
+import static bg.tuvarna.traveltickets.common.Constants.SECONDS_KEY;
 import static bg.tuvarna.traveltickets.common.Constants.SEEN_BUTTON_KEY;
+import static bg.tuvarna.traveltickets.common.Constants.SYSTEM_KEY;
 import static bg.tuvarna.traveltickets.util.JpaOperationsUtil.executeInTransaction;
 
 public class NotificationsDialogController extends BaseUndecoratedController {
@@ -29,7 +38,9 @@ public class NotificationsDialogController extends BaseUndecoratedController {
         void update();
     }
 
+    private final AuthService authService = AuthServiceImpl.getInstance();
     private final NotificationService notificationService = NotificationServiceImpl.getInstance();
+
     private NotificationBellUpdater notificationBellUpdater;
 
     @FXML
@@ -75,8 +86,11 @@ public class NotificationsDialogController extends BaseUndecoratedController {
             @Override
             protected void updateItem(final Notification item, final boolean empty) {
                 super.updateItem(item, empty);
+
                 if (!empty && notificationService.isSeen(getTableView().getItems().get(getIndex()))) onSeen(this);
-                setText(empty ? null : item.getCreatedBy().getUsername());
+
+                final String from = empty ? null : item.getCreatedBy().getUsername();
+                setText(authService.getLoggedUser().getUsername().equals(from) ? getLangBundle().getString(SYSTEM_KEY) : from);
             }
         });
         columnMessage.setCellFactory(col -> new TableCell<>() {
@@ -92,7 +106,23 @@ public class NotificationsDialogController extends BaseUndecoratedController {
             protected void updateItem(final Notification item, final boolean empty) {
                 super.updateItem(item, empty);
                 if (!empty && notificationService.isSeen(getTableView().getItems().get(getIndex()))) onSeen(this);
-                setText(empty ? null : item.getCreatedAt().format(AppConfig.getDateTimeFormatter()));
+
+                String date = empty ? null : item.getCreatedAt().format(AppConfig.getDateTimeFormatter());
+                if (!empty) {
+                    final Instant currInstant = OffsetDateTime.now().toInstant();
+                    final Instant createdAtInstant = item.getCreatedAt().toInstant();
+
+                    final Duration duration = Duration.between(createdAtInstant, currInstant);
+                    if (duration.toDays() == 0) {
+                        if (duration.toHours() > 0)
+                            date = getLangBundle().getString(HOURS_KEY).formatted(duration.toHours());
+                        else if (duration.toMinutes() > 0)
+                            date = getLangBundle().getString(MINUTES_KEY).formatted(duration.toMinutes());
+                        else
+                            date = getLangBundle().getString(SECONDS_KEY).formatted(duration.toSeconds());
+                    }
+                }
+                setText(date);
             }
         });
         columnAction.setCellFactory(col -> new TableCell<>() {

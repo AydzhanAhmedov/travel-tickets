@@ -10,6 +10,7 @@ import bg.tuvarna.traveltickets.util.JpaOperationsUtil;
 import javax.persistence.TypedQuery;
 import java.util.List;
 
+import static bg.tuvarna.traveltickets.common.Constants.CLIENT_TYPE_ID;
 import static bg.tuvarna.traveltickets.common.Constants.USER_ID_PARAM;
 
 public class ClientRepositoryImpl extends GenericCrudRepositoryImpl<Client, Long> implements ClientRepository {
@@ -22,6 +23,11 @@ public class ClientRepositoryImpl extends GenericCrudRepositoryImpl<Client, Long
 
     private static final String FIND_ALL_CLIENTS_HQL = """
                 FROM Client
+            """;
+
+    private static final String FIND_ALL_IDS_BY_CLIENT_TYPE_ID_HQL = """
+                SELECT c FROM Client AS c
+                WHERE c.clientType.id = :clientTypeId
             """;
 
     @Override
@@ -40,9 +46,17 @@ public class ClientRepositoryImpl extends GenericCrudRepositoryImpl<Client, Long
 
     @Override
     public List<Client> findAll() {
-        final TypedQuery<Client> query = EntityManagerUtil.getEntityManager()
-                .createQuery(FIND_ALL_CLIENTS_HQL, Client.class);
-        return query.getResultList();
+        return EntityManagerUtil.getEntityManager()
+                .createQuery(FIND_ALL_CLIENTS_HQL, Client.class)
+                .getResultList();
+    }
+
+    @Override
+    public List<Client> findAllByClientTypeId(final Long clientTypeId) {
+        return EntityManagerUtil.getEntityManager()
+                .createQuery(FIND_ALL_IDS_BY_CLIENT_TYPE_ID_HQL, Client.class)
+                .setParameter(CLIENT_TYPE_ID, clientTypeId)
+                .getResultList();
     }
 
     private static ClientRepositoryImpl instance;

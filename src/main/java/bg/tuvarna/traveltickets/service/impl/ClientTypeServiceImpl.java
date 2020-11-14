@@ -14,7 +14,7 @@ import java.util.function.Function;
 import static java.util.stream.Collectors.toUnmodifiableList;
 import static java.util.stream.Collectors.toUnmodifiableMap;
 
-public class ClientTypeServiceImpl implements ClientTypeService {
+public final class ClientTypeServiceImpl implements ClientTypeService {
 
     private static final Logger LOG = LogManager.getLogger(ClientTypeServiceImpl.class);
 

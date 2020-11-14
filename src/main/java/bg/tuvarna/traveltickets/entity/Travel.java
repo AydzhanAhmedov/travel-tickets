@@ -5,6 +5,7 @@ import bg.tuvarna.traveltickets.entity.base.BaseAuditEntity;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -12,10 +13,10 @@ import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
+@EntityListeners(TravelEntityListener.class)
 @Entity
 @Table(name = "travels")
 public class Travel extends BaseAuditEntity {
@@ -53,36 +54,9 @@ public class Travel extends BaseAuditEntity {
     @OneToMany(mappedBy = "travel", cascade = CascadeType.ALL)
     private List<TravelRoute> travelRoutes = new ArrayList<>();
 
+    //TODO: fix the association mapping.
     //@OneToMany(mappedBy = "travel")
     //private List<TravelDistributorRequest> distributorRequests = new ArrayList<>();
-
-    //public void addDistributorRequest(Distributor distributor, RequestStatus requestStatus) {
-    //    TravelDistributorRequest distributorRequest = new TravelDistributorRequest(this, distributor);
-    //    distributorRequest.setRequestStatus(requestStatus);
-    //    distributorRequests.add(distributorRequest);
-    //}
-
-    public void addTravelRoute(City city, OffsetDateTime date, TransportType type) {
-        TravelRoute travelRoute = new TravelRoute(this, city);
-        travelRoute.setArrivalDate(date);
-        travelRoute.setTransportType(type);
-        travelRoutes.add(travelRoute);
-    }
-
-    // TODO test remove
-    public void removeTravelRoute(City city) {
-        for (Iterator<TravelRoute> iterator = travelRoutes.iterator();
-             iterator.hasNext(); ) {
-            TravelRoute travelRoute = iterator.next();
-
-            if (travelRoute.getTravel().equals(this) &&
-                    travelRoute.getCity().equals(city)) {
-                iterator.remove();
-                travelRoute.setCity(null);
-                travelRoute.setTravel(null);
-            }
-        }
-    }
 
     public Travel() {
     }
@@ -170,15 +144,6 @@ public class Travel extends BaseAuditEntity {
     public void setTravelRoutes(List<TravelRoute> travelRoutes) {
         this.travelRoutes = travelRoutes;
     }
-
-    //public List<TravelDistributorRequest> getDistributorRequests() {
-    //    return distributorRequests;
-    //}
-//
-    //public void setDistributorRequests(List<TravelDistributorRequest> distributorRequests) {
-    //    this.distributorRequests = distributorRequests;
-    //}
-
 
     @Override
     public boolean equals(Object o) {

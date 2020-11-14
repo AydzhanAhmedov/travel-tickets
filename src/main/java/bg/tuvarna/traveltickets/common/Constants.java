@@ -14,9 +14,18 @@ public final class Constants {
     public static final String USERNAME_OR_EMAIL_PARAM = "usernameOrEmail";
     public static final String USER_ID_PARAM = "userId";
     public static final String CITY_NAME_PARAM = "cityName";
+    public static final String TRAVEL_STATUS_ID_PARAM = "travelStatusId";
+    public static final String REQUEST_STATUS_ID_PARAM = "requestStatusId";
+    public static final String CLIENT_TYPE_ID = "clientTypeId";
+    public static final String TRAVEL_ID = "travelId";
 
     // Bundles
     public static final String SEEN_BUTTON_KEY = "label.button.seen";
+
+    public static final String SYSTEM_KEY = "label.system";
+    public static final String HOURS_KEY = "label.short_hours_ago";
+    public static final String MINUTES_KEY = "label.short_minutes_ago";
+    public static final String SECONDS_KEY = "label.short_seconds_ago";
 
     public static final String BAD_CREDENTIALS_KEY = "label.error.bad_credentials";
     public static final String UNEXPECTED_ERROR_KEY = "label.error.unexpected_error_try_again";
@@ -31,8 +40,13 @@ public final class Constants {
     public static final String EMPTY_STRING = "";
     public static final String LANG_BUNDLE_NAME = "bundles.lang_bundle";
     public static final String PERSISTENT_UNIT_NAME = "travel-ticket-persistence-unit";
+    public static final String ABLY_API_KEY = "WF2iBA.9Sd_xQ:7y8STCyKVAhHHto0";
     public static final String ACTIVE_NOTIFICATIONS_BTN_CSS = "activeNotificationsButton";
     public static final String NOTIFICATIONS_BTN_CSS = "notificationsButton";
+
+    public static final Long DEFAULT_NOTIFICATION_CHECK_PERIOD_MILLS = 60L * 60L * 1000L;
+    public static final String NEW_TRAVELS_CHANNEL = "new-travels";
+    public static final String DISTRIBUTOR_TRAVELS_CHANNEL_FORMAT = "distributor-%s";
 
     private Constants() {
         throw new UnsupportedOperationException(CANNOT_BE_INSTANTIATED_FORMAT.formatted(getClass().toString()));

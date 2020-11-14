@@ -18,7 +18,7 @@ public class NotificationRepositoryImpl extends GenericCrudRepositoryImpl<Notifi
                 LEFT JOIN FETCH nr.notification AS n
                 LEFT JOIN FETCH n.createdBy
                 WHERE nr.recipient.id = :userId
-                ORDER BY n.createdAt
+                ORDER BY n.createdAt DESC
             """;
 
     @Override

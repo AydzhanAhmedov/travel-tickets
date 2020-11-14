@@ -13,4 +13,7 @@ public interface ClientRepository extends GenericCrudRepository<Client, Long> {
     <T extends Client> T findById(Class<T> clientClass, Long userId);
 
     List<Client> findAll();
+
+    List<Client> findAllByClientTypeId(Long clientTypeId);
+
 }

@@ -14,4 +14,6 @@ public interface GenericCrudRepository<E, ID> {
 
     void delete(E entity);
 
+    void flush();
+
 }
