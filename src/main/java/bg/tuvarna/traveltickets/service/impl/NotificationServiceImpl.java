@@ -12,11 +12,13 @@ import bg.tuvarna.traveltickets.service.NotificationTypeService;
 import bg.tuvarna.traveltickets.util.EntityManagerUtil;
 import bg.tuvarna.traveltickets.util.notifications.RecipientsNotifier;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Objects;
 
 import static bg.tuvarna.traveltickets.common.Constants.RECIPIENT_LIST_CANNOT_BE_EMPTY;
 import static bg.tuvarna.traveltickets.entity.NotificationStatus.Enum.SEEN;
+import static java.time.ZoneOffset.UTC;
 import static java.util.Collections.singleton;
 
 public class NotificationServiceImpl implements NotificationService {
@@ -59,6 +61,12 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public List<NotificationRecipient> findAllByRecipientId(final Long recipientId) {
         return notificationRepository.findAllByRecipientId(recipientId);
+    }
+
+    @Override
+    public List<NotificationRecipient> findAllByRecipientIdAndDateAfter(final Long recipientId,
+                                                                        final OffsetDateTime date) {
+        return notificationRepository.findAllByRecipientIdAndDateAfter(recipientId, date.withOffsetSameInstant(UTC));
     }
 
     @Override

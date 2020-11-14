@@ -10,7 +10,7 @@ import bg.tuvarna.traveltickets.util.JpaOperationsUtil;
 import javax.persistence.TypedQuery;
 import java.util.List;
 
-import static bg.tuvarna.traveltickets.common.Constants.CLIENT_TYPE_ID;
+import static bg.tuvarna.traveltickets.common.Constants.CLIENT_TYPE_ID_PARAM;
 import static bg.tuvarna.traveltickets.common.Constants.USER_ID_PARAM;
 
 public class ClientRepositoryImpl extends GenericCrudRepositoryImpl<Client, Long> implements ClientRepository {
@@ -55,7 +55,7 @@ public class ClientRepositoryImpl extends GenericCrudRepositoryImpl<Client, Long
     public List<Client> findAllByClientTypeId(final Long clientTypeId) {
         return EntityManagerUtil.getEntityManager()
                 .createQuery(FIND_ALL_IDS_BY_CLIENT_TYPE_ID_HQL, Client.class)
-                .setParameter(CLIENT_TYPE_ID, clientTypeId)
+                .setParameter(CLIENT_TYPE_ID_PARAM, clientTypeId)
                 .getResultList();
     }
 

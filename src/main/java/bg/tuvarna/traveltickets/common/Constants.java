@@ -16,8 +16,9 @@ public final class Constants {
     public static final String CITY_NAME_PARAM = "cityName";
     public static final String TRAVEL_STATUS_ID_PARAM = "travelStatusId";
     public static final String REQUEST_STATUS_ID_PARAM = "requestStatusId";
-    public static final String CLIENT_TYPE_ID = "clientTypeId";
-    public static final String TRAVEL_ID = "travelId";
+    public static final String CLIENT_TYPE_ID_PARAM = "clientTypeId";
+    public static final String TRAVEL_ID_PARAM = "travelId";
+    public static final String DATE_PARAM = "date";
 
     // Bundles
     public static final String SEEN_BUTTON_KEY = "label.button.seen";

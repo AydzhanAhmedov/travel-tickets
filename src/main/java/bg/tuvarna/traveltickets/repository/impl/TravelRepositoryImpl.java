@@ -11,7 +11,7 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 import static bg.tuvarna.traveltickets.common.Constants.REQUEST_STATUS_ID_PARAM;
-import static bg.tuvarna.traveltickets.common.Constants.TRAVEL_ID;
+import static bg.tuvarna.traveltickets.common.Constants.TRAVEL_ID_PARAM;
 import static bg.tuvarna.traveltickets.common.Constants.TRAVEL_STATUS_ID_PARAM;
 import static bg.tuvarna.traveltickets.common.Constants.USER_ID_PARAM;
 
@@ -72,7 +72,7 @@ public class TravelRepositoryImpl extends GenericCrudRepositoryImpl<Travel, Long
     public List<User> findAllDistributorsByTravelId(final Long travelId, final Long requestStatusId) {
         return EntityManagerUtil.getEntityManager()
                 .createQuery(FIND_ALL_DISTRIBUTOR_BY_TRAVEL_ID_HQL, User.class)
-                .setParameter(TRAVEL_ID, travelId)
+                .setParameter(TRAVEL_ID_PARAM, travelId)
                 .setParameter(REQUEST_STATUS_ID_PARAM, requestStatusId)
                 .getResultList();
     }

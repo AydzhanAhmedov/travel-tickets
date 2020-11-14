@@ -22,9 +22,12 @@ import bg.tuvarna.traveltickets.service.impl.SubscriberServiceImpl;
 import bg.tuvarna.traveltickets.service.impl.TransportTypeServiceImpl;
 import bg.tuvarna.traveltickets.service.impl.TravelServiceImpl;
 import bg.tuvarna.traveltickets.service.impl.TravelTypeServiceImpl;
+import bg.tuvarna.traveltickets.util.JpaOperationsUtil;
 import bg.tuvarna.traveltickets.util.notifications.NotificationEvent;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -150,7 +153,19 @@ public class HomeController extends BaseUndecoratedController {
         final DialogPane dialogPane = loader.load();
         final UndecoratedDialog<Void> dialog = new UndecoratedDialog<>(root, dialogPane);
 
+        final Long recipientId = authService.getLoggedUser().getId();
+        final OffsetDateTime lastNotificationDate = notifications.get(0).getNotification().getCreatedAt();
+
+        final Task<List<NotificationRecipient>> fetchLastNotificationTask = JpaOperationsUtil
+                .createTask(em -> notificationService.findAllByRecipientIdAndDateAfter(recipientId, lastNotificationDate));
+
+        fetchLastNotificationTask.setOnSucceeded(e -> Platform.runLater(() -> {
+            fetchLastNotificationTask.getValue().forEach(n -> notifications.add(0, n));
+            LOG.info("New notifications fetched and added.");
+        }));
+
         loader.<NotificationsDialogController>getController().injectNotifications(notifications, this::updateNotificationButton);
+        new Thread(fetchLastNotificationTask).start();
 
         dialog.showAndWait();
     }

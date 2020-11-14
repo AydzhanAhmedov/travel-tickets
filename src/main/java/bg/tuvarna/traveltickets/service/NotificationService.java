@@ -6,6 +6,7 @@ import bg.tuvarna.traveltickets.entity.NotificationType;
 import bg.tuvarna.traveltickets.entity.User;
 import bg.tuvarna.traveltickets.util.notifications.RecipientsNotifier;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 public interface NotificationService {
@@ -18,6 +19,8 @@ public interface NotificationService {
                                RecipientsNotifier<Notification, User> notifier);
 
     List<NotificationRecipient> findAllByRecipientId(Long recipientId);
+
+    List<NotificationRecipient> findAllByRecipientIdAndDateAfter(Long recipientId, OffsetDateTime date);
 
     NotificationRecipient markAsSeen(NotificationRecipient notificationRecipient);
 
