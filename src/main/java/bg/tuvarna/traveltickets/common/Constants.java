@@ -13,6 +13,7 @@ public final class Constants {
     // Params
     public static final String USERNAME_OR_EMAIL_PARAM = "usernameOrEmail";
     public static final String USER_ID_PARAM = "userId";
+    public static final String CITY_NAME_PARAM = "cityName";
 
     // Bundles
     public static final String SEEN_BUTTON_KEY = "label.button.seen";
