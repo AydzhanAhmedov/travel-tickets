@@ -13,63 +13,71 @@
 
 <BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="bg.tuvarna.traveltickets.controller.HomeController">
     <left>
-        <VBox fx:id="leftVBox" alignment="TOP_CENTER" minWidth="320.0" prefHeight="800.0" prefWidth="320.0" style="-fx-background-color: radial-gradient(focus-distance 0% , center 50% 50% , radius 85% ,#7076ba,#444484);" BorderPane.alignment="CENTER">
+        <VBox alignment="TOP_CENTER" minWidth="320.0" prefHeight="800.0" prefWidth="320.0" style="-fx-background-color: radial-gradient(focus-distance 0% , center 50% 50% , radius 85% ,#7076ba,#444484);" BorderPane.alignment="CENTER">
             <AnchorPane prefHeight="60.0" prefWidth="320.0">
                 <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="14.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0">
                     <Image url="@../images/logo.png" />
                 </ImageView>
-                <Button fx:id="notificationButton" layoutX="244.0" layoutY="17.0" maxHeight="40.0" maxWidth="40.0" minHeight="40.0" minWidth="40.0" mnemonicParsing="false" onMouseClicked="#onNotificationButtonClicked" prefHeight="40.0" prefWidth="40.0" styleClass="notificationsButton" stylesheets="@../css/buttons.css" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
+                <Button fx:id="notificationButton" layoutX="244.0" layoutY="17.0" maxHeight="40.0" maxWidth="40.0" minHeight="40.0" minWidth="40.0" mnemonicParsing="false" onAction="#onNotificationButtonClicked" prefHeight="40.0" prefWidth="40.0" styleClass="notificationsButton" stylesheets="@../css/buttons.css" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
             </AnchorPane>
             <VBox alignment="TOP_CENTER" prefHeight="200.0" spacing="10.0">
                 <VBox.margin>
-                    <Insets/>
+                    <Insets />
                 </VBox.margin>
                 <padding>
-                    <Insets top="20.0"/>
+                    <Insets top="20.0" />
                 </padding>
                 <opaqueInsets>
-                    <Insets/>
+                    <Insets />
                 </opaqueInsets>
-                <ImageView fx:id="userImageView" cache="true" cacheHint="SPEED" fitHeight="105.0" fitWidth="150.0"
-                           pickOnBounds="true" preserveRatio="true">
+                <ImageView fx:id="userImageView" cache="true" cacheHint="SPEED" fitHeight="105.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
                     <viewport>
-                        <Rectangle2D/>
+                        <Rectangle2D />
                     </viewport>
-                    <Image url="@../images/admin.png"/>
+                    <Image url="@../images/admin.png" />
                 </ImageView>
-                <Text fx:id="userText" cache="true" cacheHint="SPEED" fill="#01233f" strokeType="OUTSIDE"
-                      strokeWidth="0.0" text="Admin Panel" textAlignment="CENTER">
+                <Text fx:id="userText" cache="true" cacheHint="SPEED" fill="#01233f" strokeType="OUTSIDE" strokeWidth="0.0" text="Admin Panel" textAlignment="CENTER">
                     <font>
-                        <Font name="System Bold" size="30.0"/>
+                        <Font name="System Bold" size="30.0" />
                     </font>
                 </Text>
             </VBox>
-            <Button alignment="BASELINE_LEFT" cache="true" cacheHint="SPEED" graphicTextGap="20.0" mnemonicParsing="false" onMouseClicked="#onLogoutButtonClicked" prefHeight="50.0" prefWidth="320.0" styleClass="menuButton" stylesheets="@../css/buttons.css" text="%label.profile">
-                <font>
-                    <Font name="System Bold" size="15.0" />
-                </font>
-                <graphic>
-                    <ImageView fitHeight="30.0" fitWidth="30.0" opacity="0.63" pickOnBounds="true" preserveRatio="true">
-                        <Image url="@../images/baseline_account_circle_black_18dp.png" />
-                    </ImageView>
-                </graphic>
-                <padding>
-                    <Insets left="50.0" />
-                </padding>
-            </Button>
-            <Button fx:id="logoutButton" alignment="BASELINE_LEFT" cache="true" cacheHint="SPEED" graphicTextGap="20.0" layoutX="10.0" layoutY="371.0" mnemonicParsing="false" onMouseClicked="#onLogoutButtonClicked" prefHeight="50.0" prefWidth="320.0" styleClass="menuButton" stylesheets="@../css/buttons.css" text="%label.logout">
-                <font>
-                    <Font name="System Bold" size="15.0" />
-                </font>
-                <padding>
-                    <Insets left="50.0" />
-                </padding>
-                <graphic>
-                    <ImageView fitHeight="30.0" fitWidth="30.0" opacity="0.63" pickOnBounds="true" preserveRatio="true">
-                        <Image url="@../images/baseline_exit_to_app_black_18dp.png" />
-                    </ImageView>
-                </graphic>
-            </Button>
+            <VBox fx:id="contentButtonsVBox" BorderPane.alignment="CENTER">
+                <Button alignment="BASELINE_LEFT" cache="true" cacheHint="SPEED" graphicTextGap="20.0"
+                        mnemonicParsing="false" onAction="#onProfileButtonClicked" prefHeight="50.0"
+                        prefWidth="320.0" styleClass="menuButton" stylesheets="@../css/buttons.css"
+                        text="%label.profile">
+                    <font>
+                        <Font name="System Bold" size="15.0"/>
+                    </font>
+                    <graphic>
+                        <ImageView fitHeight="30.0" fitWidth="30.0" opacity="0.63" pickOnBounds="true"
+                                   preserveRatio="true">
+                            <Image url="@../images/baseline_account_circle_black_18dp.png"/>
+                        </ImageView>
+                    </graphic>
+                    <padding>
+                        <Insets left="50.0"/>
+                    </padding>
+                </Button>
+                <Button alignment="BASELINE_LEFT" cache="true" cacheHint="SPEED" graphicTextGap="20.0"
+                        mnemonicParsing="false" onAction="#onLogoutButtonClicked" prefHeight="50.0"
+                        prefWidth="320.0" styleClass="menuButton" stylesheets="@../css/buttons.css"
+                        text="%label.logout">
+                    <font>
+                        <Font name="System Bold" size="15.0"/>
+                    </font>
+                    <padding>
+                        <Insets left="50.0"/>
+                    </padding>
+                    <graphic>
+                        <ImageView fitHeight="30.0" fitWidth="30.0" opacity="0.63" pickOnBounds="true"
+                                   preserveRatio="true">
+                            <Image url="@../images/baseline_exit_to_app_black_18dp.png"/>
+                        </ImageView>
+                    </graphic>
+                </Button>
+            </VBox>
         </VBox>
     </left>
    <center>
@@ -77,6 +85,11 @@
          <top>
                <AnchorPane prefHeight="120.0" prefWidth="880.0" BorderPane.alignment="CENTER">
                    <Button fx:id="exitButton" layoutX="846.0" layoutY="14.0" maxHeight="20.0" maxWidth="20.0" minHeight="20.0" minWidth="20.0" mnemonicParsing="false" onMouseClicked="#onExitButtonClicked" prefHeight="20.0" prefWidth="20.0" styleClass="exitButton" stylesheets="@../css/buttons.css" />
+               <Text fx:id="contentText" cache="true" cacheHint="SPEED" fill="#01233f" layoutX="28.0" layoutY="70.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER">
+                  <font>
+                     <Font name="System Bold" size="30.0" />
+                  </font>
+               </Text>
                </AnchorPane>
          </top>
       </BorderPane>

@@ -5,6 +5,7 @@ import bg.tuvarna.traveltickets.control.UndecoratedDialog;
 import bg.tuvarna.traveltickets.entity.Address;
 import bg.tuvarna.traveltickets.entity.Client;
 import bg.tuvarna.traveltickets.entity.ClientType;
+import bg.tuvarna.traveltickets.service.ClientService;
 import bg.tuvarna.traveltickets.service.impl.ClientServiceImpl;
 import bg.tuvarna.traveltickets.util.JpaOperationsUtil;
 import javafx.collections.FXCollections;
@@ -20,16 +21,22 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import static bg.tuvarna.traveltickets.common.AppConfig.getLangBundle;
 import static bg.tuvarna.traveltickets.common.Constants.CLIENT_DIALOG_FXML_PATH;
+import static bg.tuvarna.traveltickets.controller.ClientDialogController.DialogMode.ADD;
+import static bg.tuvarna.traveltickets.controller.ClientDialogController.DialogMode.VIEW;
 
 public class ClientsTableController implements Initializable {
+
+    private static final Logger LOG = LogManager.getLogger(ClientsTableController.class);
+
+    private final ClientService clientService = ClientServiceImpl.getInstance();
 
     @FXML
     private BorderPane root;
@@ -52,39 +59,41 @@ public class ClientsTableController implements Initializable {
     @FXML
     private TableColumn<Client, Address> columnCity;
 
-    @FXML
-    void onViewClicked(ActionEvent event) throws IOException {
-        // View clients
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(CLIENT_DIALOG_FXML_PATH), AppConfig.getLangBundle());
-        DialogPane dialogPane = loader.load();
-        ClientDialogController clientDialogController = loader.getController();
-        Client client = tableClients.getSelectionModel().getSelectedItem();
-        clientDialogController.initDialog(client, ClientDialogController.DialogMode.VIEW, c -> tableClients.getItems().add(c));
-
-        Dialog<Void> dialog = new UndecoratedDialog<>(root.getParent().getParent(), dialogPane);
-        dialog.showAndWait();
-    }
-
-    @FXML
-    void onAddClicked(ActionEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(CLIENT_DIALOG_FXML_PATH), AppConfig.getLangBundle());
-        DialogPane dialogPane = loader.load();
-        ClientDialogController clientDialogController = loader.getController();
-        Client client = new Client();
-        clientDialogController.initDialog(client, ClientDialogController.DialogMode.ADD, c -> tableClients.getItems().add(c));
-
-        Dialog<Void> dialog = new UndecoratedDialog<>(root.getParent().getParent(), dialogPane);
-        dialog.showAndWait();
-
-        //Add client to database
-    }
-
     @Override
     public void initialize(final URL location, final ResourceBundle resources) {
         initColumns();
 
-        List<Client> clients = JpaOperationsUtil.executeInTransaction(em -> ClientServiceImpl.getInstance().findAll());
+        final List<Client> clients = JpaOperationsUtil.execute(em -> clientService.findAll());
         tableClients.setItems(FXCollections.observableArrayList(clients));
+    }
+
+    @FXML
+    private void onViewClicked(final ActionEvent event) {
+        loadDialog(VIEW, tableClients.getSelectionModel().getSelectedItem());
+    }
+
+    @FXML
+    private void onAddClicked(final ActionEvent event) {
+        loadDialog(ADD, null);
+    }
+
+    private void loadDialog(final ClientDialogController.DialogMode dialogMode, final Client client) {
+        try {
+            final FXMLLoader loader = new FXMLLoader(getClass().getResource(CLIENT_DIALOG_FXML_PATH), AppConfig.getLangBundle());
+            final DialogPane dialogPane = loader.load();
+            final ClientDialogController clientDialogController = loader.getController();
+
+            clientDialogController.injectDialogMode(dialogMode, client, c -> tableClients.getItems().add(c));
+
+            final Dialog<Void> dialog = new UndecoratedDialog<>(root.getParent().getParent(), dialogPane);
+            dialog.showAndWait();
+        }
+        catch (Exception e) {
+            LOG.error("Error while trying to load client dialog with mode " + dialogMode.toString() + ": ", e);
+        }
+    }
+
+    public void setData() {
     }
 
     private void initColumns() {
@@ -92,35 +101,21 @@ public class ClientsTableController implements Initializable {
             @Override
             protected void updateItem(final ClientType item, final boolean empty) {
                 super.updateItem(item, empty);
-                if (empty) {
-                    //some logic must be added here
-                } else {
-                    //TODO use toString here
-                    setText(getLangBundle().getString("label." + item.getName().toString().toLowerCase()));
-                }
+                setText(!empty ? item.getName().toString() : null);
             }
         });
-
-        columnType.setCellValueFactory(new PropertyValueFactory<>("clientType"));
-        columnName.setCellValueFactory(new PropertyValueFactory<>("name"));
-        columnPhone.setCellValueFactory(new PropertyValueFactory<>("phone"));
-
         columnCity.setCellFactory(col -> new TableCell<>() {
             @Override
             protected void updateItem(final Address item, final boolean empty) {
                 super.updateItem(item, empty);
-                if (empty) {
-                    // some logic
-                } else {
-                    setText(item.getCity().getName());
-                }
+                setText(!empty ? item.getCity().getName() : null);
             }
         });
+        columnCity.setCellValueFactory(new PropertyValueFactory<>("address"));
 
-        PropertyValueFactory addressProperty = new PropertyValueFactory("address");
-        columnCity.setCellValueFactory(addressProperty);
+        columnType.setCellValueFactory(new PropertyValueFactory<>("clientType"));
+        columnName.setCellValueFactory(new PropertyValueFactory<>("name"));
+        columnPhone.setCellValueFactory(new PropertyValueFactory<>("phone"));
     }
 
-    public void setData() {
-    }
 }

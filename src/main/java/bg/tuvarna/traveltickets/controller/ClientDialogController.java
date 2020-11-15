@@ -55,7 +55,7 @@ public class ClientDialogController extends BaseUndecoratedController {
     private ClientType.Enum clientType;
     private DialogMode dialogMode;
 
-    private Consumer<Client> clientConsumer;
+    private Consumer<Client> onNewClient;
 
     @FXML
     private Text errorText;
@@ -102,27 +102,28 @@ public class ClientDialogController extends BaseUndecoratedController {
     @FXML
     private TextField detail2TextField;
 
-    @FXML
-    void onChange(ActionEvent event) {
-        configureDetails(clientTypeComboBox.getValue());
-    }
-
     @Override
     public void initialize(final URL location, final ResourceBundle resources) {
-        LOG.info("Dialog loaded");
         super.initialize(location, resources);
 
         setDetailsInvisible();
         clientTypeComboBox.getItems().setAll(ClientType.Enum.values());
         clientTypeComboBox.getSelectionModel().select(0);
         configureDetails(clientTypeComboBox.getValue());
+
+        LOG.info("Dialog loaded");
     }
 
-    public void initDialog(Client client, DialogMode mode, Consumer<Client> newClientConsumer) {
-        this.clientConsumer = newClientConsumer;
+    @FXML
+    private void onClientTypeChange(ActionEvent event) {
+        configureDetails(clientTypeComboBox.getValue());
+    }
+
+    public void injectDialogMode(final DialogMode mode, final Client client, final Consumer<Client> onNewClient) {
+        this.onNewClient = onNewClient;
         setMode(mode);
-        if (mode != DialogMode.ADD)
-            setData(client);
+
+        if (mode != DialogMode.ADD) setData(client);
     }
 
     private boolean validate() {
@@ -202,7 +203,7 @@ public class ClientDialogController extends BaseUndecoratedController {
             event.consume();
 
         //readData();
-        //clientConsumer.accept(client);
+        //onNewClient.accept(client);
         System.out.println("data read");
 
     }

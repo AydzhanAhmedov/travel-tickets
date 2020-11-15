@@ -54,7 +54,7 @@
                       <TextField fx:id="emailTextField" maxWidth="150.0" prefWidth="150.0" GridPane.columnIndex="1" />
                       <TextField fx:id="usernameTextField" maxWidth="150.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                       <PasswordField fx:id="passwordField" maxWidth="150.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                      <ComboBox fx:id="clientTypeComboBox" onAction="#onChange" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                      <ComboBox fx:id="clientTypeComboBox" onAction="#onClientTypeChange" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                       <TextField fx:id="nameTextField" maxWidth="150.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                       <NumberTextField fx:id="phoneTextField" maxWidth="150.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                       <TextField fx:id="addressTextField" maxWidth="150.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
