@@ -2,6 +2,7 @@ package bg.tuvarna.traveltickets.entity;
 
 import javafx.beans.property.StringProperty;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -41,16 +42,25 @@ public class Client implements Serializable {
     @Column(nullable = false)
     private String phone;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
     private Address address;
 
     public Client() {
-        user = new User();
+        user = new User(new Role(2L, Role.Enum.CLIENT));
     }
 
     public Client(final User user) {
         userId = user.getId();
         this.user = user;
+    }
+
+    public void setUserId(final Long userId) {
+        this.userId = userId;
+    }
+
+    public void setUser(final User user) {
+        this.user = user;
+        this.userId = user.getId();
     }
 
     public Long getUserId() {

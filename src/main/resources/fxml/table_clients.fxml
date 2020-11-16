@@ -7,17 +7,19 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 
+<?import javafx.geometry.Insets?>
 <BorderPane fx:id="root" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="bg.tuvarna.traveltickets.controller.ClientsTableController">
     <top>
-        <HBox prefHeight="40.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+        <HBox prefHeight="40.0" prefWidth="600.0" BorderPane.alignment="CENTER" >
+            <padding>
+                <Insets left="20.0" right="20.0" />
+            </padding>
             <children>
-                <Button mnemonicParsing="false" onAction="#onAddClicked" text="Add" />
-                <Separator orientation="VERTICAL" prefHeight="200.0" />
-                <Button mnemonicParsing="false" text="Delete" />
-                <Separator orientation="VERTICAL" prefHeight="200.0" />
-                <Button mnemonicParsing="false" text="Update" />
-                <Separator orientation="VERTICAL" prefHeight="200.0" />
-                <Button fx:id="buttonView" mnemonicParsing="false" onAction="#onViewClicked" text="View" />
+                <Button mnemonicParsing="false" onAction="#onAddClicked" text="Add" styleClass="markAsReadBtn" stylesheets="@../css/buttons.css"/>
+                <Separator orientation="VERTICAL" prefHeight="200.0" visible="false"/>
+                <Button mnemonicParsing="false" text="Update" styleClass="markAsReadBtn" stylesheets="@../css/buttons.css"/>
+                <Separator orientation="VERTICAL" prefHeight="200.0" visible="false"/>
+                <Button fx:id="buttonView" mnemonicParsing="false" onAction="#onViewClicked" text="View" styleClass="markAsReadBtn" stylesheets="@../css/buttons.css"/>
             </children>
         </HBox>
     </top>

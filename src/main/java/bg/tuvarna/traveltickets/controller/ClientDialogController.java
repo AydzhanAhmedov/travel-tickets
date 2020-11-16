@@ -8,7 +8,12 @@ import bg.tuvarna.traveltickets.entity.City;
 import bg.tuvarna.traveltickets.entity.Client;
 import bg.tuvarna.traveltickets.entity.ClientType;
 import bg.tuvarna.traveltickets.entity.Company;
+import bg.tuvarna.traveltickets.entity.Distributor;
 import bg.tuvarna.traveltickets.entity.User;
+import bg.tuvarna.traveltickets.service.ClientService;
+import bg.tuvarna.traveltickets.service.impl.ClientServiceImpl;
+import bg.tuvarna.traveltickets.service.impl.ClientTypeServiceImpl;
+import bg.tuvarna.traveltickets.util.JpaOperationsUtil;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -26,6 +31,7 @@ import javafx.scene.text.Text;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.math.BigDecimal;
 import java.net.URL;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -47,6 +53,7 @@ import static bg.tuvarna.traveltickets.common.Constants.INVALID_USERNAME_KEY;
 
 public class ClientDialogController extends BaseUndecoratedController {
 
+    private final ClientService clientService = ClientServiceImpl.getInstance();
     private static final Logger LOG = LogManager.getLogger(ClientDialogController.class);
 
     public enum DialogMode {VIEW, ADD, EDIT}
@@ -199,11 +206,12 @@ public class ClientDialogController extends BaseUndecoratedController {
     }
 
     private void onAddClick(Event event) {
-        if (!validate())
-            event.consume();
+        //if (!validate())
+        //    event.consume();
 
-        //readData();
-        //onNewClient.accept(client);
+        readData();
+        JpaOperationsUtil.executeInTransaction(em -> ClientServiceImpl.getInstance().addClient(client));
+        onNewClient.accept(client);
         System.out.println("data read");
 
     }
@@ -272,7 +280,17 @@ public class ClientDialogController extends BaseUndecoratedController {
 
     private void readData() {
 
-        client.setClientType(new ClientType(clientTypeComboBox.getValue()));
+        if (client == null) {
+            client = switch (clientType) {
+                case COMPANY -> new Company();
+                case CASHIER -> new Cashier();
+                case DISTRIBUTOR -> new Distributor();
+            };
+
+            LOG.debug("New client created");
+        }
+
+        client.setClientType(ClientTypeServiceImpl.getInstance().findByName(clientType));
 
         City city = new City(cityTextField.getText());
         Address address = new Address(city, addressTextField.getText());
@@ -283,6 +301,16 @@ public class ClientDialogController extends BaseUndecoratedController {
         client.getUser().setUsername(emailTextField.getText());
         client.getUser().setPassword(passwordField.getText());
 
+        if (client instanceof Company) {
+            ((Company) client).setLogoUrl(detail1TextField.getText());
+            ((Company) client).setDescription(detail2TextField.getText());
+        }
+
+        if (client instanceof Cashier) {
+            ((Cashier) client).setHonorarium(BigDecimal.valueOf(Double.valueOf(detail1TextField.getText())));
+        }
+
+        LOG.debug("Data read");
     }
 
     private void setData(Client client) {

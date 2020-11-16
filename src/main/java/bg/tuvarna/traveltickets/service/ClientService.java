@@ -8,5 +8,7 @@ public interface ClientService {
 
     Client findByUserId(Long userId);
 
+    Client addClient(Client client);
+
     List<Client> findAll();
 }
