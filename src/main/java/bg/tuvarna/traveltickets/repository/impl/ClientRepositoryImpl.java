@@ -31,6 +31,11 @@ public class ClientRepositoryImpl extends GenericCrudRepositoryImpl<Client, Long
                 WHERE c.clientType.id = :clientTypeId
             """;
 
+    private static final String FIND_ALL_IDS_BY_CLIENT_TYPE_IDS_HQL = """
+                SELECT c FROM Client AS c
+                WHERE c.clientType.id IN (:clientTypeId)
+            """;
+
     private static final String FIND_ALL_CASHIERS_BY_DISTRIBUTOR_ID_HQL = """
                 SELECT c FROM Cashier AS c
                 WHERE c.createdBy.id IN (:userId)
@@ -62,6 +67,14 @@ public class ClientRepositoryImpl extends GenericCrudRepositoryImpl<Client, Long
         return EntityManagerUtil.getEntityManager()
                 .createQuery(FIND_ALL_IDS_BY_CLIENT_TYPE_ID_HQL, Client.class)
                 .setParameter(CLIENT_TYPE_ID_PARAM, clientTypeId)
+                .getResultList();
+    }
+
+    @Override
+    public List<Client> findAllByClientTypeIds(final List<Long> clientTypeIds) {
+        return EntityManagerUtil.getEntityManager()
+                .createQuery(FIND_ALL_IDS_BY_CLIENT_TYPE_IDS_HQL, Client.class)
+                .setParameter(CLIENT_TYPE_ID_PARAM, clientTypeIds)
                 .getResultList();
     }
 

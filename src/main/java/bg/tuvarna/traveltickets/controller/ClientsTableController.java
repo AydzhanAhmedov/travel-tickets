@@ -6,6 +6,7 @@ import bg.tuvarna.traveltickets.entity.Address;
 import bg.tuvarna.traveltickets.entity.Client;
 import bg.tuvarna.traveltickets.entity.ClientType;
 import bg.tuvarna.traveltickets.service.ClientService;
+import bg.tuvarna.traveltickets.service.impl.AuthServiceImpl;
 import bg.tuvarna.traveltickets.service.impl.ClientServiceImpl;
 import bg.tuvarna.traveltickets.util.JpaOperationsUtil;
 import javafx.collections.FXCollections;
@@ -63,7 +64,17 @@ public class ClientsTableController implements Initializable {
     public void initialize(final URL location, final ResourceBundle resources) {
         initColumns();
 
-        final List<Client> clients = JpaOperationsUtil.execute(em -> clientService.findAll());
+        List<Client> clients;
+
+        if (AuthServiceImpl.getInstance().loggedUserIsAdmin()) {
+            clients = JpaOperationsUtil.execute(em -> clientService.findAllCompaniesAndDistributors());
+        } else if (AuthServiceImpl.getInstance().getLoggedClient().getClientType().getName() == ClientType.Enum.DISTRIBUTOR) {
+            clients = JpaOperationsUtil.execute(em -> clientService.findAllCashiersForLoggedUser());
+        } else {
+            LOG.error("Cant display clients for currently logged client type");
+            return;
+        }
+
         tableClients.setItems(FXCollections.observableArrayList(clients));
     }
 

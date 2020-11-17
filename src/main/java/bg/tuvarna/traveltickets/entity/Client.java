@@ -1,7 +1,5 @@
 package bg.tuvarna.traveltickets.entity;
 
-import javafx.beans.property.StringProperty;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -46,7 +44,6 @@ public class Client implements Serializable {
     private Address address;
 
     public Client() {
-        user = new User(new Role(2L, Role.Enum.CLIENT));
     }
 
     public Client(final User user) {

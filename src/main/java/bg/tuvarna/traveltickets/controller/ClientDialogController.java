@@ -9,10 +9,14 @@ import bg.tuvarna.traveltickets.entity.Client;
 import bg.tuvarna.traveltickets.entity.ClientType;
 import bg.tuvarna.traveltickets.entity.Company;
 import bg.tuvarna.traveltickets.entity.Distributor;
+import bg.tuvarna.traveltickets.entity.Role;
 import bg.tuvarna.traveltickets.entity.User;
+import bg.tuvarna.traveltickets.service.AuthService;
 import bg.tuvarna.traveltickets.service.ClientService;
+import bg.tuvarna.traveltickets.service.impl.AuthServiceImpl;
 import bg.tuvarna.traveltickets.service.impl.ClientServiceImpl;
 import bg.tuvarna.traveltickets.service.impl.ClientTypeServiceImpl;
+import bg.tuvarna.traveltickets.service.impl.RoleServiceImpl;
 import bg.tuvarna.traveltickets.util.JpaOperationsUtil;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -35,6 +39,7 @@ import java.math.BigDecimal;
 import java.net.URL;
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
@@ -54,6 +59,7 @@ import static bg.tuvarna.traveltickets.common.Constants.INVALID_USERNAME_KEY;
 public class ClientDialogController extends BaseUndecoratedController {
 
     private final ClientService clientService = ClientServiceImpl.getInstance();
+    private final AuthService authService = AuthServiceImpl.getInstance();
     private static final Logger LOG = LogManager.getLogger(ClientDialogController.class);
 
     public enum DialogMode {VIEW, ADD, EDIT}
@@ -113,9 +119,7 @@ public class ClientDialogController extends BaseUndecoratedController {
     public void initialize(final URL location, final ResourceBundle resources) {
         super.initialize(location, resources);
 
-        setDetailsInvisible();
-        clientTypeComboBox.getItems().setAll(ClientType.Enum.values());
-        clientTypeComboBox.getSelectionModel().select(0);
+        initClientTypeComboBox();
         configureDetails(clientTypeComboBox.getValue());
 
         LOG.info("Dialog loaded");
@@ -124,6 +128,15 @@ public class ClientDialogController extends BaseUndecoratedController {
     @FXML
     private void onClientTypeChange(ActionEvent event) {
         configureDetails(clientTypeComboBox.getValue());
+    }
+
+    private void initClientTypeComboBox() {
+        if (authService.loggedUserIsAdmin())
+            clientTypeComboBox.getItems().setAll(List.of(ClientType.Enum.COMPANY, ClientType.Enum.DISTRIBUTOR));
+        else
+            clientTypeComboBox.getItems().setAll(ClientType.Enum.CASHIER);
+
+        clientTypeComboBox.getSelectionModel().select(0);
     }
 
     public void injectDialogMode(final DialogMode mode, final Client client, final Consumer<Client> onNewClient) {
@@ -287,7 +300,11 @@ public class ClientDialogController extends BaseUndecoratedController {
                 case DISTRIBUTOR -> new Distributor();
             };
 
-            LOG.debug("New client created");
+            User user = new User();
+            user.setRole(RoleServiceImpl.getInstance().findByName(Role.Enum.CLIENT));
+            client.setUser(user);
+
+            LOG.debug("New local client created");
         }
 
         client.setClientType(ClientTypeServiceImpl.getInstance().findByName(clientType));

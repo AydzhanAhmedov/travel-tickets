@@ -54,6 +54,10 @@ public class User extends BaseEntity {
         this.notifications = notifications;
     }
 
+    public void setRole(final Role role) {
+        this.role = role;
+    }
+
     public String getEmail() {
         return email;
     }

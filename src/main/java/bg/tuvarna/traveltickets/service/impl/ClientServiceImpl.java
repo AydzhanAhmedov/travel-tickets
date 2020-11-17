@@ -12,7 +12,11 @@ import bg.tuvarna.traveltickets.repository.impl.ClientRepositoryImpl;
 import bg.tuvarna.traveltickets.repository.impl.UserRepositoryImpl;
 import bg.tuvarna.traveltickets.service.ClientService;
 
+import java.util.Arrays;
 import java.util.List;
+
+import static bg.tuvarna.traveltickets.entity.ClientType.Enum.COMPANY;
+import static bg.tuvarna.traveltickets.entity.ClientType.Enum.DISTRIBUTOR;
 
 public class ClientServiceImpl implements ClientService {
 
@@ -58,6 +62,17 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public List<Client> findAll() {
         return clientRepository.findAll();
+    }
+
+    @Override
+    public List<Client> findAllCompaniesAndDistributors() {
+        return clientRepository.findAllByClientTypeIds(Arrays.asList(ClientTypeServiceImpl.getInstance().findByName(DISTRIBUTOR).getId(),
+                ClientTypeServiceImpl.getInstance().findByName(COMPANY).getId()));
+    }
+
+    @Override
+    public List<Client> findAllCashiersForLoggedUser() {
+        return (List<Client>) (List<?>) clientRepository.findAllCashiersByDistributorIds(List.of(AuthServiceImpl.getInstance().getLoggedClient().getUserId()));
     }
 
     private static ClientServiceImpl instance;

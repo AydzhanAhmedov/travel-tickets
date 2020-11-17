@@ -11,4 +11,8 @@ public interface ClientService {
     Client addClient(Client client);
 
     List<Client> findAll();
+
+    List<Client> findAllCompaniesAndDistributors();
+
+    List<Client> findAllCashiersForLoggedUser();
 }
