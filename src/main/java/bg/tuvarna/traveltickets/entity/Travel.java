@@ -6,6 +6,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -22,6 +23,8 @@ import java.util.Objects;
 public class Travel extends BaseAuditEntity {
 
     private static final long serialVersionUID = 6063243358784196914L;
+
+    private String name;
 
     @ManyToOne
     @JoinColumn(name = "travel_type_id", nullable = false)
@@ -55,14 +58,30 @@ public class Travel extends BaseAuditEntity {
     private List<TravelRoute> travelRoutes = new ArrayList<>();
 
     //TODO: fix the association mapping.
-    //@OneToMany(mappedBy = "travel")
-    //private List<TravelDistributorRequest> distributorRequests = new ArrayList<>();
+    @OneToMany(mappedBy = "travel", fetch = FetchType.EAGER)
+    private List<TravelDistributorRequest> distributorRequests = new ArrayList<>();
 
     public Travel() {
     }
 
     public Travel(Long id) {
         super.id = id;
+    }
+
+    public List<TravelDistributorRequest> getDistributorRequests() {
+        return distributorRequests;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    public void setDistributorRequests(final List<TravelDistributorRequest> distributorRequests) {
+        this.distributorRequests = distributorRequests;
     }
 
     public TravelType getTravelType() {

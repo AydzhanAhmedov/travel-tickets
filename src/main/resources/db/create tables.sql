@@ -67,6 +67,7 @@ CREATE TABLE transport_types(
 DROP TABLE IF EXISTS travels;
 CREATE TABLE travels(
 	id bigserial NOT NULL PRIMARY KEY,
+	name varchar(100) NOT NULL,
 	travel_type_id int4 NOT NULL,
 	travel_status_id int4 NOT NULL,
 	start_date timestamp NOT NULL,

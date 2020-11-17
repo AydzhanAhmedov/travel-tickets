@@ -23,6 +23,7 @@ public class TravelDistributorRequest implements Serializable {
     @MapsId("travelID")
     private Travel travel;
 
+    @JoinColumn(name = "distributor_id")
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("distributorID")
     private User user;
