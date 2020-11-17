@@ -10,6 +10,7 @@ import bg.tuvarna.traveltickets.util.JpaOperationsUtil;
 
 import javax.persistence.TypedQuery;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static bg.tuvarna.traveltickets.common.Constants.CLIENT_TYPE_ID_PARAM;
 import static bg.tuvarna.traveltickets.common.Constants.USER_ID_PARAM;
@@ -23,21 +24,22 @@ public class ClientRepositoryImpl extends GenericCrudRepositoryImpl<Client, Long
             """;
 
     private static final String FIND_ALL_CLIENTS_HQL = """
-                FROM Client
+                SELECT c FROM Client AS c
+                LEFT JOIN FETCH c.user
+                LEFT JOIN FETCH c.address
             """;
 
-    private static final String FIND_ALL_IDS_BY_CLIENT_TYPE_ID_HQL = """
-                SELECT c FROM Client AS c
+    private static final String FIND_ALL_IDS_BY_CLIENT_TYPE_ID_HQL_FORMAT = """
+                SELECT c FROM %s AS c
+                LEFT JOIN FETCH c.user
+                LEFT JOIN FETCH c.address
                 WHERE c.clientType.id = :clientTypeId
-            """;
-
-    private static final String FIND_ALL_IDS_BY_CLIENT_TYPE_IDS_HQL = """
-                SELECT c FROM Client AS c
-                WHERE c.clientType.id IN (:clientTypeId)
             """;
 
     private static final String FIND_ALL_CASHIERS_BY_DISTRIBUTOR_ID_HQL = """
                 SELECT c FROM Cashier AS c
+                LEFT JOIN FETCH c.user
+                LEFT JOIN FETCH c.address
                 WHERE c.createdBy.id IN (:userId)
             """;
 
@@ -63,27 +65,24 @@ public class ClientRepositoryImpl extends GenericCrudRepositoryImpl<Client, Long
     }
 
     @Override
-    public List<Client> findAllByClientTypeId(final Long clientTypeId) {
+    public <T extends Client> List<Client> findAllByClientTypeId(final Long clientTypeId, final Class<T> clientClass) {
+        final String hql = FIND_ALL_IDS_BY_CLIENT_TYPE_ID_HQL_FORMAT.formatted(clientClass.toString());
         return EntityManagerUtil.getEntityManager()
-                .createQuery(FIND_ALL_IDS_BY_CLIENT_TYPE_ID_HQL, Client.class)
+                .createQuery(hql, clientClass)
                 .setParameter(CLIENT_TYPE_ID_PARAM, clientTypeId)
-                .getResultList();
+                .getResultStream()
+                .map(c -> (Client) c)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public List<Client> findAllByClientTypeIds(final List<Long> clientTypeIds) {
-        return EntityManagerUtil.getEntityManager()
-                .createQuery(FIND_ALL_IDS_BY_CLIENT_TYPE_IDS_HQL, Client.class)
-                .setParameter(CLIENT_TYPE_ID_PARAM, clientTypeIds)
-                .getResultList();
-    }
-
-    @Override
-    public List<Cashier> findAllCashiersByDistributorIds(final List<Long> distributorId) {
+    public List<Client> findAllCashiersByDistributorIds(final List<Long> distributorId) {
         return EntityManagerUtil.getEntityManager()
                 .createQuery(FIND_ALL_CASHIERS_BY_DISTRIBUTOR_ID_HQL, Cashier.class)
                 .setParameter(USER_ID_PARAM, distributorId)
-                .getResultList();
+                .getResultStream()
+                .map(c -> (Client) c)
+                .collect(Collectors.toList());
     }
 
     private static ClientRepositoryImpl instance;

@@ -22,6 +22,7 @@ public final class Constants {
 
     // Bundles
     public static final String SEEN_BUTTON_KEY = "label.button.seen";
+    public static final String EDIT_BUTTON_KEY = "label.button.edit";
 
     public static final String SYSTEM_KEY = "label.system";
     public static final String HOURS_KEY = "label.short_hours_ago";
@@ -47,6 +48,7 @@ public final class Constants {
     public static final String CLIENT_DIALOG_FXML_PATH = "/fxml/client_dialog.fxml";
     public static final String NOTIFICATIONS_DIALOG_FXML_PATH = "/fxml/notifications_dialog.fxml";
     public static final String CLIENTS_TABLE_FXML_PATH = "/fxml/table_clients.fxml";
+    public static final String TRAVELS_TABLE_FXML_PATH = "/fxml/table_travels.fxml";
 
     // Other constants
     public static final String EMPTY_STRING = "";

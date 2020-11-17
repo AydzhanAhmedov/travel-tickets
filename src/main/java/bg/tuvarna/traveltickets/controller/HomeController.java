@@ -7,7 +7,6 @@ import bg.tuvarna.traveltickets.controller.base.BaseUndecoratedController;
 import bg.tuvarna.traveltickets.entity.ClientType;
 import bg.tuvarna.traveltickets.entity.Company;
 import bg.tuvarna.traveltickets.entity.NotificationRecipient;
-import bg.tuvarna.traveltickets.schedule.ScheduledTicketsNotificationCheck;
 import bg.tuvarna.traveltickets.service.AuthService;
 import bg.tuvarna.traveltickets.service.NotificationService;
 import bg.tuvarna.traveltickets.service.impl.AuthServiceImpl;
@@ -40,7 +39,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import static bg.tuvarna.traveltickets.common.AppConfig.getLangBundle;
 import static bg.tuvarna.traveltickets.common.AppConfig.setPrimaryStageScene;
@@ -49,6 +47,7 @@ import static bg.tuvarna.traveltickets.common.Constants.ACTIVE_NOTIFICATIONS_BTN
 import static bg.tuvarna.traveltickets.common.Constants.CLIENTS_TABLE_FXML_PATH;
 import static bg.tuvarna.traveltickets.common.Constants.NOTIFICATIONS_BTN_CSS;
 import static bg.tuvarna.traveltickets.common.Constants.NOTIFICATIONS_DIALOG_FXML_PATH;
+import static bg.tuvarna.traveltickets.common.Constants.TRAVELS_TABLE_FXML_PATH;
 import static bg.tuvarna.traveltickets.util.notifications.NotificationEvent.NEW_NOTIFICATION;
 
 public class HomeController extends BaseUndecoratedController {
@@ -128,8 +127,8 @@ public class HomeController extends BaseUndecoratedController {
 
     private EventHandler<ActionEvent> getEventHandler(MenuContent content) {
         return switch (content) {
-            case BTN_CLIENTS -> this::clientsBtnHandler;
-            case BTN_TRAVELS -> event -> {/*executeInTransaction(em -> { //TODO: remove this, only for test
+            case BTN_CLIENTS -> this::onClientsBtnClicked;
+            case BTN_TRAVELS -> this::onTravelsBtnClicked;/*executeInTransaction(em -> { //TODO: remove this, only for test
                 final City varna = CityServiceImpl.getInstance().findOrAddByName("Varna");
                 final City sofia = CityServiceImpl.getInstance().findOrAddByName("Sofia");
 
@@ -158,7 +157,6 @@ public class HomeController extends BaseUndecoratedController {
 
                 return travel;
             });*/
-            };
             case BTN_REQUESTS -> event -> {
             };
             case BTN_STATISTIC -> event -> {
@@ -168,13 +166,23 @@ public class HomeController extends BaseUndecoratedController {
         };
     }
 
-    public void clientsBtnHandler(final ActionEvent actionEvent) {
+    public void onClientsBtnClicked(final ActionEvent actionEvent) {
         try {
             contentText.setText(((Button) actionEvent.getSource()).getText());
             childBorderPane.setCenter(new FXMLLoader(getClass().getResource(CLIENTS_TABLE_FXML_PATH), getLangBundle()).load());
         }
         catch (IOException e) {
             LOG.error("Error loading clients table: ", e);
+        }
+    }
+
+    public void onTravelsBtnClicked(final ActionEvent actionEvent) {
+        try {
+            contentText.setText(((Button) actionEvent.getSource()).getText());
+            childBorderPane.setCenter(new FXMLLoader(getClass().getResource(TRAVELS_TABLE_FXML_PATH), getLangBundle()).load());
+        }
+        catch (IOException e) {
+            LOG.error("Error loading travels table: ", e);
         }
     }
 
@@ -255,10 +263,10 @@ public class HomeController extends BaseUndecoratedController {
             return;
         }
 
-        scheduledExecutorService.scheduleWithFixedDelay(
-                new ScheduledTicketsNotificationCheck(n -> fireNewNotificationEvent()),
-                0L, AppConfig.getNotificationCheckPeriod(), TimeUnit.MILLISECONDS
-        );
+//        scheduledExecutorService.scheduleWithFixedDelay(
+//                new ScheduledTicketsNotificationCheck(n -> fireNewNotificationEvent()),
+//                0L, AppConfig.getNotificationCheckPeriod(), TimeUnit.MILLISECONDS
+//        );
     }
 
 }

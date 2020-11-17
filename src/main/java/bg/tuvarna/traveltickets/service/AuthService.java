@@ -5,7 +5,7 @@ import bg.tuvarna.traveltickets.entity.Client;
 import bg.tuvarna.traveltickets.entity.ClientType;
 import bg.tuvarna.traveltickets.entity.User;
 
-import java.util.EnumSet;
+import java.util.List;
 
 public interface AuthService {
 
@@ -21,5 +21,6 @@ public interface AuthService {
 
     void logout();
 
-    EnumSet<MenuContent> getLoggedUserMenuContent();
+    List<MenuContent> getLoggedUserMenuContent();
+
 }

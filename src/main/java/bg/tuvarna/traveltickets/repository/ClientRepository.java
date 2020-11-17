@@ -1,6 +1,5 @@
 package bg.tuvarna.traveltickets.repository;
 
-import bg.tuvarna.traveltickets.entity.Cashier;
 import bg.tuvarna.traveltickets.entity.Client;
 import bg.tuvarna.traveltickets.entity.ClientType;
 import bg.tuvarna.traveltickets.repository.base.GenericCrudRepository;
@@ -15,10 +14,8 @@ public interface ClientRepository extends GenericCrudRepository<Client, Long> {
 
     List<Client> findAll();
 
-    List<Client> findAllByClientTypeId(Long clientTypeIds);
+    <T extends Client> List<Client> findAllByClientTypeId(Long clientTypeId, Class<T> clientClass);
 
-    List<Client> findAllByClientTypeIds(List<Long> clientTypeIds);
-
-    List<Cashier> findAllCashiersByDistributorIds(final List<Long> distributorId);
+    List<Client> findAllCashiersByDistributorIds(final List<Long> distributorId);
 
 }

@@ -73,7 +73,6 @@ public final class ScheduledTicketsNotificationCheck implements Runnable {
         notifierFunction.notifyRecipient(executeInTransaction(em -> createNotificationsIfNeeded(clientId, clientType)));
     }
 
-    // TODO: change .getDetails with Name getter when created
     private List<Notification> createNotificationsIfNeeded(final Long clientId, final ClientType.Enum clientType) {
         final List<Travel> travels = findTravels(clientId, clientType);
         if (travels.isEmpty()) {
@@ -88,12 +87,12 @@ public final class ScheduledTicketsNotificationCheck implements Runnable {
         if (clientType == COMPANY) {
             // ticketQuantity - currentQuantity = soldTicketsQuantity
             notifications.addAll(createNotifications(travels, t -> soldFormat
-                    .formatted(t.getDetails(), t.getTicketQuantity() - t.getCurrentTicketQuantity()), SOLD_TICKETS));
+                    .formatted(t.getName(), t.getTicketQuantity() - t.getCurrentTicketQuantity()), SOLD_TICKETS));
 
             LOG.debug("{} notifications of type {} created.", notifications.size(), SOLD_TICKETS.toString());
         }
 
-        final List<Notification> unsoldNotifications = createNotifications(travels, t -> unsoldFormat.formatted(t.getDetails()), UNSOLD_TICKETS);
+        final List<Notification> unsoldNotifications = createNotifications(travels, t -> unsoldFormat.formatted(t.getName()), UNSOLD_TICKETS);
         notifications.addAll(unsoldNotifications);
 
         LOG.debug("{} notifications of type {} created.", unsoldNotifications.size(), UNSOLD_TICKETS.toString());

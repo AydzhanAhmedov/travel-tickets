@@ -17,6 +17,15 @@ import static bg.tuvarna.traveltickets.common.Constants.USER_ID_PARAM;
 
 public class TravelRepositoryImpl extends GenericCrudRepositoryImpl<Travel, Long> implements TravelRepository {
 
+    private static final String FIND_ALL_HQL = """
+                FROM Travel
+            """;
+
+    private static final String FIND_ALL_BY_COMPANY_ID_HQL = """
+                SELECT t FROM Travel AS t
+                WHERE t.createdBy.id = :userId
+            """;
+
     private static final String FIND_ALL_BY_COMPANY_ID_AND_TRAVEL_STATUS_ID_HQL = """
                 SELECT t FROM Travel AS t
                 WHERE t.travelStatus.id = :travelStatusId AND t.createdBy.id = :userId
@@ -45,6 +54,21 @@ public class TravelRepositoryImpl extends GenericCrudRepositoryImpl<Travel, Long
 
         entityManager.persist(travelRoute);
         return travelRoute;
+    }
+
+    @Override
+    public List<Travel> findAll() {
+        return EntityManagerUtil.getEntityManager()
+                .createQuery(FIND_ALL_HQL, Travel.class)
+                .getResultList();
+    }
+
+    @Override
+    public List<Travel> findAllByCompanyId(final Long companyId) {
+        return EntityManagerUtil.getEntityManager()
+                .createQuery(FIND_ALL_BY_COMPANY_ID_HQL, Travel.class)
+                .setParameter(USER_ID_PARAM, companyId)
+                .getResultList();
     }
 
     @Override

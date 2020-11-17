@@ -6,9 +6,7 @@ import bg.tuvarna.traveltickets.entity.Address;
 import bg.tuvarna.traveltickets.entity.Client;
 import bg.tuvarna.traveltickets.entity.ClientType;
 import bg.tuvarna.traveltickets.service.ClientService;
-import bg.tuvarna.traveltickets.service.impl.AuthServiceImpl;
 import bg.tuvarna.traveltickets.service.impl.ClientServiceImpl;
-import bg.tuvarna.traveltickets.util.JpaOperationsUtil;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -26,7 +24,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
 
 import static bg.tuvarna.traveltickets.common.Constants.CLIENT_DIALOG_FXML_PATH;
@@ -63,19 +60,7 @@ public class ClientsTableController implements Initializable {
     @Override
     public void initialize(final URL location, final ResourceBundle resources) {
         initColumns();
-
-        List<Client> clients;
-
-        if (AuthServiceImpl.getInstance().loggedUserIsAdmin()) {
-            clients = JpaOperationsUtil.execute(em -> clientService.findAllCompaniesAndDistributors());
-        } else if (AuthServiceImpl.getInstance().getLoggedClient().getClientType().getName() == ClientType.Enum.DISTRIBUTOR) {
-            clients = JpaOperationsUtil.execute(em -> clientService.findAllCashiersForLoggedUser());
-        } else {
-            LOG.error("Cant display clients for currently logged client type");
-            return;
-        }
-
-        tableClients.setItems(FXCollections.observableArrayList(clients));
+        tableClients.setItems(FXCollections.observableArrayList(clientService.findAll()));
     }
 
     @FXML

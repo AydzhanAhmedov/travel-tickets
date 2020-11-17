@@ -37,8 +37,8 @@ public final class AppConfig {
     private static Stage primaryStage;
     private static Long notificationCheckPeriod = DEFAULT_NOTIFICATION_CHECK_PERIOD_MILLS;
 
-    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter
-            .ofLocalizedDateTime(FormatStyle.SHORT, FormatStyle.MEDIUM).withLocale(language.getLocale());
+    private static DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT, FormatStyle.MEDIUM).withLocale(language.getLocale());
+    private static DateTimeFormatter shortDateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT).withLocale(language.getLocale());
 
     private static AblyRealtime ablyClient;
     private static boolean ablyIsEnabled;
@@ -65,12 +65,17 @@ public final class AppConfig {
 
     public static void setLanguage(final SupportedLanguage language) {
         AppConfig.language = language;
-        DATE_TIME_FORMATTER.withLocale(language.getLocale());
+        dateTimeFormatter = dateTimeFormatter.withLocale(language.getLocale());
+        shortDateTimeFormatter = shortDateTimeFormatter.withLocale(language.getLocale());
         AppScreens.reloadScreens();
     }
 
     public static DateTimeFormatter getDateTimeFormatter() {
-        return DATE_TIME_FORMATTER;
+        return dateTimeFormatter;
+    }
+
+    public static DateTimeFormatter getShortDateTimeFormatter() {
+        return dateTimeFormatter;
     }
 
     public static Stage getPrimaryStage() {

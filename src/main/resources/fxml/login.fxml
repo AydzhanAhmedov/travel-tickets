@@ -23,12 +23,12 @@
    </left>
    <center>
       <AnchorPane focusTraversable="true" onKeyPressed="#onKeyPressed" prefHeight="600.0" prefWidth="603.0" style="-fx-background-color: #d3d3ed;" BorderPane.alignment="CENTER">
-         <TextField fx:id="usernameTextField" layoutX="137.0" layoutY="257.0" prefHeight="30.0" prefWidth="250.0" promptText="%label.user_name" style="-fx-background-color: transparent; -fx-border-color: #7076ba#7076ba; -fx-border-width: 0px 0px 2px 0px;">
+         <TextField fx:id="usernameTextField" layoutX="137.0" layoutY="257.0" prefHeight="30.0" prefWidth="250.0" promptText="%label.user_name" styleClass="loginTextField" stylesheets="@../css/text_fields.css">
             <opaqueInsets>
                <Insets />
             </opaqueInsets>
          </TextField>
-         <PasswordField fx:id="passwordField" layoutX="137.0" layoutY="309.0" prefHeight="30.0" prefWidth="250.0" promptText="%label.password" style="-fx-background-color: transparent; -fx-border-color: #7076ba#7076ba; -fx-border-width: 0px 0px 2px 0px;" />
+         <PasswordField fx:id="passwordField" layoutX="137.0" layoutY="309.0" prefHeight="30.0" prefWidth="250.0" promptText="%label.password" styleClass="loginTextField" stylesheets="@../css/text_fields.css" />
          <Button fx:id="loginButton" cache="true" cacheHint="SPEED" layoutX="116.0" layoutY="402.0" mnemonicParsing="false" onMouseClicked="#onLoginButtonClicked" prefHeight="30.0" prefWidth="273.0" styleClass="loginBtn" stylesheets="@../css/buttons.css" text="%label.button.login">
             <font>
                <Font name="System Bold" size="14.0" />

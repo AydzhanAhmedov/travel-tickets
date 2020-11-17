@@ -8,10 +8,10 @@ import bg.tuvarna.traveltickets.entity.User;
 import bg.tuvarna.traveltickets.repository.UserRepository;
 import bg.tuvarna.traveltickets.repository.impl.UserRepositoryImpl;
 import bg.tuvarna.traveltickets.service.AuthService;
-import bg.tuvarna.traveltickets.service.ClientService;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.EnumSet;
+import java.util.List;
 
 import static bg.tuvarna.traveltickets.common.Constants.CLIENT_NOT_FOUND_FORMAT;
 import static bg.tuvarna.traveltickets.entity.Role.Enum.ADMIN;
@@ -19,31 +19,30 @@ import static bg.tuvarna.traveltickets.entity.Role.Enum.ADMIN;
 public final class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository = UserRepositoryImpl.getInstance();
-    private final ClientService clientService = ClientServiceImpl.getInstance();
 
     private User loggedUser;
     private Client loggedClient;
 
-    private final EnumSet<MenuContent> adminContent = EnumSet.of(
+    private final List<MenuContent> adminContent = List.of(
             MenuContent.BTN_CLIENTS,
             MenuContent.BTN_STATISTIC
     );
 
-    private final EnumSet<MenuContent> companyContent = EnumSet.of(
-            MenuContent.BTN_STATISTIC,
+    private final List<MenuContent> companyContent = List.of(
             MenuContent.BTN_TRAVELS,
             MenuContent.BTN_REQUESTS,
-            MenuContent.BTN_SOLD_TICKETS
+            MenuContent.BTN_SOLD_TICKETS,
+            MenuContent.BTN_STATISTIC
     );
 
-    private final EnumSet<MenuContent> distributorContent = EnumSet.of(
+    private final List<MenuContent> distributorContent = List.of(
             MenuContent.BTN_CLIENTS,
-            MenuContent.BTN_STATISTIC,
             MenuContent.BTN_TRAVELS,
-            MenuContent.BTN_SOLD_TICKETS
+            MenuContent.BTN_SOLD_TICKETS,
+            MenuContent.BTN_STATISTIC
     );
 
-    private final EnumSet<MenuContent> cashierContent = EnumSet.of(
+    private final List<MenuContent> cashierContent = List.of(
             MenuContent.BTN_TRAVELS,
             MenuContent.BTN_SOLD_TICKETS
     );
@@ -74,7 +73,7 @@ public final class AuthServiceImpl implements AuthService {
         final User user = userRepository.findByUsernameOrEmail(usernameOrEmail);
 
         loggedUser = user != null && BCrypt.checkpw(password, user.getPassword()) ? user : null;
-        loggedClient = loggedUser != null && !loggedUserIsAdmin() ? clientService.findByUserId(loggedUser.getId()) : null;
+        loggedClient = loggedUser != null && !loggedUserIsAdmin() ? ClientServiceImpl.getInstance().findByUserId(loggedUser.getId()) : null;
 
         if (loggedUser != null && !loggedUserIsAdmin() && loggedClient == null) {
             throw new RuntimeException(CLIENT_NOT_FOUND_FORMAT.formatted(loggedUser.getId()));
@@ -91,7 +90,7 @@ public final class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public EnumSet<MenuContent> getLoggedUserMenuContent() {
+    public List<MenuContent> getLoggedUserMenuContent() {
         if (loggedUserIsAdmin())
             return adminContent;
 

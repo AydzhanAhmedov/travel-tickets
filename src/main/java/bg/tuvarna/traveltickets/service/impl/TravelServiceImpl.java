@@ -4,6 +4,7 @@ import bg.tuvarna.traveltickets.common.AppConfig;
 import bg.tuvarna.traveltickets.entity.Cashier;
 import bg.tuvarna.traveltickets.entity.Client;
 import bg.tuvarna.traveltickets.entity.ClientType;
+import bg.tuvarna.traveltickets.entity.Distributor;
 import bg.tuvarna.traveltickets.entity.Travel;
 import bg.tuvarna.traveltickets.entity.TravelStatus;
 import bg.tuvarna.traveltickets.entity.User;
@@ -31,11 +32,14 @@ import static bg.tuvarna.traveltickets.entity.ClientType.Enum.DISTRIBUTOR;
 import static bg.tuvarna.traveltickets.entity.NotificationType.Enum.NEW_TRAVEL;
 import static bg.tuvarna.traveltickets.entity.NotificationType.Enum.TRAVEL_STATUS_CHANGED;
 import static bg.tuvarna.traveltickets.entity.RequestStatus.Enum.APPROVED;
+import static bg.tuvarna.traveltickets.entity.TravelStatus.Enum.INCOMING;
+import static bg.tuvarna.traveltickets.util.JpaOperationsUtil.executeInTransaction;
 
 public class TravelServiceImpl implements TravelService {
 
     private static final Logger LOG = LogManager.getLogger(TravelServiceImpl.class);
 
+    private static final Long INCOMING_STATUS_ID = TravelStatusServiceImpl.getInstance().findByName(INCOMING).getId();
     private static final Long DISTRIBUTOR_TYPE_ID = ClientTypeServiceImpl.getInstance().findByName(DISTRIBUTOR).getId();
     private static final Long APPROVED_REQUEST_ID = RequestStatusServiceImpl.getInstance().findByName(APPROVED).getId();
 
@@ -46,6 +50,26 @@ public class TravelServiceImpl implements TravelService {
     private final AuthService authService = AuthServiceImpl.getInstance();
     private final TravelStatusService travelStatusService = TravelStatusServiceImpl.getInstance();
     private final NotificationService notificationService = NotificationServiceImpl.getInstance();
+
+    @Override
+    public List<Travel> findAll() {
+        // admins can see all travels
+        if (authService.loggedUserIsAdmin()) {
+            return travelRepository.findAll();
+        }
+
+        final Long clientId = authService.getLoggedUser().getId();
+
+        // companies only their travels, distributors and cashiers only the travel they can sell tickets
+        return switch (authService.getLoggedClientTypeName()) {
+            case COMPANY -> travelRepository.findAllByCompanyId(clientId);
+            case DISTRIBUTOR -> travelRepository.findAllByDistributorIdAndTravelStatusId(clientId, INCOMING_STATUS_ID, APPROVED_REQUEST_ID);
+            case CASHIER -> {
+                final Long distributorId = ((Cashier) authService.getLoggedClient()).getCreatedBy().getId();
+                yield travelRepository.findAllByDistributorIdAndTravelStatusId(distributorId, INCOMING_STATUS_ID, APPROVED_REQUEST_ID);
+            }
+        };
+    }
 
     @Override
     public Travel create(final Travel travel) {
@@ -61,24 +85,7 @@ public class TravelServiceImpl implements TravelService {
         travelRepository.save(travel);
         travelRepository.flush();
 
-        final String message = getLangBundle().getString("label.notification.new_travel").formatted(travel.getDetails());
-        final List<User> recipients = clientRepository.findAllByClientTypeId(DISTRIBUTOR_TYPE_ID).stream()
-                .map(Client::getUser)
-                .collect(Collectors.toList());
-
-        if (recipients.isEmpty()) return travel;
-
-        notificationService.createAndSend(message, NEW_TRAVEL, recipients, (n, r) -> {
-            if (AppConfig.ablyIsEnabled()) {
-                try {
-                    ablyClient.channels.get(NEW_TRAVELS_CHANNEL).publish("new", message);
-                    LOG.info("New message published to {} channel.", NEW_TRAVELS_CHANNEL);
-                }
-                catch (AblyException e) {
-                    LOG.error("Error while publishing message to ably: ", e);
-                }
-            }
-        });
+        new Thread(() -> executeInTransaction(em -> createAndSendNewTravelNotifications(travel))).start();
 
         return travel;
     }
@@ -94,21 +101,52 @@ public class TravelServiceImpl implements TravelService {
         travelRepository.save(travel);
         travelRepository.flush();
 
+        // if new status is ended don't send notification
         if (newStatusName == TravelStatus.Enum.ENDED) return travel;
 
-        final String newStatus = getLangBundle().getString("label.travel_status_" + newStatusName.toString().toLowerCase());
-        final String message = getLangBundle().getString("label.notification.travel_status_changed").formatted(travel.getDetails(), newStatus);
+        new Thread(() -> executeInTransaction(em -> createAndSendStatusUpdatedNotifications(travel, newStatusName))).start();
 
+        return travel;
+    }
+
+    private boolean createAndSendNewTravelNotifications(final Travel travel) {
+        final String message = getLangBundle().getString("label.notification.new_travel").formatted(travel.getName());
+        // fetch all the distributors and create notifications for them
+        final List<User> recipients = clientRepository.findAllByClientTypeId(DISTRIBUTOR_TYPE_ID, Distributor.class).stream()
+                .map(Client::getUser)
+                .collect(Collectors.toList());
+
+        if (recipients.isEmpty()) return false;
+
+        notificationService.createAndSend(message, NEW_TRAVEL, recipients, (n, r) -> {
+            if (AppConfig.ablyIsEnabled()) {
+                try {
+                    ablyClient.channels.get(NEW_TRAVELS_CHANNEL).publish("new", message);
+                    LOG.info("New message published to {} channel.", NEW_TRAVELS_CHANNEL);
+                }
+                catch (AblyException e) {
+                    LOG.error("Error while publishing message to ably: ", e);
+                }
+            }
+        });
+        return true;
+    }
+
+    private boolean createAndSendStatusUpdatedNotifications(final Travel travel, final TravelStatus.Enum newStatusName) {
+        final String newStatus = getLangBundle().getString("label.travel_status_" + newStatusName.toString().toLowerCase());
+        final String message = getLangBundle().getString("label.notification.travel_status_changed").formatted(travel.getName(), newStatus);
+
+        // fetch all interested distributors and their cashiers to create notifications for them
         final List<User> distributorRecipients = travelRepository.findAllDistributorsByTravelId(travel.getId(), APPROVED_REQUEST_ID);
 
         final List<Long> distributorIds = distributorRecipients.stream().map(User::getId).collect(Collectors.toList());
         final List<User> recipients = clientRepository.findAllCashiersByDistributorIds(distributorIds).stream()
-                .map(Cashier::getUser)
+                .map(Client::getUser)
                 .collect(Collectors.toList());
 
         recipients.addAll(distributorRecipients);
 
-        if (distributorRecipients.isEmpty()) return travel;
+        if (distributorRecipients.isEmpty()) return false;
 
         notificationService.createAndSend(message, TRAVEL_STATUS_CHANGED, recipients, (n, r) -> {
             if (AppConfig.ablyIsEnabled()) {
@@ -124,8 +162,7 @@ public class TravelServiceImpl implements TravelService {
                 });
             }
         });
-
-        return travel;
+        return true;
     }
 
     private static TravelServiceImpl instance;

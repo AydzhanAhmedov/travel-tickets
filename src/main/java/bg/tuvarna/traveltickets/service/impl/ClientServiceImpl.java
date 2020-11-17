@@ -10,21 +10,25 @@ import bg.tuvarna.traveltickets.repository.ClientRepository;
 import bg.tuvarna.traveltickets.repository.UserRepository;
 import bg.tuvarna.traveltickets.repository.impl.ClientRepositoryImpl;
 import bg.tuvarna.traveltickets.repository.impl.UserRepositoryImpl;
+import bg.tuvarna.traveltickets.service.AuthService;
+import bg.tuvarna.traveltickets.service.CityService;
 import bg.tuvarna.traveltickets.service.ClientService;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
-import static bg.tuvarna.traveltickets.entity.ClientType.Enum.COMPANY;
 import static bg.tuvarna.traveltickets.entity.ClientType.Enum.DISTRIBUTOR;
+import static java.util.Collections.singletonList;
 
 public class ClientServiceImpl implements ClientService {
+
+    private static final Long DISTRIBUTOR_TYPE_ID = ClientTypeServiceImpl.getInstance().findByName(DISTRIBUTOR).getId();
 
     private final ClientRepository clientRepository = ClientRepositoryImpl.getInstance();
     private final UserRepository userRepository = UserRepositoryImpl.getInstance();
 
-    //private final ClientTypeService clientTypeService = ClientTypeServiceImpl.getInstance();
-    //TODO remove comment
+    private final AuthService authService = AuthServiceImpl.getInstance();
+    private final CityService cityService = CityServiceImpl.getInstance();
 
     @Override
     public Client findByUserId(final Long userId) {
@@ -45,9 +49,8 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public Client addClient(Client client) {
-
         // add city
-        City city = CityServiceImpl.getInstance().findOrAddByName(client.getAddress().getCity().getName());
+        final City city = cityService.findOrAddByName(client.getAddress().getCity().getName());
         client.getAddress().setCity(city);
 
         // add user
@@ -55,24 +58,17 @@ public class ClientServiceImpl implements ClientService {
         client.setUserId(client.getUser().getId());
 
         // add client
-        ClientRepositoryImpl.getInstance().save(client);
-        return client;
+        return clientRepository.save(client);
     }
 
     @Override
     public List<Client> findAll() {
-        return clientRepository.findAll();
-    }
-
-    @Override
-    public List<Client> findAllCompaniesAndDistributors() {
-        return clientRepository.findAllByClientTypeIds(Arrays.asList(ClientTypeServiceImpl.getInstance().findByName(DISTRIBUTOR).getId(),
-                ClientTypeServiceImpl.getInstance().findByName(COMPANY).getId()));
-    }
-
-    @Override
-    public List<Client> findAllCashiersForLoggedUser() {
-        return (List<Client>) (List<?>) clientRepository.findAllCashiersByDistributorIds(List.of(AuthServiceImpl.getInstance().getLoggedClient().getUserId()));
+        if (authService.loggedUserIsAdmin()) {
+            return clientRepository.findAll();
+        }
+        return authService.getLoggedClientTypeName() == DISTRIBUTOR
+                ? clientRepository.findAllCashiersByDistributorIds(singletonList(authService.getLoggedUser().getId()))
+                : Collections.emptyList();
     }
 
     private static ClientServiceImpl instance;

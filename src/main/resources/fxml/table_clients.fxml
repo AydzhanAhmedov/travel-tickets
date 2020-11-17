@@ -12,28 +12,26 @@
     <top>
         <HBox prefHeight="40.0" prefWidth="600.0" BorderPane.alignment="CENTER">
             <padding>
-                <Insets left="20.0" right="20.0" />
+                <Insets left="20.0" right="20.0"/>
             </padding>
-            <children>
-                <Button mnemonicParsing="false" onAction="#onAddClicked" styleClass="markAsReadBtn" stylesheets="@../css/buttons.css" text="Add" />
-                <Separator orientation="VERTICAL" prefHeight="200.0" visible="false" />
-                <Button mnemonicParsing="false" styleClass="markAsReadBtn" stylesheets="@../css/buttons.css" text="Update" />
-                <Separator orientation="VERTICAL" prefHeight="200.0" visible="false" />
-                <Button fx:id="buttonView" mnemonicParsing="false" onAction="#onViewClicked" styleClass="markAsReadBtn" stylesheets="@../css/buttons.css" text="View" />
-            </children>
+            <Button mnemonicParsing="false" onAction="#onAddClicked" styleClass="markAsReadBtn" stylesheets="@../css/buttons.css" text="Add"/>
+            <Separator orientation="VERTICAL" prefHeight="200.0" visible="false"/>
+            <Button mnemonicParsing="false" styleClass="markAsReadBtn" stylesheets="@../css/buttons.css" text="Update"/>
+            <Separator orientation="VERTICAL" prefHeight="200.0" visible="false"/>
+            <Button fx:id="buttonView" mnemonicParsing="false" onAction="#onViewClicked" styleClass="markAsReadBtn" stylesheets="@../css/buttons.css" text="View"/>
         </HBox>
     </top>
-   <center>
-          <TableView fx:id="tableClients" prefHeight="360.0" prefWidth="600.0" stylesheets="@../css/table.css" BorderPane.alignment="CENTER">
-              <columns>
-                  <TableColumn fx:id="columnType" editable="false" prefWidth="75.0" reorderable="false" sortable="false" text="Type" />
-                  <TableColumn fx:id="columnName" editable="false" prefWidth="75.0" reorderable="false" sortable="false" text="Name" />
-                  <TableColumn fx:id="columnPhone" editable="false" prefWidth="115.99993896484375" reorderable="false" sortable="false" text="Phone" />
-                  <TableColumn fx:id="columnCity" editable="false" minWidth="8.800048828125" prefWidth="63.199951171875" reorderable="false" sortable="false" text="City" />
-              </columns>
-         <columnResizePolicy>
-            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-         </columnResizePolicy>
-          </TableView>
-   </center>
+    <center>
+        <TableView fx:id="tableClients" prefHeight="360.0" prefWidth="600.0" stylesheets="@../css/tables.css" BorderPane.alignment="CENTER">
+            <columns>
+                <TableColumn fx:id="columnType" editable="false" prefWidth="75.0" reorderable="false" sortable="false" text="Type" />
+                <TableColumn fx:id="columnName" editable="false" prefWidth="75.0" reorderable="false" sortable="false" text="Name" />
+                <TableColumn fx:id="columnPhone" editable="false" prefWidth="115.99993896484375" reorderable="false" sortable="false" text="Phone" />
+                <TableColumn fx:id="columnCity" editable="false" minWidth="8.800048828125" prefWidth="63.199951171875" reorderable="false" sortable="false" text="City" />
+            </columns>
+            <columnResizePolicy>
+                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+            </columnResizePolicy>
+        </TableView>
+    </center>
 </BorderPane>

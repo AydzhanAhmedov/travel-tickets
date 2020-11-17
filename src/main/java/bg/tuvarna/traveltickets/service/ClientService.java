@@ -12,7 +12,4 @@ public interface ClientService {
 
     List<Client> findAll();
 
-    List<Client> findAllCompaniesAndDistributors();
-
-    List<Client> findAllCashiersForLoggedUser();
 }

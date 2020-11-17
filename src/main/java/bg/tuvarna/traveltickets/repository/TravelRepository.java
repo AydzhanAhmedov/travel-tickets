@@ -11,6 +11,10 @@ public interface TravelRepository extends GenericCrudRepository<Travel, Long> {
 
     TravelRoute save(TravelRoute travelRoute);
 
+    List<Travel> findAll();
+
+    List<Travel> findAllByCompanyId(Long companyId);
+
     List<Travel> findAllByCompanyIdAndTravelStatusId(Long companyId, Long travelStatusId);
 
     List<Travel> findAllByDistributorIdAndTravelStatusId(Long distributorId, Long travelStatusId, Long requestStatusId);
