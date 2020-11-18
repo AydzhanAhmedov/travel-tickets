@@ -1,6 +1,6 @@
 package bg.tuvarna.traveltickets.controller;
 
-import bg.tuvarna.traveltickets.common.NumberTextField;
+import bg.tuvarna.traveltickets.control.NumberTextField;
 import bg.tuvarna.traveltickets.controller.base.BaseUndecoratedDialogController;
 import bg.tuvarna.traveltickets.entity.Address;
 import bg.tuvarna.traveltickets.entity.Cashier;
