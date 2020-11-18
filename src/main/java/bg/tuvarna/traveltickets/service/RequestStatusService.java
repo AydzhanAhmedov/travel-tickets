@@ -8,6 +8,8 @@ public interface RequestStatusService {
 
     List<RequestStatus> findAll();
 
+    RequestStatus findById(Long id);
+
     RequestStatus findByName(RequestStatus.Enum requestStatusName);
 
 }

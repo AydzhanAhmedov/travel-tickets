@@ -1,7 +1,7 @@
 package bg.tuvarna.traveltickets.controller;
 
 import bg.tuvarna.traveltickets.common.NumberTextField;
-import bg.tuvarna.traveltickets.controller.base.BaseUndecoratedController;
+import bg.tuvarna.traveltickets.controller.base.BaseUndecoratedDialogController;
 import bg.tuvarna.traveltickets.entity.Address;
 import bg.tuvarna.traveltickets.entity.Cashier;
 import bg.tuvarna.traveltickets.entity.City;
@@ -25,7 +25,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -56,17 +55,14 @@ import static bg.tuvarna.traveltickets.common.Constants.INVALID_PASSWORD_KEY;
 import static bg.tuvarna.traveltickets.common.Constants.INVALID_PHONE_KEY;
 import static bg.tuvarna.traveltickets.common.Constants.INVALID_USERNAME_KEY;
 
-public class ClientDialogController extends BaseUndecoratedController {
+public class ClientDialogController extends BaseUndecoratedDialogController {
 
     private final ClientService clientService = ClientServiceImpl.getInstance();
     private final AuthService authService = AuthServiceImpl.getInstance();
     private static final Logger LOG = LogManager.getLogger(ClientDialogController.class);
 
-    public enum DialogMode {VIEW, ADD, EDIT}
-
     private Client client;
     private ClientType.Enum clientType;
-    private DialogMode dialogMode;
 
     private Consumer<Client> onNewClient;
 
@@ -141,7 +137,7 @@ public class ClientDialogController extends BaseUndecoratedController {
 
     public void injectDialogMode(final DialogMode mode, final Client client, final Consumer<Client> onNewClient) {
         this.onNewClient = onNewClient;
-        setMode(mode);
+        setDialogMode(mode);
 
         if (mode != DialogMode.ADD) setData(client);
     }
@@ -158,14 +154,14 @@ public class ClientDialogController extends BaseUndecoratedController {
             return false;
         }
 
-        if (dialogMode == DialogMode.ADD) {
+        if (getDialogMode() == DialogMode.ADD) {
             if (passwordField.getText().length() < 8) {
                 setErrorText(getLangBundle().getString(INVALID_PASSWORD_KEY));
                 return false;
             }
         }
 
-        if (dialogMode == DialogMode.EDIT) {
+        if (getDialogMode() == DialogMode.EDIT) {
             if (!passwordField.getText().isBlank() && passwordField.getText().length() < 8) {
                 setErrorText(getLangBundle().getString(INVALID_PASSWORD_KEY));
                 return false;
@@ -229,41 +225,6 @@ public class ClientDialogController extends BaseUndecoratedController {
 
     }
 
-    private void setMode(DialogMode mode) {
-        dialogMode = mode;
-        switch (mode) {
-            case ADD -> {
-                ButtonType OK = new ButtonType(getLangBundle().getString(BUTTON_APPLY_KEY), ButtonBar.ButtonData.OK_DONE);
-                getDialogPane().getButtonTypes().add(OK);
-
-                Button btOk = (Button) getDialogPane().lookupButton(OK);
-                if (btOk == null)
-                    return;
-
-                btOk.addEventFilter(ActionEvent.ACTION, this::onAddClick);
-            }
-            case EDIT -> {
-                ButtonType OK = new ButtonType(getLangBundle().getString(BUTTON_APPLY_KEY), ButtonBar.ButtonData.OK_DONE);
-                getDialogPane().getButtonTypes().add(OK);
-                clientTypeComboBox.setDisable(true);
-                clientTypeComboBox.setStyle("-fx-opacity: 1");
-            }
-            case VIEW -> {
-                clientTypeComboBox.setDisable(true);
-                clientTypeComboBox.setStyle("-fx-opacity: 1");
-                emailTextField.setEditable(false);
-                usernameTextField.setEditable(false);
-                passwordField.setEditable(false);
-                nameTextField.setEditable(false);
-                phoneTextField.setEditable(false);
-                addressTextField.setEditable(false);
-                cityTextField.setEditable(false);
-                detail1TextField.setEditable(false);
-                detail2TextField.setEditable(false);
-            }
-        }
-    }
-
     private void setDetailsInvisible() {
         detail1Label.setVisible(false);
         detail2Label.setVisible(false);
@@ -324,7 +285,7 @@ public class ClientDialogController extends BaseUndecoratedController {
         }
 
         if (client instanceof Cashier) {
-            ((Cashier) client).setHonorarium(BigDecimal.valueOf(Double.valueOf(detail1TextField.getText())));
+            ((Cashier) client).setHonorarium(BigDecimal.valueOf(Double.parseDouble(detail1TextField.getText())));
         }
 
         LOG.debug("Data read");
@@ -356,7 +317,38 @@ public class ClientDialogController extends BaseUndecoratedController {
         }
     }
 
-    private DialogPane getDialogPane() {
-        return (DialogPane) root;
+    @Override
+    protected void onViewModeSet() {
+        clientTypeComboBox.setDisable(true);
+        clientTypeComboBox.setStyle("-fx-opacity: 1");
+        emailTextField.setEditable(false);
+        usernameTextField.setEditable(false);
+        passwordField.setEditable(false);
+        nameTextField.setEditable(false);
+        phoneTextField.setEditable(false);
+        addressTextField.setEditable(false);
+        cityTextField.setEditable(false);
+        detail1TextField.setEditable(false);
+        detail2TextField.setEditable(false);
     }
+
+    @Override
+    protected void onAddModeSet() {
+        final ButtonType okButtonType = new ButtonType(getLangBundle().getString(BUTTON_APPLY_KEY), ButtonBar.ButtonData.OK_DONE);
+        getDialogPane().getButtonTypes().add(okButtonType);
+
+        final Button okButton = (Button) getDialogPane().lookupButton(okButtonType);
+        if (okButton == null) return;
+
+        okButton.addEventFilter(ActionEvent.ACTION, this::onAddClick);
+    }
+
+    @Override
+    protected void onEditMode() {
+        getDialogPane().getButtonTypes().add(new ButtonType(getLangBundle().getString(BUTTON_APPLY_KEY), ButtonBar.ButtonData.OK_DONE));
+
+        clientTypeComboBox.setDisable(true);
+        clientTypeComboBox.setStyle("-fx-opacity: 1");
+    }
+
 }

@@ -9,7 +9,6 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Table;
 import java.util.Objects;
-import java.util.prefs.BackingStoreException;
 
 @Immutable
 @Entity

@@ -6,6 +6,7 @@ import bg.tuvarna.traveltickets.entity.User;
 import bg.tuvarna.traveltickets.repository.TravelRepository;
 import bg.tuvarna.traveltickets.repository.base.GenericCrudRepositoryImpl;
 import bg.tuvarna.traveltickets.util.EntityManagerUtil;
+import org.hibernate.jpa.QueryHints;
 
 import javax.persistence.EntityManager;
 import java.util.List;
@@ -18,23 +19,35 @@ import static bg.tuvarna.traveltickets.common.Constants.USER_ID_PARAM;
 public class TravelRepositoryImpl extends GenericCrudRepositoryImpl<Travel, Long> implements TravelRepository {
 
     private static final String FIND_ALL_HQL = """
-                FROM Travel
+                SELECT DISTINCT t FROM Travel AS t
+                LEFT JOIN FETCH t.travelRoutes AS tr
+                LEFT JOIN FETCH tr.city
+                LEFT JOIN FETCH t.createdBy
             """;
 
     private static final String FIND_ALL_BY_COMPANY_ID_HQL = """
-                SELECT t FROM Travel AS t
+                SELECT DISTINCT t FROM Travel AS t
+                LEFT JOIN FETCH t.travelRoutes AS tr
+                LEFT JOIN FETCH tr.city
+                LEFT JOIN FETCH t.createdBy
                 WHERE t.createdBy.id = :userId
             """;
 
     private static final String FIND_ALL_BY_COMPANY_ID_AND_TRAVEL_STATUS_ID_HQL = """
-                SELECT t FROM Travel AS t
+                SELECT DISTINCT t FROM Travel AS t
+                LEFT JOIN FETCH t.travelRoutes AS tr
+                LEFT JOIN FETCH tr.city
+                LEFT JOIN FETCH t.createdBy
                 WHERE t.travelStatus.id = :travelStatusId AND t.createdBy.id = :userId
             """;
 
     private static final String FIND_ALL_BY_DISTRIBUTOR_ID_AND_TRAVEL_STATUS_ID_HQL = """
-                SELECT t FROM TravelDistributorRequest AS tdr
-                RIGHT JOIN FETCH tdr.travel AS t
-                WHERE tdr.requestStatus.id = :requestStatusId AND 
+                SELECT DISTINCT t FROM Travel AS t
+                LEFT JOIN FETCH t.travelRoutes AS tr
+                LEFT JOIN FETCH tr.city
+                LEFT JOIN FETCH t.createdBy
+                RIGHT JOIN t.distributorRequests tdr
+                WHERE tdr.requestStatus.id = :requestStatusId AND
                       t.travelStatus.id = :travelStatusId AND
                       tdr.user.id = :userId
             """;
@@ -60,6 +73,7 @@ public class TravelRepositoryImpl extends GenericCrudRepositoryImpl<Travel, Long
     public List<Travel> findAll() {
         return EntityManagerUtil.getEntityManager()
                 .createQuery(FIND_ALL_HQL, Travel.class)
+                .setHint(QueryHints.HINT_PASS_DISTINCT_THROUGH, false)
                 .getResultList();
     }
 
@@ -68,6 +82,7 @@ public class TravelRepositoryImpl extends GenericCrudRepositoryImpl<Travel, Long
         return EntityManagerUtil.getEntityManager()
                 .createQuery(FIND_ALL_BY_COMPANY_ID_HQL, Travel.class)
                 .setParameter(USER_ID_PARAM, companyId)
+                .setHint(QueryHints.HINT_PASS_DISTINCT_THROUGH, false)
                 .getResultList();
     }
 
@@ -77,6 +92,7 @@ public class TravelRepositoryImpl extends GenericCrudRepositoryImpl<Travel, Long
                 .createQuery(FIND_ALL_BY_COMPANY_ID_AND_TRAVEL_STATUS_ID_HQL, Travel.class)
                 .setParameter(TRAVEL_STATUS_ID_PARAM, travelStatusId)
                 .setParameter(USER_ID_PARAM, companyId)
+                .setHint(QueryHints.HINT_PASS_DISTINCT_THROUGH, false)
                 .getResultList();
     }
 
@@ -89,6 +105,7 @@ public class TravelRepositoryImpl extends GenericCrudRepositoryImpl<Travel, Long
                 .setParameter(REQUEST_STATUS_ID_PARAM, requestStatusId)
                 .setParameter(TRAVEL_STATUS_ID_PARAM, travelStatusId)
                 .setParameter(USER_ID_PARAM, distributorId)
+                .setHint(QueryHints.HINT_PASS_DISTINCT_THROUGH, false)
                 .getResultList();
     }
 

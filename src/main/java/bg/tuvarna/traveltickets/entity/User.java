@@ -5,6 +5,8 @@ import bg.tuvarna.traveltickets.entity.base.BaseEntity;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -12,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@EntityListeners(UserEntityListener.class)
 @Entity
 @Table(name = "users")
 public class User extends BaseEntity {
@@ -27,7 +30,7 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private String password;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Role role;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "recipient")

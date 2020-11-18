@@ -19,11 +19,18 @@ public final class RequestStatusServiceImpl implements RequestStatusService {
     private static final Logger LOG = LogManager.getLogger(RequestStatusServiceImpl.class);
 
     private final List<RequestStatus> requestStatusesCache;
+
+    private final Map<Long, RequestStatus> requestStatusByIdCache;
     private final Map<RequestStatus.Enum, RequestStatus> requestStatusByNameCache;
 
     @Override
     public List<RequestStatus> findAll() {
         return requestStatusesCache;
+    }
+
+    @Override
+    public RequestStatus findById(final Long id) {
+        return requestStatusByIdCache.get(Objects.requireNonNull(id));
     }
 
     @Override
@@ -49,6 +56,9 @@ public final class RequestStatusServiceImpl implements RequestStatusService {
                         .getResultStream()
                         .collect(toUnmodifiableList())
         );
+
+        requestStatusByIdCache = requestStatusesCache.stream()
+                .collect(toUnmodifiableMap(RequestStatus::getId, Function.identity()));
 
         requestStatusByNameCache = requestStatusesCache.stream()
                 .collect(toUnmodifiableMap(RequestStatus::getName, Function.identity()));

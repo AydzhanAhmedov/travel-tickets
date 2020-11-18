@@ -17,6 +17,13 @@ import static bg.tuvarna.traveltickets.common.Constants.USER_ID_PARAM;
 
 public class ClientRepositoryImpl extends GenericCrudRepositoryImpl<Client, Long> implements ClientRepository {
 
+    private static final String FIND_CLIENT_BY_ID_HQL = """
+                SELECT c FROM Client AS c
+                LEFT JOIN FETCH c.address AS a
+                LEFT JOIN FETCH a.city
+                WHERE c.userId = :userId
+            """;
+
     private static final String FIND_TYPE_BY_ID_HQL = """
                 SELECT ct FROM ClientType ct
                 RIGHT JOIN Client c ON c.clientType.id = ct.id
@@ -26,20 +33,23 @@ public class ClientRepositoryImpl extends GenericCrudRepositoryImpl<Client, Long
     private static final String FIND_ALL_CLIENTS_HQL = """
                 SELECT c FROM Client AS c
                 LEFT JOIN FETCH c.user
-                LEFT JOIN FETCH c.address
+                LEFT JOIN FETCH c.address AS a
+                LEFT JOIN FETCH a.city
             """;
 
     private static final String FIND_ALL_IDS_BY_CLIENT_TYPE_ID_HQL_FORMAT = """
                 SELECT c FROM %s AS c
                 LEFT JOIN FETCH c.user
-                LEFT JOIN FETCH c.address
+                LEFT JOIN FETCH c.address AS a
+                LEFT JOIN FETCH a.city
                 WHERE c.clientType.id = :clientTypeId
             """;
 
     private static final String FIND_ALL_CASHIERS_BY_DISTRIBUTOR_ID_HQL = """
                 SELECT c FROM Cashier AS c
                 LEFT JOIN FETCH c.user
-                LEFT JOIN FETCH c.address
+                LEFT JOIN FETCH c.address AS a
+                LEFT JOIN FETCH a.city
                 WHERE c.createdBy.id IN (:userId)
             """;
 
@@ -47,6 +57,15 @@ public class ClientRepositoryImpl extends GenericCrudRepositoryImpl<Client, Long
     public ClientType findTypeByUserId(final Long userId) {
         final TypedQuery<ClientType> query = EntityManagerUtil.getEntityManager()
                 .createQuery(FIND_TYPE_BY_ID_HQL, ClientType.class)
+                .setParameter(USER_ID_PARAM, userId);
+
+        return JpaOperationsUtil.getSingleResultOrNull(query);
+    }
+
+    @Override
+    public Client findById(final Long userId) {
+        final TypedQuery<Client> query = EntityManagerUtil.getEntityManager()
+                .createQuery(FIND_CLIENT_BY_ID_HQL, Client.class)
                 .setParameter(USER_ID_PARAM, userId);
 
         return JpaOperationsUtil.getSingleResultOrNull(query);

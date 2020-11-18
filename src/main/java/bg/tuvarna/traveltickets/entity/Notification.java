@@ -1,24 +1,26 @@
 package bg.tuvarna.traveltickets.entity;
 
-import bg.tuvarna.traveltickets.entity.base.BaseAuditEntity;
+import bg.tuvarna.traveltickets.entity.base.BaseUserAuditEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.util.Objects;
 
+@EntityListeners(NotificationEntityListener.class)
 @Entity
 @Table(name = "notifications")
-public class Notification extends BaseAuditEntity {
+public class Notification extends BaseUserAuditEntity {
 
     private static final long serialVersionUID = 1527812768320401028L;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "type_id", nullable = false)
-    private NotificationType notificationType;
+    NotificationType notificationType;
 
     @Column(nullable = false, updatable = false)
     private String message;

@@ -23,6 +23,8 @@ public final class Constants {
     // Bundles
     public static final String SEEN_BUTTON_KEY = "label.button.seen";
     public static final String EDIT_BUTTON_KEY = "label.button.edit";
+    public static final String REQUEST_BUTTON_KEY = "label.button.request";
+    public static final String SELL_BUTTON_KEY = "label.button.sell";
 
     public static final String SYSTEM_KEY = "label.system";
     public static final String HOURS_KEY = "label.short_hours_ago";

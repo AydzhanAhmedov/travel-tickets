@@ -19,11 +19,18 @@ public final class TravelStatusServiceImpl implements TravelStatusService {
     private static final Logger LOG = LogManager.getLogger(TravelStatusServiceImpl.class);
 
     private final List<TravelStatus> travelStatusesCache;
+
+    private final Map<Long, TravelStatus> travelStatusesByIdCache;
     private final Map<TravelStatus.Enum, TravelStatus> travelStatusesByNameCache;
 
     @Override
     public List<TravelStatus> findAll() {
         return travelStatusesCache;
+    }
+
+    @Override
+    public TravelStatus findById(final Long id) {
+        return travelStatusesByIdCache.get(Objects.requireNonNull(id));
     }
 
     @Override
@@ -49,6 +56,9 @@ public final class TravelStatusServiceImpl implements TravelStatusService {
                         .getResultStream()
                         .collect(toUnmodifiableList())
         );
+
+        travelStatusesByIdCache = travelStatusesCache.stream()
+                .collect(toUnmodifiableMap(TravelStatus::getId, Function.identity()));
 
         travelStatusesByNameCache = travelStatusesCache.stream()
                 .collect(toUnmodifiableMap(TravelStatus::getName, Function.identity()));

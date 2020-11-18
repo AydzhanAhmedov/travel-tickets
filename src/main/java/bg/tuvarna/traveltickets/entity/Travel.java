@@ -1,6 +1,6 @@
 package bg.tuvarna.traveltickets.entity;
 
-import bg.tuvarna.traveltickets.entity.base.BaseAuditEntity;
+import bg.tuvarna.traveltickets.entity.base.BaseClientAuditEntity;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -20,17 +20,17 @@ import java.util.Objects;
 @EntityListeners(TravelEntityListener.class)
 @Entity
 @Table(name = "travels")
-public class Travel extends BaseAuditEntity {
+public class Travel extends BaseClientAuditEntity<Company> {
 
     private static final long serialVersionUID = 6063243358784196914L;
 
     private String name;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "travel_type_id", nullable = false)
     private TravelType travelType;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "travel_status_id", nullable = false)
     private TravelStatus travelStatus;
 
@@ -57,8 +57,7 @@ public class Travel extends BaseAuditEntity {
     @OneToMany(mappedBy = "travel", cascade = CascadeType.ALL)
     private List<TravelRoute> travelRoutes = new ArrayList<>();
 
-    //TODO: fix the association mapping.
-    @OneToMany(mappedBy = "travel", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "travel")
     private List<TravelDistributorRequest> distributorRequests = new ArrayList<>();
 
     public Travel() {
@@ -165,12 +164,13 @@ public class Travel extends BaseAuditEntity {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-        Travel travel = (Travel) o;
-        return Objects.equals(travelType, travel.travelType) &&
+        final Travel travel = (Travel) o;
+        return Objects.equals(name, travel.name) &&
+                Objects.equals(travelType, travel.travelType) &&
                 Objects.equals(travelStatus, travel.travelStatus) &&
                 Objects.equals(startDate, travel.startDate) &&
                 Objects.equals(endDate, travel.endDate) &&
@@ -179,11 +179,13 @@ public class Travel extends BaseAuditEntity {
                 Objects.equals(ticketPrice, travel.ticketPrice) &&
                 Objects.equals(ticketBuyLimit, travel.ticketBuyLimit) &&
                 Objects.equals(details, travel.details) &&
-                Objects.equals(travelRoutes, travel.travelRoutes);
+                Objects.equals(travelRoutes, travel.travelRoutes) &&
+                Objects.equals(distributorRequests, travel.distributorRequests);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), travelType, travelStatus, startDate, endDate, ticketQuantity, currentTicketQuantity, ticketPrice, ticketBuyLimit, details, travelRoutes);
+        return Objects.hash(super.hashCode(), name, travelType, travelStatus, startDate, endDate, ticketQuantity, currentTicketQuantity, ticketPrice, ticketBuyLimit, details, travelRoutes, distributorRequests);
     }
+
 }

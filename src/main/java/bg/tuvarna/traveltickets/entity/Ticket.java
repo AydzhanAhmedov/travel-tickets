@@ -1,19 +1,17 @@
 package bg.tuvarna.traveltickets.entity;
 
-import bg.tuvarna.traveltickets.entity.base.BaseAuditEntity;
-import org.apache.logging.log4j.core.tools.picocli.CommandLine;
+import bg.tuvarna.traveltickets.entity.base.BaseClientAuditEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import java.time.OffsetDateTime;
 import java.util.Objects;
 
 @Entity
 @Table(name = "tickets")
-public class Ticket extends BaseAuditEntity {
+public class Ticket extends BaseClientAuditEntity<Cashier> {
 
     private static final long serialVersionUID = 8812749995652436145L;
 
@@ -67,16 +65,6 @@ public class Ticket extends BaseAuditEntity {
 
     public void setTravel(Travel travel) {
         this.travel = travel;
-    }
-
-    @Override
-    public User getCreatedBy() {
-        return super.getCreatedBy();
-    }
-
-    @Override
-    public OffsetDateTime getCreatedAt() {
-        return super.getCreatedAt();
     }
 
     @Override

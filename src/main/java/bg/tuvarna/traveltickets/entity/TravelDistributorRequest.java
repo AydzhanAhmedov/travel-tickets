@@ -2,6 +2,7 @@ package bg.tuvarna.traveltickets.entity;
 
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -10,6 +11,7 @@ import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Objects;
 
+@EntityListeners(TravelDistributorRequestEntityListener.class)
 @Entity
 @Table(name = "travel_distributor_requests")
 public class TravelDistributorRequest implements Serializable {
@@ -28,7 +30,7 @@ public class TravelDistributorRequest implements Serializable {
     @MapsId("distributorID")
     private User user;
 
-    @ManyToOne(targetEntity = RequestStatus.class)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "request_status_id")
     private RequestStatus requestStatus;
 

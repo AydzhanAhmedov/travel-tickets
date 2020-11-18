@@ -65,8 +65,13 @@ public class TravelServiceImpl implements TravelService {
             case COMPANY -> travelRepository.findAllByCompanyId(clientId);
             case DISTRIBUTOR -> travelRepository.findAllByDistributorIdAndTravelStatusId(clientId, INCOMING_STATUS_ID, APPROVED_REQUEST_ID);
             case CASHIER -> {
-                final Long distributorId = ((Cashier) authService.getLoggedClient()).getCreatedBy().getId();
-                yield travelRepository.findAllByDistributorIdAndTravelStatusId(distributorId, INCOMING_STATUS_ID, APPROVED_REQUEST_ID);
+                final Long distributorId = ((Cashier) authService.getLoggedClient()).getCreatedBy().getUserId();
+                final Long cityId = authService.getLoggedClient().getAddress().getCity().getId();
+
+                yield travelRepository.findAllByDistributorIdAndTravelStatusId(distributorId, INCOMING_STATUS_ID, APPROVED_REQUEST_ID)
+                        .stream()
+                        .filter(t -> t.getTravelRoutes().stream().anyMatch(r -> r.getCity().getId().equals(cityId)))
+                        .collect(Collectors.toList());
             }
         };
     }
@@ -93,7 +98,7 @@ public class TravelServiceImpl implements TravelService {
     @Override
     public Travel updateTravelStatus(final Travel travel, final TravelStatus.Enum newStatusName) {
         Objects.requireNonNull(newStatusName);
-        if (Objects.requireNonNull(travel).getCreatedBy().getId().equals(authService.getLoggedUser().getId())) {
+        if (Objects.requireNonNull(travel).getCreatedBy().getUserId().equals(authService.getLoggedUser().getId())) {
             throw new IllegalArgumentException("Only creator company can edit their travels.");
         }
         travel.setTravelStatus(travelStatusService.findByName(Objects.requireNonNull(newStatusName)));

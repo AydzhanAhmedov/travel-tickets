@@ -14,7 +14,6 @@ public class UserRepositoryImpl extends GenericCrudRepositoryImpl<User, Long> im
 
     private static final String FIND_BY_USERNAME_OR_EMAIL_HQL = """
                 SELECT u FROM User u
-                LEFT JOIN FETCH u.role
                 WHERE u.username = :usernameOrEmail OR u.email = :usernameOrEmail
             """;
 

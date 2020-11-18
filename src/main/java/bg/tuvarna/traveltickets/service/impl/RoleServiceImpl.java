@@ -19,11 +19,18 @@ public final class RoleServiceImpl implements RoleService {
     private static final Logger LOG = LogManager.getLogger(RoleServiceImpl.class);
 
     private final List<Role> rolesCache;
+
+    private final Map<Long, Role> rolesByIdCache;
     private final Map<Role.Enum, Role> rolesByNameCache;
 
     @Override
     public List<Role> findAll() {
         return rolesCache;
+    }
+
+    @Override
+    public Role findById(final Long id) {
+        return rolesByIdCache.get(Objects.requireNonNull(id));
     }
 
     @Override
@@ -49,6 +56,9 @@ public final class RoleServiceImpl implements RoleService {
                         .getResultStream()
                         .collect(toUnmodifiableList())
         );
+
+        rolesByIdCache = rolesCache.stream()
+                .collect(toUnmodifiableMap(Role::getId, Function.identity()));
 
         rolesByNameCache = rolesCache.stream()
                 .collect(toUnmodifiableMap(Role::getName, Function.identity()));

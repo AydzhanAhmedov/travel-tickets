@@ -19,11 +19,18 @@ public final class NotificationStatusServiceImpl implements NotificationStatusSe
     private static final Logger LOG = LogManager.getLogger(NotificationStatusServiceImpl.class);
 
     private final List<NotificationStatus> notificationStatusesCache;
+
+    private final Map<Long, NotificationStatus> notificationStatusByIdCache;
     private final Map<NotificationStatus.Enum, NotificationStatus> notificationStatusByNameCache;
 
     @Override
     public List<NotificationStatus> findAll() {
         return notificationStatusesCache;
+    }
+
+    @Override
+    public NotificationStatus findById(final Long id) {
+        return notificationStatusByIdCache.get(Objects.requireNonNull(id));
     }
 
     @Override
@@ -49,6 +56,9 @@ public final class NotificationStatusServiceImpl implements NotificationStatusSe
                         .getResultStream()
                         .collect(toUnmodifiableList())
         );
+
+        notificationStatusByIdCache = notificationStatusesCache.stream()
+                .collect(toUnmodifiableMap(NotificationStatus::getId, Function.identity()));
 
         notificationStatusByNameCache = notificationStatusesCache.stream()
                 .collect(toUnmodifiableMap(NotificationStatus::getName, Function.identity()));

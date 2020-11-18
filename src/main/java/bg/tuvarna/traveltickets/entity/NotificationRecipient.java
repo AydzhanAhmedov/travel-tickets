@@ -29,7 +29,7 @@ public class NotificationRecipient implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     private User recipient;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "notification_status_id", nullable = false)
     private NotificationStatus notificationStatus;
 

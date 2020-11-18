@@ -8,14 +8,14 @@ import java.time.OffsetDateTime;
 
 import static java.time.ZoneOffset.UTC;
 
-public final class BaseAuditEntityListener {
+public final class BaseUserAuditEntityListener {
 
     private final AuthService authService = AuthServiceImpl.getInstance();
 
     @PrePersist
-    public void prePersist(final BaseAuditEntity baseAuditEntity) {
-        baseAuditEntity.createdBy = authService.getLoggedUser();
-        baseAuditEntity.createdAt = OffsetDateTime.now(UTC);
+    public void prePersist(final BaseUserAuditEntity baseUserAuditEntity) {
+        baseUserAuditEntity.createdBy = authService.getLoggedUser();
+        baseUserAuditEntity.createdAt = OffsetDateTime.now(UTC);
     }
 
 }

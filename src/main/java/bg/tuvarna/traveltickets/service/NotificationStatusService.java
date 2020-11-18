@@ -8,6 +8,8 @@ public interface NotificationStatusService {
 
     List<NotificationStatus> findAll();
 
+    NotificationStatus findById(Long id);
+
     NotificationStatus findByName(NotificationStatus.Enum notificationStatusName);
 
 }

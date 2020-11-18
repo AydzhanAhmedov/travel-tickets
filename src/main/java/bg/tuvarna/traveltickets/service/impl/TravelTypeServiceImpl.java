@@ -19,11 +19,18 @@ public class TravelTypeServiceImpl implements TravelTypeService {
     private static final Logger LOG = LogManager.getLogger(TravelTypeServiceImpl.class);
 
     private final List<TravelType> travelTypesCache;
+
+    private final Map<Long, TravelType> travelTypesByIdCache;
     private final Map<TravelType.Enum, TravelType> travelTypesByNameCache;
 
     @Override
     public List<TravelType> findAll() {
         return travelTypesCache;
+    }
+
+    @Override
+    public TravelType findById(final Long id) {
+        return travelTypesByIdCache.get(Objects.requireNonNull(id));
     }
 
     @Override
@@ -49,6 +56,9 @@ public class TravelTypeServiceImpl implements TravelTypeService {
                         .getResultStream()
                         .collect(toUnmodifiableList())
         );
+
+        travelTypesByIdCache = travelTypesCache.stream()
+                .collect(toUnmodifiableMap(TravelType::getId, Function.identity()));
 
         travelTypesByNameCache = travelTypesCache.stream()
                 .collect(toUnmodifiableMap(TravelType::getName, Function.identity()));

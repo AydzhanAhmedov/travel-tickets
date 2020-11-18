@@ -8,5 +8,8 @@ public interface ClientTypeService {
 
     List<ClientType> findAll();
 
+    ClientType findById(Long id);
+
     ClientType findByName(ClientType.Enum clientTypeName);
+
 }

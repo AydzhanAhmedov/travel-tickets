@@ -25,7 +25,7 @@ public class Cashier extends Client {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by", updatable = false, nullable = false)
-    User createdBy;
+    Distributor createdBy;
 
     @Column(name = "created_at", updatable = false, nullable = false)
     OffsetDateTime createdAt;
@@ -46,7 +46,7 @@ public class Cashier extends Client {
         this.honorarium = honorarium;
     }
 
-    public User getCreatedBy() {
+    public Distributor getCreatedBy() {
         return createdBy;
     }
 

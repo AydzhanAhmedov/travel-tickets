@@ -19,11 +19,18 @@ public final class ClientTypeServiceImpl implements ClientTypeService {
     private static final Logger LOG = LogManager.getLogger(ClientTypeServiceImpl.class);
 
     private final List<ClientType> clientTypesCache;
+
+    private final Map<Long, ClientType> clientTypeByIdCache;
     private final Map<ClientType.Enum, ClientType> clientTypeByNameCache;
 
     @Override
     public List<ClientType> findAll() {
         return clientTypesCache;
+    }
+
+    @Override
+    public ClientType findById(final Long id) {
+        return clientTypeByIdCache.get(Objects.requireNonNull(id));
     }
 
     @Override
@@ -50,6 +57,9 @@ public final class ClientTypeServiceImpl implements ClientTypeService {
                         .getResultStream()
                         .collect(toUnmodifiableList())
         );
+
+        clientTypeByIdCache = clientTypesCache.stream()
+                .collect(toUnmodifiableMap(ClientType::getId, Function.identity()));
 
         clientTypeByNameCache = clientTypesCache.stream()
                 .collect(toUnmodifiableMap(ClientType::getName, Function.identity()));

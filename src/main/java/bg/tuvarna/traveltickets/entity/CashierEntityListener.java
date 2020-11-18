@@ -14,7 +14,7 @@ public final class CashierEntityListener {
 
     @PrePersist
     public void prePersist(final Cashier cashier) {
-        cashier.createdBy = authService.getLoggedUser();
+        cashier.createdBy = authService.getLoggedClient() instanceof Distributor d ? d : null;
         cashier.createdAt = OffsetDateTime.now(UTC);
     }
 

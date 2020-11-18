@@ -45,7 +45,7 @@ public class SubscriberServiceImpl implements SubscriberService {
 
     private Long getDistributorId() {
         return authService.getLoggedClientTypeName() == DISTRIBUTOR
-                ? authService.getLoggedUser().getId() : ((Cashier) authService.getLoggedClient()).getCreatedBy().getId();
+                ? authService.getLoggedUser().getId() : ((Cashier) authService.getLoggedClient()).getCreatedBy().getUserId();
     }
 
     private void subscribeToChannel(final String channel, final LoggedRecipientNotifier<Message> notifier) {

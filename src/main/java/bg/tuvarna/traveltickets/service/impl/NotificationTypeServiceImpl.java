@@ -19,11 +19,18 @@ public final class NotificationTypeServiceImpl implements NotificationTypeServic
     private static final Logger LOG = LogManager.getLogger(NotificationTypeServiceImpl.class);
 
     private final List<NotificationType> notificationTypesCache;
+
+    private final Map<Long, NotificationType> notificationTypeByIdCache;
     private final Map<NotificationType.Enum, NotificationType> notificationTypeByNameCache;
 
     @Override
     public List<NotificationType> findAll() {
         return notificationTypesCache;
+    }
+
+    @Override
+    public NotificationType findById(final Long id) {
+        return notificationTypeByIdCache.get(Objects.requireNonNull(id));
     }
 
     @Override
@@ -49,6 +56,9 @@ public final class NotificationTypeServiceImpl implements NotificationTypeServic
                         .getResultStream()
                         .collect(toUnmodifiableList())
         );
+
+        notificationTypeByIdCache = notificationTypesCache.stream()
+                .collect(toUnmodifiableMap(NotificationType::getId, Function.identity()));
 
         notificationTypeByNameCache = notificationTypesCache.stream()
                 .collect(toUnmodifiableMap(NotificationType::getName, Function.identity()));

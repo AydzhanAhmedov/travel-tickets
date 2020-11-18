@@ -8,6 +8,8 @@ public interface TravelStatusService {
 
     List<TravelStatus> findAll();
 
+    TravelStatus findById(Long id);
+
     TravelStatus findByName(TravelStatus.Enum travelStatusName);
 
 }

@@ -8,6 +8,7 @@ import bg.tuvarna.traveltickets.service.AuthService;
 import bg.tuvarna.traveltickets.service.NotificationService;
 import bg.tuvarna.traveltickets.service.impl.AuthServiceImpl;
 import bg.tuvarna.traveltickets.service.impl.NotificationServiceImpl;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -131,24 +132,23 @@ public class NotificationsDialogController extends BaseUndecoratedController {
         });
         columnAction.setCellFactory(col -> new TableCell<>() {
             @Override
-            public void updateItem(NotificationRecipient item, boolean empty) {
+            public void updateItem(final NotificationRecipient item, final boolean empty) {
                 super.updateItem(item, empty);
                 if (empty) {
                     setGraphic(null);
                     setText(null);
                 } else {
-                    final NotificationRecipient notification = getTableView().getItems().get(getIndex());
                     final Button btn = new Button(getLangBundle().getString(SEEN_BUTTON_KEY));
 
                     btn.getStylesheets().addAll(markAllAsSeenButton.getStylesheets());
                     btn.getStyleClass().addAll(markAllAsSeenButton.getStyleClass());
                     btn.setOnAction(event -> {
-                        executeInTransaction(em -> notificationService.markAsSeen(notification));
-                        getTableView().getItems().set(getIndex(), notification);
+                        executeInTransaction(em -> notificationService.markAsSeen(item));
+                        getTableView().getItems().set(getIndex(), item);
                         notificationBellUpdater.update();
                     });
 
-                    if (notificationService.isSeen(notification)) btn.setDisable(true);
+                    if (notificationService.isSeen(item)) btn.setDisable(true);
 
                     setGraphic(btn);
                 }
@@ -158,6 +158,7 @@ public class NotificationsDialogController extends BaseUndecoratedController {
         columnFrom.setCellValueFactory(new PropertyValueFactory<>("notification"));
         columnMessage.setCellValueFactory(new PropertyValueFactory<>("notification"));
         columnDate.setCellValueFactory(new PropertyValueFactory<>("notification"));
+        columnAction.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue()));
     }
 
 }

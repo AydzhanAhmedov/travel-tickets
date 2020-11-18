@@ -75,7 +75,7 @@ public final class AppConfig {
     }
 
     public static DateTimeFormatter getShortDateTimeFormatter() {
-        return dateTimeFormatter;
+        return shortDateTimeFormatter;
     }
 
     public static Stage getPrimaryStage() {

@@ -48,6 +48,7 @@ import static bg.tuvarna.traveltickets.common.Constants.CLIENTS_TABLE_FXML_PATH;
 import static bg.tuvarna.traveltickets.common.Constants.NOTIFICATIONS_BTN_CSS;
 import static bg.tuvarna.traveltickets.common.Constants.NOTIFICATIONS_DIALOG_FXML_PATH;
 import static bg.tuvarna.traveltickets.common.Constants.TRAVELS_TABLE_FXML_PATH;
+import static bg.tuvarna.traveltickets.util.JpaOperationsUtil.execute;
 import static bg.tuvarna.traveltickets.util.notifications.NotificationEvent.NEW_NOTIFICATION;
 
 public class HomeController extends BaseUndecoratedController {
@@ -249,7 +250,8 @@ public class HomeController extends BaseUndecoratedController {
 
         LOG.debug("Loading user's notifications.");
 
-        notifications.addAll(notificationService.findAllByRecipientId(authService.getLoggedUser().getId()));
+        final List<NotificationRecipient> notifications = execute(em -> notificationService.findAllByRecipientId(authService.getLoggedUser().getId()));
+        this.notifications.addAll(notifications);
         initialNotificationLoadTime = OffsetDateTime.now();
         notificationButton.addEventHandler(NEW_NOTIFICATION, e -> updateNotificationButton(false));
 

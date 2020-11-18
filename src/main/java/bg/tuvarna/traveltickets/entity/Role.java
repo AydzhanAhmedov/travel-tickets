@@ -20,7 +20,7 @@ public class Role extends BaseEntity {
     /**
      * Role's names enum.
      */
-    public enum Enum { ADMIN, CLIENT }
+    public enum Enum {ADMIN, CLIENT}
 
     @Enumerated(EnumType.STRING)
     @Column(insertable = false, nullable = false)

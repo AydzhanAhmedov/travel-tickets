@@ -19,11 +19,18 @@ public final class TransportTypeServiceImpl implements TransportTypeService {
     private static final Logger LOG = LogManager.getLogger(TransportTypeServiceImpl.class);
 
     private final List<TransportType> transportTypesCache;
+
+    private final Map<Long, TransportType> transportTypesByIdCache;
     private final Map<TransportType.Enum, TransportType> transportTypesByNameCache;
 
     @Override
     public List<TransportType> findAll() {
         return transportTypesCache;
+    }
+
+    @Override
+    public TransportType findById(final Long id) {
+        return transportTypesByIdCache.get(Objects.requireNonNull(id));
     }
 
     @Override
@@ -49,6 +56,9 @@ public final class TransportTypeServiceImpl implements TransportTypeService {
                         .getResultStream()
                         .collect(toUnmodifiableList())
         );
+
+        transportTypesByIdCache = transportTypesCache.stream()
+                .collect(toUnmodifiableMap(TransportType::getId, Function.identity()));
 
         transportTypesByNameCache = transportTypesCache.stream()
                 .collect(toUnmodifiableMap(TransportType::getName, Function.identity()));

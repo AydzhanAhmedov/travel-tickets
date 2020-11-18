@@ -8,6 +8,8 @@ public interface TravelTypeService {
 
     List<TravelType> findAll();
 
+    TravelType findById(Long id);
+
     TravelType findByName(TravelType.Enum travelTypeName);
 
 }

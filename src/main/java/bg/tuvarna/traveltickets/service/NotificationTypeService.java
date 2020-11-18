@@ -8,6 +8,8 @@ public interface NotificationTypeService {
 
     List<NotificationType> findAll();
 
+    NotificationType findById(Long id);
+
     NotificationType findByName(NotificationType.Enum notificationTypeName);
 
 }

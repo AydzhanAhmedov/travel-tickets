@@ -3,6 +3,7 @@ package bg.tuvarna.traveltickets.entity;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
@@ -15,6 +16,7 @@ import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Objects;
 
+@EntityListeners(ClientEntityListener.class)
 @Entity
 @Table(name = "clients")
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -27,10 +29,10 @@ public class Client implements Serializable {
     private Long userId;
 
     @MapsId("user_id")
-    @OneToOne(fetch = FetchType.EAGER, optional = false)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
     private User user;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_type_id", nullable = false)
     private ClientType clientType;
 
@@ -40,7 +42,7 @@ public class Client implements Serializable {
     @Column(nullable = false)
     private String phone;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
+    @ManyToOne(optional = false, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Address address;
 
     public Client() {

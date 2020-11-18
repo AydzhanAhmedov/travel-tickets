@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 
-<BorderPane fx:id="root" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="bg.tuvarna.traveltickets.controller.TravelsTableController">
+<BorderPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="bg.tuvarna.traveltickets.controller.TravelsTableController">
     <top>
         <HBox prefHeight="40.0" prefWidth="600.0" BorderPane.alignment="CENTER">
             <padding>
@@ -22,10 +22,11 @@
     <center>
         <TableView fx:id="tableClients" prefHeight="360.0" prefWidth="600.0" stylesheets="@../css/tables.css" BorderPane.alignment="CENTER">
             <columns>
+                <TableColumn fx:id="columnCompany" editable="false" prefWidth="115.99993896484375" reorderable="false" sortable="false" text="%label.company" />
                 <TableColumn fx:id="columnName" editable="false" prefWidth="75.0" reorderable="false" sortable="false" text="%label.name" />
+                <TableColumn fx:id="columnType" editable="false" prefWidth="115.99993896484375" reorderable="false" sortable="false" text="%label.type" />
                 <TableColumn fx:id="columnStatus" editable="false" prefWidth="75.0" reorderable="false" sortable="false" text="%label.status" />
                 <TableColumn fx:id="columnDates" editable="false" minWidth="8.800048828125" prefWidth="63.199951171875" reorderable="false" sortable="false" text="%label.dates" />
-                <TableColumn fx:id="columnRoutes" editable="false" prefWidth="115.99993896484375" reorderable="false" sortable="false" text="Routes" />
             <TableColumn fx:id="columnAction" editable="false" minWidth="8.800048828125" prefWidth="63.199951171875" reorderable="false" sortable="false" text="%label.action" />
             </columns>
             <columnResizePolicy>
