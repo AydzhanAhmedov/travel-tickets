@@ -219,10 +219,17 @@ public class ClientDialogController extends BaseUndecoratedDialogController {
         //    event.consume();
 
         readData();
-        JpaOperationsUtil.executeInTransaction(em -> ClientServiceImpl.getInstance().addClient(client));
+        JpaOperationsUtil.executeInTransaction(em -> ClientServiceImpl.getInstance().save(client));
         onNewClient.accept(client);
         System.out.println("data read");
 
+    }
+
+    private void onEditClick(Event event) {
+        readData();
+        JpaOperationsUtil.executeInTransaction(em -> ClientServiceImpl.getInstance().save(client));
+        onNewClient.accept(client);
+        System.out.println("data read");
     }
 
     private void setDetailsInvisible() {
@@ -276,8 +283,10 @@ public class ClientDialogController extends BaseUndecoratedDialogController {
         client.setName(nameTextField.getText());
         client.setPhone(phoneTextField.getText());
         client.getUser().setEmail(emailTextField.getText());
-        client.getUser().setUsername(emailTextField.getText());
-        client.getUser().setPassword(passwordField.getText());
+        client.getUser().setUsername(usernameTextField.getText());
+
+        if (getDialogMode() == DialogMode.ADD || !passwordField.getText().isBlank())
+            client.getUser().setPassword(passwordField.getText());
 
         if (client instanceof Company) {
             ((Company) client).setLogoUrl(detail1TextField.getText());
@@ -345,10 +354,15 @@ public class ClientDialogController extends BaseUndecoratedDialogController {
 
     @Override
     protected void onEditMode() {
-        getDialogPane().getButtonTypes().add(new ButtonType(getLangBundle().getString(BUTTON_APPLY_KEY), ButtonBar.ButtonData.OK_DONE));
+        final ButtonType okButtonType = new ButtonType(getLangBundle().getString(BUTTON_APPLY_KEY), ButtonBar.ButtonData.OK_DONE);
+        getDialogPane().getButtonTypes().add(okButtonType);
 
         clientTypeComboBox.setDisable(true);
         clientTypeComboBox.setStyle("-fx-opacity: 1");
-    }
 
+        final Button okButton = (Button) getDialogPane().lookupButton(okButtonType);
+        if (okButton == null) return;
+
+        okButton.addEventFilter(ActionEvent.ACTION, this::onEditClick);
+    }
 }

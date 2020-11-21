@@ -2,6 +2,7 @@ package bg.tuvarna.traveltickets.entity;
 
 import bg.tuvarna.traveltickets.entity.base.BaseEntity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
@@ -14,7 +15,7 @@ public class Address extends BaseEntity {
 
     private static final long serialVersionUID = -6396179517749137012L;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, cascade = CascadeType.ALL)
     private City city;
 
     @Column(nullable = false)

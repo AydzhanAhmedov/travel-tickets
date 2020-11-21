@@ -28,6 +28,7 @@ import org.apache.logging.log4j.Logger;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.function.Consumer;
 
 import static bg.tuvarna.traveltickets.common.AppConfig.getLangBundle;
 import static bg.tuvarna.traveltickets.common.Constants.CLIENT_DIALOG_FXML_PATH;
@@ -71,7 +72,7 @@ public class ClientsTableController implements Initializable {
             final TableRow<Client> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2 && !row.isEmpty())
-                    loadDialog(DialogMode.VIEW, tableClients.getSelectionModel().getSelectedItem());
+                    loadDialog(DialogMode.VIEW, tableClients.getSelectionModel().getSelectedItem(), null);
             });
             return row;
         });
@@ -82,16 +83,16 @@ public class ClientsTableController implements Initializable {
 
     @FXML
     private void onAddClicked(final ActionEvent event) {
-        loadDialog(DialogMode.ADD, null);
+        loadDialog(DialogMode.ADD, null, c -> tableClients.getItems().add(c));
     }
 
-    private void loadDialog(final DialogMode dialogMode, final Client client) {
+    private void loadDialog(final DialogMode dialogMode, final Client client, Consumer<Client> consumer) {
         try {
             final FXMLLoader loader = new FXMLLoader(getClass().getResource(CLIENT_DIALOG_FXML_PATH), getLangBundle());
             final DialogPane dialogPane = loader.load();
             final ClientDialogController clientDialogController = loader.getController();
 
-            clientDialogController.injectDialogMode(dialogMode, client, c -> tableClients.getItems().add(c));
+            clientDialogController.injectDialogMode(dialogMode, client, consumer);
 
             final Dialog<Void> dialog = new UndecoratedDialog<>(root.getParent().getParent(), dialogPane);
             dialog.showAndWait();
@@ -132,7 +133,7 @@ public class ClientsTableController implements Initializable {
                     btn.getStylesheets().addAll(addButton.getStylesheets());
                     btn.getStyleClass().addAll(addButton.getStyleClass());
                     btn.setOnAction(event -> {
-                        loadDialog(DialogMode.EDIT, item);
+                        loadDialog(DialogMode.EDIT, item, c -> tableClients.getItems().set(getIndex(), item));
                         getTableView().getItems().set(getIndex(), item);
                     });
 

@@ -21,6 +21,9 @@ public final class Constants {
     public static final String DATE_PARAM = "date";
 
     // Bundles
+    public static final String ACCEPT_BUTTON_KEY = "label.button.accept";
+    public static final String DECLINE_BUTTON_KEY = "label.button.decline";
+
     public static final String SEEN_BUTTON_KEY = "label.button.seen";
     public static final String EDIT_BUTTON_KEY = "label.button.edit";
     public static final String REQUEST_BUTTON_KEY = "label.button.request";
@@ -51,6 +54,7 @@ public final class Constants {
     public static final String NOTIFICATIONS_DIALOG_FXML_PATH = "/fxml/notifications_dialog.fxml";
     public static final String CLIENTS_TABLE_FXML_PATH = "/fxml/table_clients.fxml";
     public static final String TRAVELS_TABLE_FXML_PATH = "/fxml/table_travels.fxml";
+    public static final String REQUESTS_TABLE_FXML_PATH = "/fxml/table_requests.fxml";
 
     // Other constants
     public static final String EMPTY_STRING = "";

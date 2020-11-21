@@ -1,5 +1,6 @@
 package bg.tuvarna.traveltickets.entity;
 
+import bg.tuvarna.traveltickets.common.AppConfig;
 import bg.tuvarna.traveltickets.entity.base.BaseEntity;
 import org.hibernate.annotations.Immutable;
 
@@ -17,7 +18,14 @@ public class RequestStatus extends BaseEntity {
 
     private static final long serialVersionUID = 5989003038680325200L;
 
-    public enum Enum {PENDING, APPROVED, REJECTED}
+    public enum Enum {
+        PENDING, APPROVED, REJECTED;
+
+        @Override
+        public String toString() {
+            return AppConfig.getLangBundle().getString("label." + this.name().toLowerCase());
+        }
+    }
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, unique = true)

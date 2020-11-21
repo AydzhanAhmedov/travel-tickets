@@ -47,6 +47,7 @@ import static bg.tuvarna.traveltickets.common.Constants.ACTIVE_NOTIFICATIONS_BTN
 import static bg.tuvarna.traveltickets.common.Constants.CLIENTS_TABLE_FXML_PATH;
 import static bg.tuvarna.traveltickets.common.Constants.NOTIFICATIONS_BTN_CSS;
 import static bg.tuvarna.traveltickets.common.Constants.NOTIFICATIONS_DIALOG_FXML_PATH;
+import static bg.tuvarna.traveltickets.common.Constants.REQUESTS_TABLE_FXML_PATH;
 import static bg.tuvarna.traveltickets.common.Constants.TRAVELS_TABLE_FXML_PATH;
 import static bg.tuvarna.traveltickets.util.JpaOperationsUtil.execute;
 import static bg.tuvarna.traveltickets.util.notifications.NotificationEvent.NEW_NOTIFICATION;
@@ -158,8 +159,7 @@ public class HomeController extends BaseUndecoratedController {
 
                 return travel;
             });*/
-            case BTN_REQUESTS -> event -> {
-            };
+            case BTN_REQUESTS -> this::onRequestsBtnClicked;
             case BTN_STATISTIC -> event -> {
             };
             case BTN_SOLD_TICKETS -> event -> {
@@ -181,6 +181,16 @@ public class HomeController extends BaseUndecoratedController {
         try {
             contentText.setText(((Button) actionEvent.getSource()).getText());
             childBorderPane.setCenter(new FXMLLoader(getClass().getResource(TRAVELS_TABLE_FXML_PATH), getLangBundle()).load());
+        }
+        catch (IOException e) {
+            LOG.error("Error loading travels table: ", e);
+        }
+    }
+
+    public void onRequestsBtnClicked(final ActionEvent actionEvent) {
+        try {
+            contentText.setText(((Button) actionEvent.getSource()).getText());
+            childBorderPane.setCenter(new FXMLLoader(getClass().getResource(REQUESTS_TABLE_FXML_PATH), getLangBundle()).load());
         }
         catch (IOException e) {
             LOG.error("Error loading travels table: ", e);
@@ -227,9 +237,16 @@ public class HomeController extends BaseUndecoratedController {
             case COMPANY -> {
                 Company company = (Company) authService.getLoggedClient();
 
-                // check if image is laoded
-                Image image = new Image(company.getLogoUrl());
-                userImageView.setImage(image);
+                Image image;
+                try {
+                    image = new Image(company.getLogoUrl());
+                    userImageView.setImage(image);
+                }
+                catch (IllegalArgumentException e) {
+                    // INVALID URL
+                    image = new Image("images/logo_cashier.png");
+                    userImageView.setImage(image);
+                }
                 userText.setText(company.getName());
             }
         }

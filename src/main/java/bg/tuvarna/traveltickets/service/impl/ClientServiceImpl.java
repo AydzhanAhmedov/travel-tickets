@@ -9,6 +9,7 @@ import bg.tuvarna.traveltickets.repository.impl.UserRepositoryImpl;
 import bg.tuvarna.traveltickets.service.AuthService;
 import bg.tuvarna.traveltickets.service.CityService;
 import bg.tuvarna.traveltickets.service.ClientService;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.Collections;
 import java.util.List;
@@ -30,16 +31,25 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public Client addClient(final Client client) {
-        // add city
+    public Client save(final Client client) {
+
+
+        if (client.getUser().getId() != null) {
+            Client clientDB = clientRepository.findById(client.getUserId());
+            if (!clientDB.getUser().getPassword().equals(client.getUser().getPassword())) {
+                String passHash = BCrypt.hashpw(client.getUser().getPassword(), BCrypt.gensalt());
+                client.getUser().setPassword(passHash);
+            }
+        } else {
+            String passHash = BCrypt.hashpw(client.getUser().getPassword(), BCrypt.gensalt());
+            client.getUser().setPassword(passHash);
+        }
+
         final City city = cityService.findOrAddByName(client.getAddress().getCity().getName());
         client.getAddress().setCity(city);
-
-        // add user
         userRepository.save(client.getUser());
         client.setUserId(client.getUser().getId());
 
-        // add client
         return clientRepository.save(client);
     }
 
