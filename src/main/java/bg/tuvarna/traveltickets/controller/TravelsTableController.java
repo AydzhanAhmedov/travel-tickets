@@ -1,11 +1,13 @@
 package bg.tuvarna.traveltickets.controller;
 
-import bg.tuvarna.traveltickets.controller.base.BaseUndecoratedDialogController;
-import bg.tuvarna.traveltickets.entity.ClientType;
+import bg.tuvarna.traveltickets.control.UndecoratedDialog;
+import bg.tuvarna.traveltickets.controller.base.BaseUndecoratedDialogController.DialogMode;
 import bg.tuvarna.traveltickets.entity.Company;
+import bg.tuvarna.traveltickets.entity.Distributor;
 import bg.tuvarna.traveltickets.entity.Travel;
 import bg.tuvarna.traveltickets.entity.TravelStatus;
 import bg.tuvarna.traveltickets.entity.TravelType;
+import bg.tuvarna.traveltickets.repository.impl.ClientRepositoryImpl;
 import bg.tuvarna.traveltickets.service.AuthService;
 import bg.tuvarna.traveltickets.service.TravelService;
 import bg.tuvarna.traveltickets.service.impl.AuthServiceImpl;
@@ -14,29 +16,52 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.DialogPane;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.BorderPane;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.net.URL;
+import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import static bg.tuvarna.traveltickets.common.AppConfig.getLangBundle;
 import static bg.tuvarna.traveltickets.common.AppConfig.getShortDateTimeFormatter;
 import static bg.tuvarna.traveltickets.common.Constants.EDIT_BUTTON_KEY;
 import static bg.tuvarna.traveltickets.common.Constants.REQUEST_BUTTON_KEY;
 import static bg.tuvarna.traveltickets.common.Constants.SELL_BUTTON_KEY;
+import static bg.tuvarna.traveltickets.common.Constants.TRAVEL_DIALOG_FXML_PATH;
+import static bg.tuvarna.traveltickets.controller.base.BaseUndecoratedDialogController.DialogMode.ADD;
+import static bg.tuvarna.traveltickets.controller.base.BaseUndecoratedDialogController.DialogMode.EDIT;
+import static bg.tuvarna.traveltickets.controller.base.BaseUndecoratedDialogController.DialogMode.VIEW;
 import static bg.tuvarna.traveltickets.entity.ClientType.Enum.COMPANY;
+import static bg.tuvarna.traveltickets.entity.ClientType.Enum.DISTRIBUTOR;
 import static bg.tuvarna.traveltickets.util.JpaOperationsUtil.execute;
+import static bg.tuvarna.traveltickets.util.JpaOperationsUtil.executeInTransaction;
+import static java.util.stream.Collectors.toSet;
 
-public class TravelsTableController extends BaseUndecoratedDialogController {
+public class TravelsTableController implements Initializable {
+
+    private static final Logger LOG = LogManager.getLogger(TravelsTableController.class);
 
     private final TravelService travelService = TravelServiceImpl.getInstance();
     private final AuthService authService = AuthServiceImpl.getInstance();
+
+    private Set<Long> travelsWithRequests;
+
+    @FXML
+    private BorderPane root;
 
     @FXML
     private TableView<Travel> tableClients;
@@ -68,15 +93,22 @@ public class TravelsTableController extends BaseUndecoratedDialogController {
         tableClients.setRowFactory(tv -> {
             final TableRow<Travel> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
-//                if (event.getClickCount() == 2 && !row.isEmpty())
-//                    loadDialog(VIEW, tableClients.getSelectionModel().getSelectedItem());
+                if (event.getClickCount() == 2 && !row.isEmpty())
+                    loadDialog(VIEW, tableClients.getSelectionModel().getSelectedItem());
             });
             return row;
         });
 
+        executeInTransaction(em -> ClientRepositoryImpl.getInstance().findAllByClientTypeId(2L));
+
         tableClients.setItems(FXCollections.observableList(execute(em -> {
             final List<Travel> travels = travelService.findAll();
 
+            if (authService.getLoggedClientTypeName() == DISTRIBUTOR) {
+                travelsWithRequests = travelService.findAllRequests().stream().map(r -> r.getTravel().getId()).collect(toSet());
+            } else {
+                travelsWithRequests = Collections.emptySet();
+            }
 
             return travels;
         })));
@@ -84,7 +116,23 @@ public class TravelsTableController extends BaseUndecoratedDialogController {
 
     @FXML
     private void onAddClicked(final ActionEvent event) {
+        loadDialog(ADD, null);
+    }
 
+    private void loadDialog(final DialogMode dialogMode, final Travel travel) {
+        try {
+            final FXMLLoader loader = new FXMLLoader(getClass().getResource(TRAVEL_DIALOG_FXML_PATH), getLangBundle());
+            final DialogPane dialogPane = loader.load();
+            final TravelDialogController travelDialogController = loader.getController();
+
+            travelDialogController.injectDialogMode(dialogMode, travel, t -> tableClients.getItems().add(t));
+
+            final Dialog<Void> dialog = new UndecoratedDialog<>(root.getParent().getParent(), dialogPane);
+            dialog.showAndWait();
+        }
+        catch (Exception e) {
+            LOG.error("Error while trying to load travel dialog with mode " + dialogMode.toString() + ": ", e);
+        }
     }
 
     private void initColumns() {
@@ -110,15 +158,14 @@ public class TravelsTableController extends BaseUndecoratedDialogController {
             @Override
             protected void updateItem(final TravelStatus item, final boolean empty) {
                 super.updateItem(item, empty);
-                final String text = empty ? null : getLangBundle().getString("label.travel_status_" + item.getName().toString().toLowerCase());
-                setText(!empty ? text.substring(0, 1).toUpperCase() + text.substring(1) : null);
+                setText(!empty ? item.getName().toString() : null);
             }
         });
         columnType.setCellFactory(col -> new TableCell<>() {
             @Override
             protected void updateItem(final TravelType item, final boolean empty) {
                 super.updateItem(item, empty);
-                setText(!empty ? getLangBundle().getString("label." + item.getName().toString().toLowerCase()) : null);
+                setText(!empty ? item.getName().toString() : null);
             }
         });
         columnDates.setCellFactory(col -> new TableCell<>() {
@@ -136,17 +183,27 @@ public class TravelsTableController extends BaseUndecoratedDialogController {
                     setGraphic(null);
                     setText(null);
                 } else {
-                    final ClientType.Enum clientTypeName = authService.getLoggedClientTypeName();
-                    final Button btn = new Button(getLangBundle().getString(switch (clientTypeName) {
-                        case DISTRIBUTOR -> REQUEST_BUTTON_KEY;
-                        case CASHIER -> SELL_BUTTON_KEY;
-                        default -> EDIT_BUTTON_KEY;
-                    }));
+                    final Button btn = new Button();
 
+                    btn.setText(getLangBundle().getString(switch (authService.getLoggedClientTypeName()) {
+                        case DISTRIBUTOR -> {
+                            btn.setOnAction(e -> {
+                                executeInTransaction(em -> travelService.createRequest(item));
+                                travelsWithRequests.add(item.getId());
+                                getTableView().getItems().set(getIndex(), item);
+                            });
+                            yield REQUEST_BUTTON_KEY;
+                        }
+                        case CASHIER -> SELL_BUTTON_KEY; // TODO: implement with tickets functionality
+                        default -> {
+                            btn.setOnAction(e -> loadDialog(EDIT, getTableView().getItems().get(getIndex())));
+                            yield EDIT_BUTTON_KEY;
+                        }
+                    }));
                     btn.getStylesheets().addAll(addTravelButton.getStylesheets());
                     btn.getStyleClass().addAll(addTravelButton.getStyleClass());
-                    btn.setOnAction(e -> {
-                    });
+
+                    if (travelsWithRequests.contains(item.getId())) btn.setDisable(true);
 
                     setGraphic(btn);
                 }
@@ -158,21 +215,6 @@ public class TravelsTableController extends BaseUndecoratedDialogController {
         columnType.setCellValueFactory(new PropertyValueFactory<>("travelType"));
         columnDates.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue()));
         columnAction.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue()));
-    }
-
-    @Override
-    protected void onViewModeSet() {
-
-    }
-
-    @Override
-    protected void onAddModeSet() {
-
-    }
-
-    @Override
-    protected void onEditMode() {
-
     }
 
 }

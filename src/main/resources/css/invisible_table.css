@@ -9,17 +9,16 @@
    to the edge of the tableview, or up to the 'column control' button. */
 .table-view .filler, .tree-table-view .filler, .table-view .column-header,
 .tree-table-view .column-header {
-    -fx-size: 35;
-    -fx-border-style: solid;
-    -fx-border-width: 0 0 1 0;
-    -fx-border-color: #444484;
+    -fx-border-style: null;
+    -fx-border-width: 1;
+    -fx-border-color: transparent;
     -fx-background-color: transparent;
 }
 
 .table-view .show-hide-columns-button, .tree-table-view .show-hide-columns-button
 {
     -fx-background-color: transparent;
-    -fx-border-width: 0 0 1 0;
+    -fx-border-width: 0;
 }
 
 .table-view .column-header .label, .table-view .filler .label, .table-column,
@@ -30,8 +29,10 @@
     -fx-background-color: transparent;
 }
 
-.table-view .column-header-background, .tree-table-view .column-header-background
-{
+.table-view .column-header-background, .tree-table-view .column-header-background {
+    -fx-max-height: 0;
+    -fx-pref-height: 0;
+    -fx-min-height: 0;
     -fx-background-color: transparent;
 }
 
@@ -39,7 +40,6 @@
 .table-view .increment-button ,.table-view .decrement-button {
     -fx-background-color:transparent;
 	-fx-background-radius: 2em;
-
 }
 
 /* The main scrollbar **track** CSS class  */
@@ -61,18 +61,18 @@
 }
 
 .table-row-cell, .tree-table-row-cell {
-    -fx-cell-size: 40px;
+    -fx-cell-size: 28px;
     -fx-background-color: transparent;
 }
 
 .table-row-cell:odd:filled {
-    -fx-border-width: 0 0 0.5 0;
-    -fx-border-color: #444484;
+    -fx-border-width: 0 0 0 0;
+    -fx-border-color: transparent;
 }
 
 .table-row-cell:even:filled {
-    -fx-border-width: 0 0 0.5 0;
-    -fx-border-color: #444484;
+    -fx-border-width: 0;
+    -fx-border-color: transparent;
 }
 
 .table-row-cell:empty {
@@ -92,5 +92,5 @@
 
 .table-cell {
     -fx-border-color: transparent; /* Vertical Lines*/
-    -fx-border-width: 1;
+    -fx-border-width: 0;
 }

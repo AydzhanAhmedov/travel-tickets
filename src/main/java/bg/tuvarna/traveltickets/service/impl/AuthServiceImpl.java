@@ -10,7 +10,6 @@ import bg.tuvarna.traveltickets.repository.impl.UserRepositoryImpl;
 import bg.tuvarna.traveltickets.service.AuthService;
 import org.mindrot.jbcrypt.BCrypt;
 
-import java.util.EnumSet;
 import java.util.List;
 
 import static bg.tuvarna.traveltickets.common.Constants.CLIENT_NOT_FOUND_FORMAT;
@@ -22,30 +21,6 @@ public final class AuthServiceImpl implements AuthService {
 
     private User loggedUser;
     private Client loggedClient;
-
-    private final List<MenuContent> adminContent = List.of(
-            MenuContent.BTN_CLIENTS,
-            MenuContent.BTN_STATISTIC
-    );
-
-    private final List<MenuContent> companyContent = List.of(
-            MenuContent.BTN_TRAVELS,
-            MenuContent.BTN_REQUESTS,
-            MenuContent.BTN_SOLD_TICKETS,
-            MenuContent.BTN_STATISTIC
-    );
-
-    private final List<MenuContent> distributorContent = List.of(
-            MenuContent.BTN_CLIENTS,
-            MenuContent.BTN_TRAVELS,
-            MenuContent.BTN_SOLD_TICKETS,
-            MenuContent.BTN_STATISTIC
-    );
-
-    private final List<MenuContent> cashierContent = List.of(
-            MenuContent.BTN_TRAVELS,
-            MenuContent.BTN_SOLD_TICKETS
-    );
 
     @Override
     public User getLoggedUser() {
@@ -67,7 +42,6 @@ public final class AuthServiceImpl implements AuthService {
         return loggedUser != null && ADMIN.equals(loggedUser.getRole().getName());
     }
 
-    // TODO uncomment this and use for user creation:// BCrypt.hashpw(password, BCrypt.gensalt());
     @Override
     public User login(final String usernameOrEmail, final String password) {
         final User user = userRepository.findByUsernameOrEmail(usernameOrEmail);
@@ -86,19 +60,6 @@ public final class AuthServiceImpl implements AuthService {
     public void logout() {
         loggedUser = null;
         loggedClient = null;
-        AppScreens.HOME.delete();
-    }
-
-    @Override
-    public List<MenuContent> getLoggedUserMenuContent() {
-        if (loggedUserIsAdmin())
-            return adminContent;
-
-        return switch (getLoggedClientTypeName()) {
-            case COMPANY -> companyContent;
-            case DISTRIBUTOR -> distributorContent;
-            case CASHIER -> cashierContent;
-        };
     }
 
     private static AuthServiceImpl instance;

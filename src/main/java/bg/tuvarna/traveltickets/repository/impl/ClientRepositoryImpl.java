@@ -38,7 +38,7 @@ public class ClientRepositoryImpl extends GenericCrudRepositoryImpl<Client, Long
             """;
 
     private static final String FIND_ALL_IDS_BY_CLIENT_TYPE_ID_HQL_FORMAT = """
-                SELECT c FROM %s AS c
+                SELECT c FROM Client AS c
                 LEFT JOIN FETCH c.user
                 LEFT JOIN FETCH c.address AS a
                 LEFT JOIN FETCH a.city
@@ -84,14 +84,11 @@ public class ClientRepositoryImpl extends GenericCrudRepositoryImpl<Client, Long
     }
 
     @Override
-    public <T extends Client> List<Client> findAllByClientTypeId(final Long clientTypeId, final Class<T> clientClass) {
-        final String hql = FIND_ALL_IDS_BY_CLIENT_TYPE_ID_HQL_FORMAT.formatted(clientClass.toString());
+    public List<Client> findAllByClientTypeId(final Long clientTypeId) {
         return EntityManagerUtil.getEntityManager()
-                .createQuery(hql, clientClass)
+                .createQuery(FIND_ALL_IDS_BY_CLIENT_TYPE_ID_HQL_FORMAT, Client.class)
                 .setParameter(CLIENT_TYPE_ID_PARAM, clientTypeId)
-                .getResultStream()
-                .map(c -> (Client) c)
-                .collect(Collectors.toList());
+                .getResultList();
     }
 
     @Override

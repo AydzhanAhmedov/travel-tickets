@@ -1,6 +1,7 @@
 package bg.tuvarna.traveltickets.controller;
 
 import bg.tuvarna.traveltickets.common.AppConfig;
+import bg.tuvarna.traveltickets.common.AppScreens;
 import bg.tuvarna.traveltickets.common.MenuContent;
 import bg.tuvarna.traveltickets.control.UndecoratedDialog;
 import bg.tuvarna.traveltickets.controller.base.BaseUndecoratedController;
@@ -19,7 +20,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
@@ -44,11 +44,8 @@ import static bg.tuvarna.traveltickets.common.AppConfig.getLangBundle;
 import static bg.tuvarna.traveltickets.common.AppConfig.setPrimaryStageScene;
 import static bg.tuvarna.traveltickets.common.AppScreens.LOGIN;
 import static bg.tuvarna.traveltickets.common.Constants.ACTIVE_NOTIFICATIONS_BTN_CSS;
-import static bg.tuvarna.traveltickets.common.Constants.CLIENTS_TABLE_FXML_PATH;
 import static bg.tuvarna.traveltickets.common.Constants.NOTIFICATIONS_BTN_CSS;
 import static bg.tuvarna.traveltickets.common.Constants.NOTIFICATIONS_DIALOG_FXML_PATH;
-import static bg.tuvarna.traveltickets.common.Constants.REQUESTS_TABLE_FXML_PATH;
-import static bg.tuvarna.traveltickets.common.Constants.TRAVELS_TABLE_FXML_PATH;
 import static bg.tuvarna.traveltickets.util.JpaOperationsUtil.execute;
 import static bg.tuvarna.traveltickets.util.notifications.NotificationEvent.NEW_NOTIFICATION;
 
@@ -123,78 +120,9 @@ public class HomeController extends BaseUndecoratedController {
     @FXML
     private void onLogoutButtonClicked(final ActionEvent event) {
         authService.logout();
+        AppScreens.HOME.delete();
         LOG.info("User logged out.");
         setPrimaryStageScene(LOGIN.getScene());
-    }
-
-    private EventHandler<ActionEvent> getEventHandler(MenuContent content) {
-        return switch (content) {
-            case BTN_CLIENTS -> this::onClientsBtnClicked;
-            case BTN_TRAVELS -> this::onTravelsBtnClicked;/*executeInTransaction(em -> { //TODO: remove this, only for test
-                final City varna = CityServiceImpl.getInstance().findOrAddByName("Varna");
-                final City sofia = CityServiceImpl.getInstance().findOrAddByName("Sofia");
-
-                final Travel travel = new Travel();
-                final List<TravelRoute> routes = new ArrayList<>();
-
-                travel.setTravelType(TravelTypeServiceImpl.getInstance().findByName(TravelType.Enum.EDUCATIONAL));
-                travel.setTicketQuantity(20);
-                travel.setCurrentTicketQuantity(20);
-                travel.setDetails("test_" + new Random().nextInt(10));
-                travel.setStartDate(OffsetDateTime.now().plusDays(10));
-                travel.setEndDate(OffsetDateTime.now().plusDays(15));
-                travel.setTicketBuyLimit(1);
-                travel.setTicketPrice(BigDecimal.valueOf(20.50));
-                travel.setTravelRoutes(routes);
-
-                routes.add(new TravelRoute(travel, varna));
-                routes.add(new TravelRoute(travel, sofia));
-
-                routes.get(0).setArrivalDate(travel.getStartDate());
-                routes.get(1).setArrivalDate(travel.getEndDate());
-                routes.get(0).setTransportType(TransportTypeServiceImpl.getInstance().findByName(TransportType.Enum.AIRPLANE));
-                routes.get(1).setTransportType(TransportTypeServiceImpl.getInstance().findByName(TransportType.Enum.SHIP));
-
-                TravelServiceImpl.getInstance().create(travel);
-
-                return travel;
-            });*/
-            case BTN_REQUESTS -> this::onRequestsBtnClicked;
-            case BTN_STATISTIC -> event -> {
-            };
-            case BTN_SOLD_TICKETS -> event -> {
-            };
-        };
-    }
-
-    public void onClientsBtnClicked(final ActionEvent actionEvent) {
-        try {
-            contentText.setText(((Button) actionEvent.getSource()).getText());
-            childBorderPane.setCenter(new FXMLLoader(getClass().getResource(CLIENTS_TABLE_FXML_PATH), getLangBundle()).load());
-        }
-        catch (IOException e) {
-            LOG.error("Error loading clients table: ", e);
-        }
-    }
-
-    public void onTravelsBtnClicked(final ActionEvent actionEvent) {
-        try {
-            contentText.setText(((Button) actionEvent.getSource()).getText());
-            childBorderPane.setCenter(new FXMLLoader(getClass().getResource(TRAVELS_TABLE_FXML_PATH), getLangBundle()).load());
-        }
-        catch (IOException e) {
-            LOG.error("Error loading travels table: ", e);
-        }
-    }
-
-    public void onRequestsBtnClicked(final ActionEvent actionEvent) {
-        try {
-            contentText.setText(((Button) actionEvent.getSource()).getText());
-            childBorderPane.setCenter(new FXMLLoader(getClass().getResource(REQUESTS_TABLE_FXML_PATH), getLangBundle()).load());
-        }
-        catch (IOException e) {
-            LOG.error("Error loading travels table: ", e);
-        }
     }
 
     private void fireNewNotificationEvent() {
@@ -215,12 +143,17 @@ public class HomeController extends BaseUndecoratedController {
     private void initUserSpecificContent() {
         LOG.info("Initializing user specific content.");
 
-        authService.getLoggedUserMenuContent().forEach(c -> {
+        (authService.loggedUserIsAdmin()
+                ? MenuContent.getAdminContent()
+                : MenuContent.getClientContent(authService.getLoggedClientTypeName())
+        ).forEach(c -> {
             final Button button = c.getButton();
-            button.setOnAction(getEventHandler(c));
+            button.setOnAction(e -> {
+                contentText.setText(button.getText());
+                childBorderPane.setCenter(c.loadContent());
+            });
             contentButtonsVBox.getChildren().add(contentButtonsVBox.getChildren().size() - 1, button);
         });
-
         ((Button) contentButtonsVBox.getChildren().get(1)).fire();
 
         if (authService.loggedUserIsAdmin()) return;
@@ -236,16 +169,12 @@ public class HomeController extends BaseUndecoratedController {
             }
             case COMPANY -> {
                 Company company = (Company) authService.getLoggedClient();
-
-                Image image;
                 try {
-                    image = new Image(company.getLogoUrl());
-                    userImageView.setImage(image);
+                    userImageView.setImage(new Image(company.getLogoUrl()));
                 }
                 catch (IllegalArgumentException e) {
-                    // INVALID URL
-                    image = new Image("images/logo_cashier.png");
-                    userImageView.setImage(image);
+                    LOG.warn("Invalid logo url for logged company: ", e);
+                    userImageView.setImage(new Image("images/logo_cashier.png"));
                 }
                 userText.setText(company.getName());
             }

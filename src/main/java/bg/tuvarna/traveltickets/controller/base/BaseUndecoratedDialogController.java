@@ -1,5 +1,8 @@
 package bg.tuvarna.traveltickets.controller.base;
 
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.DialogPane;
 
 import java.util.Objects;
@@ -32,6 +35,12 @@ public abstract class BaseUndecoratedDialogController extends BaseUndecoratedCon
 
     protected final DialogPane getDialogPane() {
         return (DialogPane) root;
+    }
+
+    protected final Button addDialogButton(final String text, final ButtonBar.ButtonData buttonData) {
+        final ButtonType buttonType = new ButtonType(text, buttonData);
+        getDialogPane().getButtonTypes().add(buttonType);
+        return (Button) getDialogPane().lookupButton(buttonType);
     }
 
     /**

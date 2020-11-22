@@ -1,6 +1,7 @@
 package bg.tuvarna.traveltickets.repository;
 
 import bg.tuvarna.traveltickets.entity.Travel;
+import bg.tuvarna.traveltickets.entity.TravelDistributorRequest;
 import bg.tuvarna.traveltickets.entity.TravelRoute;
 import bg.tuvarna.traveltickets.entity.User;
 import bg.tuvarna.traveltickets.repository.base.GenericCrudRepository;
@@ -11,9 +12,17 @@ public interface TravelRepository extends GenericCrudRepository<Travel, Long> {
 
     TravelRoute save(TravelRoute travelRoute);
 
+    TravelDistributorRequest save(TravelDistributorRequest travelDistributorRequest);
+
+    List<TravelDistributorRequest> findAllRequestsByCompanyIdAndRequestStatusId(Long companyId, Long statusId);
+
+    List<TravelDistributorRequest> findAllRequestsByDistributorId(Long distributorId);
+
     List<Travel> findAll();
 
     List<Travel> findAllByCompanyId(Long companyId);
+
+    List<Travel> findAllByTravelStatusId(Long travelStatusId);
 
     List<Travel> findAllByCompanyIdAndTravelStatusId(Long companyId, Long travelStatusId);
 

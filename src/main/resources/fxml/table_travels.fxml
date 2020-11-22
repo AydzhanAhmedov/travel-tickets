@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 
-<BorderPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="bg.tuvarna.traveltickets.controller.TravelsTableController">
+<BorderPane fx:id="root" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="bg.tuvarna.traveltickets.controller.TravelsTableController">
     <top>
         <HBox prefHeight="40.0" prefWidth="600.0" BorderPane.alignment="CENTER">
             <padding>

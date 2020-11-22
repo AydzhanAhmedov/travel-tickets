@@ -55,7 +55,7 @@
                 <TextField fx:id="emailTextField" maxWidth="150.0" prefWidth="150.0" GridPane.columnIndex="1" styleClass="dialogTextField" stylesheets="@../css/text_fields.css"/>
                 <TextField fx:id="usernameTextField" maxWidth="150.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" styleClass="dialogTextField" stylesheets="@../css/text_fields.css" />
                 <PasswordField fx:id="passwordField" maxWidth="150.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" styleClass="dialogTextField" stylesheets="@../css/text_fields.css"/>
-                <ComboBox fx:id="clientTypeComboBox" onAction="#onClientTypeChange" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="3" stylesheets="@../css/text_fields.css"/>
+                <ComboBox fx:id="clientTypeComboBox" onAction="#onClientTypeChange" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="3" styleClass="dialogComboBox" stylesheets="@../css/text_fields.css"/>
                 <TextField fx:id="nameTextField" maxWidth="150.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="4" styleClass="dialogTextField" stylesheets="@../css/text_fields.css" />
                 <NumberTextField fx:id="phoneTextField" maxWidth="150.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="5" styleClass="dialogTextField" stylesheets="@../css/text_fields.css"/>
                 <TextField fx:id="addressTextField" maxWidth="150.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="6" styleClass="dialogTextField" stylesheets="@../css/text_fields.css"/>

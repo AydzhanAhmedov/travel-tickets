@@ -10,6 +10,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.Table;
 import java.util.Objects;
 
+import static bg.tuvarna.traveltickets.common.AppConfig.getLangBundle;
+
 @Immutable
 @Entity
 @Table(name = "travel_statuses")
@@ -17,7 +19,15 @@ public class TravelStatus extends BaseEntity {
 
     private static final long serialVersionUID = -6993633903199159181L;
 
-    public enum Enum {INCOMING, ONGOING, CANCELLED, ENDED}
+    public enum Enum {
+        INCOMING, ONGOING, CANCELLED, ENDED;
+
+        @Override
+        public String toString() {
+            final String text = getLangBundle().getString("label.travel_status_" + this.name().toLowerCase());
+            return text.substring(0, 1).toUpperCase() + text.substring(1);
+        }
+    }
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, unique = true)

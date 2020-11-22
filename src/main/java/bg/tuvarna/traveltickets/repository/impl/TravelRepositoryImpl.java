@@ -1,6 +1,7 @@
 package bg.tuvarna.traveltickets.repository.impl;
 
 import bg.tuvarna.traveltickets.entity.Travel;
+import bg.tuvarna.traveltickets.entity.TravelDistributorRequest;
 import bg.tuvarna.traveltickets.entity.TravelRoute;
 import bg.tuvarna.traveltickets.entity.User;
 import bg.tuvarna.traveltickets.repository.TravelRepository;
@@ -41,7 +42,15 @@ public class TravelRepositoryImpl extends GenericCrudRepositoryImpl<Travel, Long
                 WHERE t.travelStatus.id = :travelStatusId AND t.createdBy.id = :userId
             """;
 
-    private static final String FIND_ALL_BY_DISTRIBUTOR_ID_AND_TRAVEL_STATUS_ID_HQL = """
+    private static final String FIND_ALL_BY_TRAVEL_STATUS_ID_HQL = """
+                SELECT DISTINCT t FROM Travel AS t
+                LEFT JOIN FETCH t.travelRoutes AS tr
+                LEFT JOIN FETCH tr.city
+                LEFT JOIN FETCH t.createdBy
+                WHERE t.travelStatus.id = :travelStatusId
+            """;
+
+    private static final String FIND_ALL_BY_DISTRIBUTOR_ID_AND_TRAVEL_AND_REQUEST_STATUS_ID_HQL = """
                 SELECT DISTINCT t FROM Travel AS t
                 LEFT JOIN FETCH t.travelRoutes AS tr
                 LEFT JOIN FETCH tr.city
@@ -57,6 +66,17 @@ public class TravelRepositoryImpl extends GenericCrudRepositoryImpl<Travel, Long
                 WHERE tdr.travel.id = :travelId AND tdr.requestStatus.id = :requestStatusId
             """;
 
+    private static final String FIND_ALL_REQUESTS_BY_COMPANY_ID_AND_STATUS_ID_HQL = """
+                SELECT tdr FROM TravelDistributorRequest AS tdr
+                LEFT JOIN FETCH tdr.travel AS t
+                WHERE t.createdBy.id = :userId AND tdr.requestStatus.id =:requestStatusId
+            """;
+
+    private static final String FIND_ALL_REQUESTS_BY_DISTRIBUTOR_ID_HQL = """
+                SELECT tdr FROM TravelDistributorRequest AS tdr
+                WHERE tdr.user.id = :userId
+            """;
+
     @Override
     public TravelRoute save(final TravelRoute travelRoute) {
         final EntityManager entityManager = EntityManagerUtil.getEntityManager();
@@ -67,6 +87,36 @@ public class TravelRepositoryImpl extends GenericCrudRepositoryImpl<Travel, Long
 
         entityManager.persist(travelRoute);
         return travelRoute;
+    }
+
+    @Override
+    public TravelDistributorRequest save(final TravelDistributorRequest travelDistributorRequest) {
+        final EntityManager entityManager = EntityManagerUtil.getEntityManager();
+
+        if (travelDistributorRequest.getTravelDistributorID() != null) {
+            return entityManager.merge(travelDistributorRequest);
+        }
+
+        entityManager.persist(travelDistributorRequest);
+        return travelDistributorRequest;
+    }
+
+    @Override
+    public List<TravelDistributorRequest> findAllRequestsByCompanyIdAndRequestStatusId(final Long companyId,
+                                                                                       final Long statusId) {
+        return EntityManagerUtil.getEntityManager()
+                .createQuery(FIND_ALL_REQUESTS_BY_COMPANY_ID_AND_STATUS_ID_HQL, TravelDistributorRequest.class)
+                .setParameter(REQUEST_STATUS_ID_PARAM, statusId)
+                .setParameter(USER_ID_PARAM, companyId)
+                .getResultList();
+    }
+
+    @Override
+    public List<TravelDistributorRequest> findAllRequestsByDistributorId(final Long distributorId) {
+        return EntityManagerUtil.getEntityManager()
+                .createQuery(FIND_ALL_REQUESTS_BY_DISTRIBUTOR_ID_HQL, TravelDistributorRequest.class)
+                .setParameter(USER_ID_PARAM, distributorId)
+                .getResultList();
     }
 
     @Override
@@ -87,6 +137,15 @@ public class TravelRepositoryImpl extends GenericCrudRepositoryImpl<Travel, Long
     }
 
     @Override
+    public List<Travel> findAllByTravelStatusId(final Long travelStatusId) {
+        return EntityManagerUtil.getEntityManager()
+                .createQuery(FIND_ALL_BY_TRAVEL_STATUS_ID_HQL, Travel.class)
+                .setParameter(TRAVEL_STATUS_ID_PARAM, travelStatusId)
+                .setHint(QueryHints.HINT_PASS_DISTINCT_THROUGH, false)
+                .getResultList();
+    }
+
+    @Override
     public List<Travel> findAllByCompanyIdAndTravelStatusId(final Long companyId, final Long travelStatusId) {
         return EntityManagerUtil.getEntityManager()
                 .createQuery(FIND_ALL_BY_COMPANY_ID_AND_TRAVEL_STATUS_ID_HQL, Travel.class)
@@ -101,7 +160,7 @@ public class TravelRepositoryImpl extends GenericCrudRepositoryImpl<Travel, Long
                                                                 final Long travelStatusId,
                                                                 final Long requestStatusId) {
         return EntityManagerUtil.getEntityManager()
-                .createQuery(FIND_ALL_BY_DISTRIBUTOR_ID_AND_TRAVEL_STATUS_ID_HQL, Travel.class)
+                .createQuery(FIND_ALL_BY_DISTRIBUTOR_ID_AND_TRAVEL_AND_REQUEST_STATUS_ID_HQL, Travel.class)
                 .setParameter(REQUEST_STATUS_ID_PARAM, requestStatusId)
                 .setParameter(TRAVEL_STATUS_ID_PARAM, travelStatusId)
                 .setParameter(USER_ID_PARAM, distributorId)

@@ -23,7 +23,6 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -260,7 +259,6 @@ public class ClientDialogController extends BaseUndecoratedDialogController {
     }
 
     private void readData() {
-
         if (client == null) {
             client = switch (clientType) {
                 case COMPANY -> new Company();
@@ -288,13 +286,11 @@ public class ClientDialogController extends BaseUndecoratedDialogController {
         if (getDialogMode() == DialogMode.ADD || !passwordField.getText().isBlank())
             client.getUser().setPassword(passwordField.getText());
 
-        if (client instanceof Company) {
-            ((Company) client).setLogoUrl(detail1TextField.getText());
-            ((Company) client).setDescription(detail2TextField.getText());
-        }
-
-        if (client instanceof Cashier) {
-            ((Cashier) client).setHonorarium(BigDecimal.valueOf(Double.parseDouble(detail1TextField.getText())));
+        if (client instanceof Company company) {
+            company.setLogoUrl(detail1TextField.getText());
+            company.setDescription(detail2TextField.getText());
+        } else if (client instanceof Cashier cashier) {
+            cashier.setHonorarium(new BigDecimal(detail1TextField.getText()));
         }
 
         LOG.debug("Data read");
@@ -343,26 +339,24 @@ public class ClientDialogController extends BaseUndecoratedDialogController {
 
     @Override
     protected void onAddModeSet() {
-        final ButtonType okButtonType = new ButtonType(getLangBundle().getString(BUTTON_APPLY_KEY), ButtonBar.ButtonData.OK_DONE);
-        getDialogPane().getButtonTypes().add(okButtonType);
-
-        final Button okButton = (Button) getDialogPane().lookupButton(okButtonType);
+        final Button okButton = addDialogButton(getLangBundle().getString(BUTTON_APPLY_KEY), ButtonBar.ButtonData.OK_DONE);
         if (okButton == null) return;
 
+        okButton.getStylesheets().addAll("/css/buttons.css");
+        okButton.getStyleClass().addAll("markAsReadBtn");
         okButton.addEventFilter(ActionEvent.ACTION, this::onAddClick);
     }
 
     @Override
     protected void onEditMode() {
-        final ButtonType okButtonType = new ButtonType(getLangBundle().getString(BUTTON_APPLY_KEY), ButtonBar.ButtonData.OK_DONE);
-        getDialogPane().getButtonTypes().add(okButtonType);
+        final Button okButton = addDialogButton(getLangBundle().getString(BUTTON_APPLY_KEY), ButtonBar.ButtonData.OK_DONE);
+        if (okButton == null) return;
 
         clientTypeComboBox.setDisable(true);
         clientTypeComboBox.setStyle("-fx-opacity: 1");
 
-        final Button okButton = (Button) getDialogPane().lookupButton(okButtonType);
-        if (okButton == null) return;
-
+        okButton.getStylesheets().addAll("/css/buttons.css");
+        okButton.getStyleClass().addAll("markAsReadBtn");
         okButton.addEventFilter(ActionEvent.ACTION, this::onEditClick);
     }
 }
