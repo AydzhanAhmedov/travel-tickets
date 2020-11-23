@@ -15,7 +15,6 @@ import bg.tuvarna.traveltickets.service.impl.TransportTypeServiceImpl;
 import bg.tuvarna.traveltickets.service.impl.TravelServiceImpl;
 import bg.tuvarna.traveltickets.service.impl.TravelStatusServiceImpl;
 import bg.tuvarna.traveltickets.service.impl.TravelTypeServiceImpl;
-import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -28,7 +27,6 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableColumnBase;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -41,17 +39,12 @@ import org.apache.logging.log4j.Logger;
 
 import java.math.BigDecimal;
 import java.net.URL;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
 
@@ -282,44 +275,45 @@ public class TravelDialogController extends BaseUndecoratedDialogController {
                     setGraphic(null);
                 } else if (travelRouteXBoxes.size() > getIndex() && travelRouteXBoxes.get(getIndex()) != null) {
                     setGraphic(travelRouteXBoxes.get(getIndex()));
-                    if (getTableView().getItems().size() < 3) travelRouteXBoxes.get(getIndex()).getChildren().get(3).setDisable(true);
+                    if (getTableView().getItems().size() < 3)
+                        travelRouteXBoxes.get(getIndex()).getChildren().get(3).setDisable(true);
                 } else try {
-                        final HBox root = FXMLLoader.load(getClass().getResource(ROUTE_VIEW_FXML_PATH), getLangBundle());
+                    final HBox root = FXMLLoader.load(getClass().getResource(ROUTE_VIEW_FXML_PATH), getLangBundle());
 
-                        final TextField cityTextField = (TextField) root.getChildren().get(0);
-                        final DatePicker arrivalDatePicker = (DatePicker) root.getChildren().get(1);
-                        final @SuppressWarnings("unchecked") ComboBox<TransportType.Enum> transportComboBox = (ComboBox<TransportType.Enum>) root.getChildren().get(2);
-                        final Button removeButton = (Button) root.getChildren().get(3);
+                    final TextField cityTextField = (TextField) root.getChildren().get(0);
+                    final DatePicker arrivalDatePicker = (DatePicker) root.getChildren().get(1);
+                    final @SuppressWarnings("unchecked") ComboBox<TransportType.Enum> transportComboBox = (ComboBox<TransportType.Enum>) root.getChildren().get(2);
+                    final Button removeButton = (Button) root.getChildren().get(3);
 
-                        transportComboBox.getItems().setAll(TransportType.Enum.values());
+                    transportComboBox.getItems().setAll(TransportType.Enum.values());
 
-                        cityTextField.setText(item.getCity() != null ? item.getCity().getName() : null);
-                        arrivalDatePicker.setValue(item.getArrivalDate() != null ? item.getArrivalDate().toLocalDate() : null);
-                        transportComboBox.setValue(item.getTransportType() != null ? item.getTransportType().getName() : null);
-                        removeButton.setOnAction(e -> {
-                            final int index = travelRouteXBoxes.indexOf(root);
-                            travelRouteXBoxes.remove(index);
-                            travel.getTravelRoutes().remove(index);
-                            getTableView().getItems().remove(index);
-                            getTableView().refresh();
-                        });
+                    cityTextField.setText(item.getCity() != null ? item.getCity().getName() : null);
+                    arrivalDatePicker.setValue(item.getArrivalDate() != null ? item.getArrivalDate().toLocalDate() : null);
+                    transportComboBox.setValue(item.getTransportType() != null ? item.getTransportType().getName() : null);
+                    removeButton.setOnAction(e -> {
+                        final int index = travelRouteXBoxes.indexOf(root);
+                        travelRouteXBoxes.remove(index);
+                        travel.getTravelRoutes().remove(index);
+                        getTableView().getItems().remove(index);
+                        getTableView().refresh();
+                    });
 
-                        if (getDialogMode() != DialogMode.ADD) {
-                            cityTextField.setEditable(false);
-                            cityTextField.setOpacity(1);
-                            arrivalDatePicker.setDisable(true);
-                            transportComboBox.setDisable(true);
-                            removeButton.setDisable(true);
-                        } else if (getTableView().getItems().size() < 3) removeButton.setDisable(true);
+                    if (getDialogMode() != DialogMode.ADD) {
+                        cityTextField.setEditable(false);
+                        cityTextField.setOpacity(1);
+                        arrivalDatePicker.setDisable(true);
+                        transportComboBox.setDisable(true);
+                        removeButton.setDisable(true);
+                    } else if (getTableView().getItems().size() < 3) removeButton.setDisable(true);
 
-                        travelRouteXBoxes.add(root);
-                        setGraphic(root);
-                    }
-                    catch (Exception e) {
-                        LOG.error("Error loading route view: ", e);
-                    }
+                    travelRouteXBoxes.add(root);
+                    setGraphic(root);
                 }
-            });
+                catch (Exception e) {
+                    LOG.error("Error loading route view: ", e);
+                }
+            }
+        });
         routeColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue()));
     }
 

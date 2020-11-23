@@ -74,7 +74,7 @@ CREATE TABLE travels(
 	end_date timestamp NOT NULL CHECK (end_date >= start_date),
 	ticket_quantity int2 NOT NULL CHECK (ticket_quantity > 0),
 	current_ticket_quantity int2 NOT NULL CHECK (current_ticket_quantity >= 0 AND current_ticket_quantity <= ticket_quantity),
-	ticket_price numeric NOT NULL,
+	ticket_price numeric(15,2) NOT NULL,
 	ticket_buy_limit int2 NOT NULL,
 	details varchar(500),
 	created_at timestamp NOT NULL,
@@ -98,7 +98,7 @@ CREATE TABLE cashiers(
 	client_id int8 NOT NULL PRIMARY KEY,
 	created_by int8 NOT NULL,
 	created_at timestamp NOT NULL,
-	honorarium real NOT NULL
+	honorarium numeric(15,2) NOT NULL
 );
 
 DROP TABLE IF EXISTS clients;
