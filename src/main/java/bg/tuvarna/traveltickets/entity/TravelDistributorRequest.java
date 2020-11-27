@@ -21,26 +21,26 @@ public class TravelDistributorRequest implements Serializable {
     @EmbeddedId
     private TravelDistributorID travelDistributorID;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @MapsId("travelID")
     private Travel travel;
 
     @JoinColumn(name = "distributor_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @MapsId("distributorID")
-    private User user;
+    private Distributor distributor;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "request_status_id")
     private RequestStatus requestStatus;
 
     public TravelDistributorRequest() {
     }
 
-    public TravelDistributorRequest(Travel travel, User user) {
+    public TravelDistributorRequest(Travel travel, Distributor distributor) {
         this.travel = travel;
-        this.user = user;
-        this.travelDistributorID = new TravelDistributorID(travel.getId(), user.getId());
+        this.distributor = distributor;
+        this.travelDistributorID = new TravelDistributorID(travel.getId(), distributor.getUserId());
     }
 
     public TravelDistributorID getTravelDistributorID() {
@@ -55,12 +55,12 @@ public class TravelDistributorRequest implements Serializable {
         this.travel = travel;
     }
 
-    public User getUser() {
-        return user;
+    public Distributor getDistributor() {
+        return distributor;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setDistributor(Distributor distributor) {
+        this.distributor = distributor;
     }
 
     public RequestStatus getRequestStatus() {
@@ -78,12 +78,12 @@ public class TravelDistributorRequest implements Serializable {
         TravelDistributorRequest that = (TravelDistributorRequest) o;
         return Objects.equals(travelDistributorID, that.travelDistributorID) &&
                 Objects.equals(travel, that.travel) &&
-                Objects.equals(user, that.user) &&
+                Objects.equals(distributor, that.distributor) &&
                 Objects.equals(requestStatus, that.requestStatus);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(travelDistributorID, travel, user, requestStatus);
+        return Objects.hash(travelDistributorID, travel, distributor, requestStatus);
     }
 }

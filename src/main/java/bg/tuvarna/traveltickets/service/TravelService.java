@@ -18,4 +18,8 @@ public interface TravelService {
 
     TravelDistributorRequest createRequest(Travel travel);
 
+    void acceptRequest(TravelDistributorRequest travelDistributorRequest);
+
+    void declineRequest(TravelDistributorRequest travelDistributorRequest);
+
 }

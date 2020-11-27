@@ -1,20 +1,30 @@
 package bg.tuvarna.traveltickets.controller;
 
+import bg.tuvarna.traveltickets.control.ConfirmDialog;
 import bg.tuvarna.traveltickets.entity.Client;
+import bg.tuvarna.traveltickets.entity.Distributor;
 import bg.tuvarna.traveltickets.entity.RequestStatus;
 import bg.tuvarna.traveltickets.entity.Travel;
 import bg.tuvarna.traveltickets.entity.TravelDistributorRequest;
+import bg.tuvarna.traveltickets.service.TravelService;
+import bg.tuvarna.traveltickets.service.impl.TravelServiceImpl;
+import bg.tuvarna.traveltickets.util.JpaOperationsUtil;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import static bg.tuvarna.traveltickets.common.AppConfig.getLangBundle;
@@ -24,6 +34,11 @@ import static bg.tuvarna.traveltickets.common.Constants.DECLINE_BUTTON_KEY;
 public class RequestsTableController implements Initializable {
 
     private static final Logger LOG = LogManager.getLogger(RequestsTableController.class);
+
+    private final TravelService travelService = TravelServiceImpl.getInstance();
+
+    @FXML
+    private TableView<TravelDistributorRequest> tableRequests;
 
     @FXML
     private TableColumn<TravelDistributorRequest, Travel> columnTravel;
@@ -35,7 +50,7 @@ public class RequestsTableController implements Initializable {
     private TableColumn<TravelDistributorRequest, Travel> columnStartDate;
 
     @FXML
-    private TableColumn<TravelDistributorRequest, Client> columnRequester;
+    private TableColumn<TravelDistributorRequest, Distributor> columnRequester;
 
     @FXML
     private TableColumn<TravelDistributorRequest, Client> columnRating;
@@ -47,13 +62,15 @@ public class RequestsTableController implements Initializable {
     public void initialize(final URL location, final ResourceBundle resources) {
 
         initColumns();
+        List<TravelDistributorRequest> list = JpaOperationsUtil.execute(em -> travelService.findAllRequests());
+        tableRequests.setItems(FXCollections.observableList(list));
     }
 
     private void initColumns() {
         columnTravel.setCellFactory(col -> new TableCell<>() {
             @Override
             protected void updateItem(final Travel item, final boolean empty) {
-                setText(item.getName());
+                setText(!empty ? item.getName() : null);
             }
         });
         columnTravel.setCellValueFactory(new PropertyValueFactory<>("travel"));
@@ -61,7 +78,7 @@ public class RequestsTableController implements Initializable {
         columnStatus.setCellFactory(col -> new TableCell<>() {
             @Override
             protected void updateItem(final RequestStatus item, final boolean empty) {
-                setText(item.getName().toString());
+                setText(!empty ? item.getName().toString() : null);
             }
         });
         columnStatus.setCellValueFactory(new PropertyValueFactory<>("requestStatus"));
@@ -69,29 +86,64 @@ public class RequestsTableController implements Initializable {
         columnStartDate.setCellFactory(col -> new TableCell<>() {
             @Override
             protected void updateItem(final Travel item, final boolean empty) {
-                setText(item.getStartDate().toString());
+                setText(!empty ? item.getStartDate().toString() : null);
             }
         });
         columnStartDate.setCellValueFactory(new PropertyValueFactory<>("travel"));
 
-//        columnRequester.setCellFactory(col -> new TableCell<>(){
-//            @Override
-//            protected void updateItem(final Client item, final boolean empty) {
-//                setText(item.getName());
-//            }
-//        });
-//        columnRequester.setCellValueFactory(new PropertyValueFactory<>("user"));
+        columnRequester.setCellFactory(col -> new TableCell<>() {
+            @Override
+            protected void updateItem(final Distributor item, final boolean empty) {
+                if (empty) {
+                    setText(null);
+                    setOnMouseClicked(null);
+                } else {
+                    setText(item.getName());
+                    setOnMouseClicked(event -> LOG.debug("TODO add client on this click"));
+                }
+            }
+        });
+        columnRequester.setCellValueFactory(new PropertyValueFactory<>("distributor"));
 
         columnAction.setCellFactory(col -> new TableCell<>() {
             @Override
             protected void updateItem(final TravelDistributorRequest item, final boolean empty) {
-                final TravelDistributorRequest TravelDistributorRequest = getTableView().getItems().get(getIndex());
-                final Button btnAccept = new Button(getLangBundle().getString(ACCEPT_BUTTON_KEY));
-                final Button btnDecline = new Button(getLangBundle().getString(DECLINE_BUTTON_KEY));
+                if (empty) {
+                    setGraphic(null);
+                    setText(null);
+                } else {
+                    final TravelDistributorRequest travelDistributorRequest = getTableView().getItems().get(getIndex());
 
-                final HBox hBox = new HBox();
-                hBox.getChildren().addAll(btnAccept, btnDecline);
-                setGraphic(hBox);
+                    if (travelDistributorRequest.getRequestStatus().getName() != RequestStatus.Enum.PENDING)
+                        return;
+
+                    final Button btnAccept = new Button(getLangBundle().getString(ACCEPT_BUTTON_KEY));
+                    btnAccept.setOnAction(event -> {
+                        ConfirmDialog alert = new ConfirmDialog(null, getLangBundle().getString("label.dialog.accept_request"));
+                        alert.showAndWait().ifPresent(type -> {
+                            if (type.getButtonData() == ButtonBar.ButtonData.YES) {
+                                travelService.acceptRequest(travelDistributorRequest);
+                                tableRequests.getItems().set(getIndex(), travelDistributorRequest);
+                            }
+                        });
+                    });
+
+                    final Button btnDecline = new Button(getLangBundle().getString(DECLINE_BUTTON_KEY));
+                    btnDecline.setOnAction(event -> {
+                        ConfirmDialog alert = new ConfirmDialog(null, getLangBundle().getString("label.dialog.decline_requst"));
+                        alert.showAndWait().ifPresent(type -> {
+                            if (type.getButtonData() == ButtonBar.ButtonData.YES) {
+                                travelService.declineRequest(travelDistributorRequest);
+                                tableRequests.getItems().set(getIndex(), travelDistributorRequest);
+                            }
+                        });
+                    });
+
+                    final HBox hBox = new HBox();
+                    hBox.setSpacing(5);
+                    hBox.getChildren().addAll(btnAccept, btnDecline);
+                    setGraphic(hBox);
+                }
             }
         });
 

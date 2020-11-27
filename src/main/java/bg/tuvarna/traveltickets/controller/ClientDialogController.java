@@ -48,6 +48,9 @@ import static bg.tuvarna.traveltickets.common.Constants.BLANK_DESCRIPTION_KEY;
 import static bg.tuvarna.traveltickets.common.Constants.BLANK_NAME_KEY;
 import static bg.tuvarna.traveltickets.common.Constants.BLANK_URL_KEY;
 import static bg.tuvarna.traveltickets.common.Constants.BUTTON_APPLY_KEY;
+import static bg.tuvarna.traveltickets.common.Constants.DESCRIPTION_KEY;
+import static bg.tuvarna.traveltickets.common.Constants.HONORARIUM_KEY;
+import static bg.tuvarna.traveltickets.common.Constants.IMAGE_URL_KEY;
 import static bg.tuvarna.traveltickets.common.Constants.INVALID_EMAIL_KEY;
 import static bg.tuvarna.traveltickets.common.Constants.INVALID_HONORARIUM_KEY;
 import static bg.tuvarna.traveltickets.common.Constants.INVALID_PASSWORD_KEY;
@@ -214,8 +217,10 @@ public class ClientDialogController extends BaseUndecoratedDialogController {
     }
 
     private void onAddClick(Event event) {
-        //if (!validate())
-        //    event.consume();
+        if (!validate()) {
+            event.consume();
+            return;
+        }
 
         readData();
         JpaOperationsUtil.executeInTransaction(em -> ClientServiceImpl.getInstance().save(client));
@@ -243,15 +248,15 @@ public class ClientDialogController extends BaseUndecoratedDialogController {
         clientType = type;
         switch (type) {
             case CASHIER -> {
-                detail1Label.setText("Honorarium");
+                detail1Label.setText(getLangBundle().getString(HONORARIUM_KEY));
                 detail1Label.setVisible(true);
                 detail1TextField.setVisible(true);
             }
             case COMPANY -> {
-                detail1Label.setText("Image URL");
+                detail1Label.setText(getLangBundle().getString(IMAGE_URL_KEY));
                 detail1Label.setVisible(true);
                 detail1TextField.setVisible(true);
-                detail2Label.setText("Description");
+                detail2Label.setText(getLangBundle().getString(DESCRIPTION_KEY));
                 detail2Label.setVisible(true);
                 detail2TextField.setVisible(true);
             }

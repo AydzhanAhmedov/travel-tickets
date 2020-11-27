@@ -4,18 +4,22 @@ import bg.tuvarna.traveltickets.common.AppConfig;
 import bg.tuvarna.traveltickets.entity.Cashier;
 import bg.tuvarna.traveltickets.entity.Client;
 import bg.tuvarna.traveltickets.entity.ClientType;
+import bg.tuvarna.traveltickets.entity.Distributor;
 import bg.tuvarna.traveltickets.entity.Travel;
 import bg.tuvarna.traveltickets.entity.TravelDistributorRequest;
 import bg.tuvarna.traveltickets.entity.TravelRoute;
 import bg.tuvarna.traveltickets.entity.TravelStatus;
 import bg.tuvarna.traveltickets.entity.User;
 import bg.tuvarna.traveltickets.repository.ClientRepository;
+import bg.tuvarna.traveltickets.repository.RequestRepository;
 import bg.tuvarna.traveltickets.repository.TravelRepository;
 import bg.tuvarna.traveltickets.repository.impl.ClientRepositoryImpl;
+import bg.tuvarna.traveltickets.repository.impl.RequestRepositoryImpl;
 import bg.tuvarna.traveltickets.repository.impl.TravelRepositoryImpl;
 import bg.tuvarna.traveltickets.service.AuthService;
 import bg.tuvarna.traveltickets.service.CityService;
 import bg.tuvarna.traveltickets.service.NotificationService;
+import bg.tuvarna.traveltickets.service.RequestStatusService;
 import bg.tuvarna.traveltickets.service.TravelService;
 import bg.tuvarna.traveltickets.service.TravelStatusService;
 import io.ably.lib.realtime.AblyRealtime;
@@ -35,6 +39,7 @@ import static bg.tuvarna.traveltickets.entity.NotificationType.Enum.NEW_TRAVEL;
 import static bg.tuvarna.traveltickets.entity.NotificationType.Enum.TRAVEL_STATUS_CHANGED;
 import static bg.tuvarna.traveltickets.entity.RequestStatus.Enum.APPROVED;
 import static bg.tuvarna.traveltickets.entity.RequestStatus.Enum.PENDING;
+import static bg.tuvarna.traveltickets.entity.RequestStatus.Enum.REJECTED;
 import static bg.tuvarna.traveltickets.entity.TravelStatus.Enum.INCOMING;
 import static bg.tuvarna.traveltickets.util.JpaOperationsUtil.executeInTransaction;
 
@@ -49,11 +54,14 @@ public class TravelServiceImpl implements TravelService {
 
     private final TravelRepository travelRepository = TravelRepositoryImpl.getInstance();
     private final ClientRepository clientRepository = ClientRepositoryImpl.getInstance();
+    private final RequestRepository requestRepository = RequestRepositoryImpl.getInstance();
 
     private final AblyRealtime ablyClient = AppConfig.getAblyClient();
     private final AuthService authService = AuthServiceImpl.getInstance();
     private final TravelStatusService travelStatusService = TravelStatusServiceImpl.getInstance();
     private final NotificationService notificationService = NotificationServiceImpl.getInstance();
+    private final RequestStatusService requestStatusService = RequestStatusServiceImpl.getInstance();
+
     private final CityService cityService = CityServiceImpl.getInstance();
 
     @Override
@@ -149,7 +157,19 @@ public class TravelServiceImpl implements TravelService {
         if (!DISTRIBUTOR.equals(authService.getLoggedClientTypeName())) {
             throw new RuntimeException("Only distributors can create requests for travels!");
         }
-        return travelRepository.save(new TravelDistributorRequest(travel, authService.getLoggedUser()));
+        return travelRepository.save(new TravelDistributorRequest(travel, (Distributor) (authService.getLoggedClient())));
+    }
+
+    @Override
+    public void acceptRequest(final TravelDistributorRequest travelDistributorRequest) {
+        travelDistributorRequest.setRequestStatus(requestStatusService.findByName(APPROVED));
+        requestRepository.save(travelDistributorRequest);
+    }
+
+    @Override
+    public void declineRequest(final TravelDistributorRequest travelDistributorRequest) {
+        travelDistributorRequest.setRequestStatus(requestStatusService.findByName(REJECTED));
+        requestRepository.save(travelDistributorRequest);
     }
 
     private boolean createAndSendNewTravelNotifications(final Travel travel) {

@@ -33,6 +33,9 @@ public final class Constants {
     public static final String HOURS_KEY = "label.short_hours_ago";
     public static final String MINUTES_KEY = "label.short_minutes_ago";
     public static final String SECONDS_KEY = "label.short_seconds_ago";
+    public static final String HONORARIUM_KEY = "label.honorarium";
+    public static final String IMAGE_URL_KEY = "label.image_url";
+    public static final String DESCRIPTION_KEY = "label.description";
 
     public static final String BAD_CREDENTIALS_KEY = "label.error.bad_credentials";
     public static final String UNEXPECTED_ERROR_KEY = "label.error.unexpected_error_try_again";
