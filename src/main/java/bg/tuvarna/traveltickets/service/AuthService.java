@@ -16,6 +16,10 @@ public interface AuthService {
 
     User login(String usernameOrEmail, String password);
 
+    User findByUsername(String username);
+
+    User findByEmail(String email);
+
     void logout();
 
 }

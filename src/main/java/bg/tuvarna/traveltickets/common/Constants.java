@@ -12,6 +12,8 @@ public final class Constants {
 
     // Params
     public static final String USERNAME_OR_EMAIL_PARAM = "usernameOrEmail";
+    public static final String USERNAME_PARAM = "username";
+    public static final String EMAIL_PARAM = "email";
     public static final String USER_ID_PARAM = "userId";
     public static final String CITY_NAME_PARAM = "cityName";
     public static final String TRAVEL_STATUS_ID_PARAM = "travelStatusId";
@@ -42,6 +44,8 @@ public final class Constants {
     public static final String BLANK_USERNAME_OR_PASSWORD_KEY = "label.error.blank_username_or_password";
     public static final String INVALID_EMAIL_KEY = "label.error.invalid_email";
     public static final String INVALID_USERNAME_KEY = "label.error.invalid_username";
+    public static final String USERNAME_USED_KEY = "label.error.username_used";
+    public static final String EMAIL_USED_KEY = "label.error.email_used";
     public static final String INVALID_PASSWORD_KEY = "label.error.invalid_password";
     public static final String BLANK_NAME_KEY = "label.error.blank_name";
     public static final String INVALID_PHONE_KEY = "label.error.invalid_phone";

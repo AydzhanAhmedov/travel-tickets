@@ -49,6 +49,7 @@ import static bg.tuvarna.traveltickets.common.Constants.BLANK_NAME_KEY;
 import static bg.tuvarna.traveltickets.common.Constants.BLANK_URL_KEY;
 import static bg.tuvarna.traveltickets.common.Constants.BUTTON_APPLY_KEY;
 import static bg.tuvarna.traveltickets.common.Constants.DESCRIPTION_KEY;
+import static bg.tuvarna.traveltickets.common.Constants.EMAIL_USED_KEY;
 import static bg.tuvarna.traveltickets.common.Constants.HONORARIUM_KEY;
 import static bg.tuvarna.traveltickets.common.Constants.IMAGE_URL_KEY;
 import static bg.tuvarna.traveltickets.common.Constants.INVALID_EMAIL_KEY;
@@ -56,6 +57,7 @@ import static bg.tuvarna.traveltickets.common.Constants.INVALID_HONORARIUM_KEY;
 import static bg.tuvarna.traveltickets.common.Constants.INVALID_PASSWORD_KEY;
 import static bg.tuvarna.traveltickets.common.Constants.INVALID_PHONE_KEY;
 import static bg.tuvarna.traveltickets.common.Constants.INVALID_USERNAME_KEY;
+import static bg.tuvarna.traveltickets.common.Constants.USERNAME_USED_KEY;
 
 public class ClientDialogController extends BaseUndecoratedDialogController {
 
@@ -149,11 +151,21 @@ public class ClientDialogController extends BaseUndecoratedDialogController {
         if (!Pattern.compile("^(.+)@(.+)$").matcher(emailTextField.getText()).matches()) {
             setErrorText(getLangBundle().getString(INVALID_EMAIL_KEY));
             return false;
+        } else {
+            if (authService.findByEmail(emailTextField.getText()) != null) {
+                setErrorText(getLangBundle().getString(EMAIL_USED_KEY));
+                return false;
+            }
         }
 
         if (usernameTextField.getText().length() < 5) {
             setErrorText(getLangBundle().getString(INVALID_USERNAME_KEY));
             return false;
+        } else {
+            if (authService.findByUsername(usernameTextField.getText()) != null) {
+                setErrorText(getLangBundle().getString(USERNAME_USED_KEY));
+                return false;
+            }
         }
 
         if (getDialogMode() == DialogMode.ADD) {

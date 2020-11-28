@@ -1,7 +1,5 @@
 package bg.tuvarna.traveltickets.service.impl;
 
-import bg.tuvarna.traveltickets.common.AppScreens;
-import bg.tuvarna.traveltickets.common.MenuContent;
 import bg.tuvarna.traveltickets.entity.Client;
 import bg.tuvarna.traveltickets.entity.ClientType;
 import bg.tuvarna.traveltickets.entity.User;
@@ -9,8 +7,6 @@ import bg.tuvarna.traveltickets.repository.UserRepository;
 import bg.tuvarna.traveltickets.repository.impl.UserRepositoryImpl;
 import bg.tuvarna.traveltickets.service.AuthService;
 import org.mindrot.jbcrypt.BCrypt;
-
-import java.util.List;
 
 import static bg.tuvarna.traveltickets.common.Constants.CLIENT_NOT_FOUND_FORMAT;
 import static bg.tuvarna.traveltickets.entity.Role.Enum.ADMIN;
@@ -54,6 +50,16 @@ public final class AuthServiceImpl implements AuthService {
         }
 
         return loggedUser;
+    }
+
+    @Override
+    public User findByUsername(final String username) {
+        return userRepository.findByUsername(username);
+    }
+
+    @Override
+    public User findByEmail(final String email) {
+        return userRepository.findByEmail(email);
     }
 
     @Override
