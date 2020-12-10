@@ -59,11 +59,13 @@ public final class Constants {
     // FXML
     public static final String CLIENT_DIALOG_FXML_PATH = "/fxml/client_dialog.fxml";
     public static final String TRAVEL_DIALOG_FXML_PATH = "/fxml/travel_dialog.fxml";
+    public static final String TICKET_DIALOG_FXML_PATH = "/fxml/ticket_dialog.fxml";
     public static final String ROUTE_VIEW_FXML_PATH = "/fxml/route_view.fxml";
     public static final String NOTIFICATIONS_DIALOG_FXML_PATH = "/fxml/notifications_dialog.fxml";
     public static final String CLIENTS_TABLE_FXML_PATH = "/fxml/table_clients.fxml";
     public static final String TRAVELS_TABLE_FXML_PATH = "/fxml/table_travels.fxml";
     public static final String REQUESTS_TABLE_FXML_PATH = "/fxml/table_requests.fxml";
+    public static final String TICKETS_TABLE_FXML_PATH = "/fxml/table_tickets.fxml";
 
     // Other constants
     public static final String EMPTY_STRING = "";

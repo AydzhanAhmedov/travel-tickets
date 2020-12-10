@@ -36,6 +36,10 @@
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL10Dialect"/>
             <!-- connection properties -->
             <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
+
+<!--            <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://ec2-54-246-85-151.eu-west-1.compute.amazonaws.com:5432/daoeggbr3mgi47" />-->
+<!--            <property name="javax.persistence.jdbc.user" value="apfvawtzckvzmu" />-->
+<!--            <property name="javax.persistence.jdbc.password" value="66130eae2f0f7a6ed6b1391b2fab4a1d203b017f022e44b7e653e8d8e748b82d" />-->
             <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost/test"/>
             <property name="javax.persistence.jdbc.user" value="postgres"/>
             <property name="javax.persistence.jdbc.password" value="admin"/>

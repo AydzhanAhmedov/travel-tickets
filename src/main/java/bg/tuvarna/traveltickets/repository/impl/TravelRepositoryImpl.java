@@ -58,7 +58,7 @@ public class TravelRepositoryImpl extends GenericCrudRepositoryImpl<Travel, Long
                 RIGHT JOIN t.distributorRequests tdr
                 WHERE tdr.requestStatus.id = :requestStatusId AND
                       t.travelStatus.id = :travelStatusId AND
-                      tdr.user.id = :userId
+                      tdr.distributor.id = :userId
             """;
 
     private static final String FIND_ALL_DISTRIBUTOR_BY_TRAVEL_ID_HQL = """

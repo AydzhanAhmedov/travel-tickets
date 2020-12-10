@@ -3,7 +3,7 @@ package bg.tuvarna.traveltickets.controller;
 import bg.tuvarna.traveltickets.control.UndecoratedDialog;
 import bg.tuvarna.traveltickets.controller.base.BaseUndecoratedDialogController.DialogMode;
 import bg.tuvarna.traveltickets.entity.Company;
-import bg.tuvarna.traveltickets.entity.Distributor;
+import bg.tuvarna.traveltickets.entity.Ticket;
 import bg.tuvarna.traveltickets.entity.Travel;
 import bg.tuvarna.traveltickets.entity.TravelStatus;
 import bg.tuvarna.traveltickets.entity.TravelType;
@@ -30,6 +30,7 @@ import javafx.scene.layout.BorderPane;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
@@ -41,6 +42,7 @@ import static bg.tuvarna.traveltickets.common.AppConfig.getShortDateTimeFormatte
 import static bg.tuvarna.traveltickets.common.Constants.EDIT_BUTTON_KEY;
 import static bg.tuvarna.traveltickets.common.Constants.REQUEST_BUTTON_KEY;
 import static bg.tuvarna.traveltickets.common.Constants.SELL_BUTTON_KEY;
+import static bg.tuvarna.traveltickets.common.Constants.TICKET_DIALOG_FXML_PATH;
 import static bg.tuvarna.traveltickets.common.Constants.TRAVEL_DIALOG_FXML_PATH;
 import static bg.tuvarna.traveltickets.controller.base.BaseUndecoratedDialogController.DialogMode.ADD;
 import static bg.tuvarna.traveltickets.controller.base.BaseUndecoratedDialogController.DialogMode.EDIT;
@@ -90,6 +92,12 @@ public class TravelsTableController implements Initializable {
     @Override
     public void initialize(final URL location, final ResourceBundle resources) {
         initColumns();
+
+        if (authService.getLoggedClientTypeName() != COMPANY) {
+            addTravelButton.setVisible(false);
+        }
+
+
         tableClients.setRowFactory(tv -> {
             final TableRow<Travel> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
@@ -194,7 +202,10 @@ public class TravelsTableController implements Initializable {
                             });
                             yield REQUEST_BUTTON_KEY;
                         }
-                        case CASHIER -> SELL_BUTTON_KEY; // TODO: implement with tickets functionality
+                        case CASHIER -> {
+                            btn.setOnAction(e -> onTicketBuy(e, item));
+                            yield SELL_BUTTON_KEY; // TODO: implement with tickets functionality
+                        }
                         default -> {
                             btn.setOnAction(e -> loadDialog(EDIT, getTableView().getItems().get(getIndex())));
                             yield EDIT_BUTTON_KEY;
@@ -206,6 +217,25 @@ public class TravelsTableController implements Initializable {
                     if (travelsWithRequests.contains(item.getId())) btn.setDisable(true);
 
                     setGraphic(btn);
+                }
+            }
+
+            private void onTicketBuy(final ActionEvent actionEvent, Travel item) {
+                try {
+                    final FXMLLoader loader = new FXMLLoader(getClass().getResource(TICKET_DIALOG_FXML_PATH), getLangBundle());
+                    final DialogPane dialogPane;
+                    dialogPane = loader.load();
+
+                    final TicketDialogController ticketDialogController = loader.getController();
+                    Ticket ticket = new Ticket();
+                    ticket.setTravel(item);
+                    ticketDialogController.injectDialogMode(ADD, ticket);
+                    final Dialog<Void> dialog = new UndecoratedDialog<>(root.getParent().getParent(), dialogPane);
+                    dialog.showAndWait();
+
+                }
+                catch (IOException ex) {
+                    ex.printStackTrace();
                 }
             }
         });
