@@ -15,6 +15,7 @@ import java.util.List;
 import static bg.tuvarna.traveltickets.common.AppConfig.getLangBundle;
 import static bg.tuvarna.traveltickets.common.Constants.CLIENTS_TABLE_FXML_PATH;
 import static bg.tuvarna.traveltickets.common.Constants.REQUESTS_TABLE_FXML_PATH;
+import static bg.tuvarna.traveltickets.common.Constants.TICKETS_TABLE_FXML_PATH;
 import static bg.tuvarna.traveltickets.common.Constants.TRAVELS_TABLE_FXML_PATH;
 
 public enum MenuContent {
@@ -23,7 +24,7 @@ public enum MenuContent {
     STATISTIC("label.statistics", "/images/baseline_insert_chart_black_18dp.png", null),
     TRAVELS("label.travels", "/images/baseline_public_black_18dp.png", TRAVELS_TABLE_FXML_PATH),
     REQUESTS("label.requests", "/images/baseline_rule_black_18dp.png", REQUESTS_TABLE_FXML_PATH),
-    SOLD_TICKETS("label.sold_tickets", "/images/baseline_receipt_black_18dp.png", null);
+    SOLD_TICKETS("label.sold_tickets", "/images/baseline_receipt_black_18dp.png", TICKETS_TABLE_FXML_PATH);
 
     private static final Logger LOG = LogManager.getLogger(MenuContent.class);
 

@@ -83,7 +83,7 @@ public class TravelServiceImpl implements TravelService {
 
                 yield travelRepository.findAllByDistributorIdAndTravelStatusId(distributorId, INCOMING_STATUS_ID, APPROVED_REQUEST_ID)
                         .stream()
-                        .filter(t -> t.getTravelRoutes().stream().anyMatch(r -> r.getCity().getId().equals(cityId)))
+                        //.filter(t -> t.getTravelRoutes().stream().anyMatch(r -> r.getCity().getId().equals(cityId)))
                         .collect(Collectors.toList());
             }
         };

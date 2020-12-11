@@ -3,7 +3,7 @@ package bg.tuvarna.traveltickets.controller;
 import bg.tuvarna.traveltickets.control.UndecoratedDialog;
 import bg.tuvarna.traveltickets.controller.base.BaseUndecoratedDialogController.DialogMode;
 import bg.tuvarna.traveltickets.entity.Company;
-import bg.tuvarna.traveltickets.entity.Distributor;
+import bg.tuvarna.traveltickets.entity.Ticket;
 import bg.tuvarna.traveltickets.entity.Travel;
 import bg.tuvarna.traveltickets.entity.TravelStatus;
 import bg.tuvarna.traveltickets.entity.TravelType;
@@ -30,6 +30,7 @@ import javafx.scene.layout.BorderPane;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
@@ -41,6 +42,8 @@ import static bg.tuvarna.traveltickets.common.AppConfig.getShortDateTimeFormatte
 import static bg.tuvarna.traveltickets.common.Constants.EDIT_BUTTON_KEY;
 import static bg.tuvarna.traveltickets.common.Constants.REQUEST_BUTTON_KEY;
 import static bg.tuvarna.traveltickets.common.Constants.SELL_BUTTON_KEY;
+import static bg.tuvarna.traveltickets.common.Constants.SOLD_OUT_KEY;
+import static bg.tuvarna.traveltickets.common.Constants.TICKET_DIALOG_FXML_PATH;
 import static bg.tuvarna.traveltickets.common.Constants.TRAVEL_DIALOG_FXML_PATH;
 import static bg.tuvarna.traveltickets.controller.base.BaseUndecoratedDialogController.DialogMode.ADD;
 import static bg.tuvarna.traveltickets.controller.base.BaseUndecoratedDialogController.DialogMode.EDIT;
@@ -90,6 +93,12 @@ public class TravelsTableController implements Initializable {
     @Override
     public void initialize(final URL location, final ResourceBundle resources) {
         initColumns();
+
+        if (authService.getLoggedClientTypeName() != COMPANY) {
+            addTravelButton.setVisible(false);
+        }
+
+
         tableClients.setRowFactory(tv -> {
             final TableRow<Travel> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
@@ -194,7 +203,20 @@ public class TravelsTableController implements Initializable {
                             });
                             yield REQUEST_BUTTON_KEY;
                         }
-                        case CASHIER -> SELL_BUTTON_KEY; // TODO: implement with tickets functionality
+                        case CASHIER -> {
+                            if (item.getTravelStatus().getName() == TravelStatus.Enum.INCOMING) {
+                                if (item.getCurrentTicketQuantity() > 0)
+                                    btn.setOnAction(e -> onTicketBuy(e, item));
+                                else {
+                                    btn.setStyle("-fx-background-color: #800d0d");
+                                    btn.setDisable(true);
+                                    yield SOLD_OUT_KEY;
+                                }
+
+                            }
+
+                            yield SELL_BUTTON_KEY; // TODO: implement with tickets functionality
+                        }
                         default -> {
                             btn.setOnAction(e -> loadDialog(EDIT, getTableView().getItems().get(getIndex())));
                             yield EDIT_BUTTON_KEY;
@@ -208,6 +230,8 @@ public class TravelsTableController implements Initializable {
                     setGraphic(btn);
                 }
             }
+
+
         });
 
         columnName.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -217,4 +241,22 @@ public class TravelsTableController implements Initializable {
         columnAction.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue()));
     }
 
+    private void onTicketBuy(final ActionEvent actionEvent, Travel item) {
+        try {
+            final FXMLLoader loader = new FXMLLoader(getClass().getResource(TICKET_DIALOG_FXML_PATH), getLangBundle());
+            final DialogPane dialogPane;
+            dialogPane = loader.load();
+
+            final TicketDialogController ticketDialogController = loader.getController();
+            Ticket ticket = new Ticket();
+            ticket.setTravel(item);
+            ticketDialogController.injectDialogMode(ADD, ticket, null);
+            final Dialog<Void> dialog = new UndecoratedDialog<>(root.getParent().getParent(), dialogPane);
+            dialog.showAndWait();
+
+        }
+        catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
 }
