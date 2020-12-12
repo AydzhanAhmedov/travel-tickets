@@ -2,7 +2,6 @@ package bg.tuvarna.traveltickets.service;
 
 import bg.tuvarna.traveltickets.entity.TransportType;
 import bg.tuvarna.traveltickets.entity.Travel;
-import bg.tuvarna.traveltickets.entity.TravelDistributorRequest;
 import bg.tuvarna.traveltickets.entity.TravelStatus;
 import bg.tuvarna.traveltickets.entity.TravelType;
 
@@ -14,7 +13,7 @@ public interface TravelService {
 
     Travel create(Travel travel);
 
-    Travel updateTravel(Travel travel, TravelStatus.Enum newStatusName, String newDetails);
+    Travel updateTravel(Long id, TravelStatus.Enum newStatusName, String newDetails, Integer newTicketQuantity);
 
     TransportType findTransportTypeById(Long id);
 

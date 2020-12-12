@@ -20,7 +20,7 @@
         </HBox>
     </top>
     <center>
-        <TableView fx:id="tableClients" prefHeight="360.0" prefWidth="600.0" stylesheets="@../css/tables.css" BorderPane.alignment="CENTER">
+        <TableView fx:id="tableTravels" prefHeight="360.0" prefWidth="600.0" stylesheets="@../css/tables.css" BorderPane.alignment="CENTER">
             <columns>
                 <TableColumn fx:id="columnCompany" editable="false" prefWidth="115.99993896484375" reorderable="false" sortable="false" text="%label.company" />
                 <TableColumn fx:id="columnName" editable="false" prefWidth="75.0" reorderable="false" sortable="false" text="%label.name" />

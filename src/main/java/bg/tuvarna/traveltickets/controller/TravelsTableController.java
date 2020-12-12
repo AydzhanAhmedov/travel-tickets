@@ -70,7 +70,7 @@ public class TravelsTableController implements Initializable {
     private BorderPane root;
 
     @FXML
-    private TableView<Travel> tableClients;
+    private TableView<Travel> tableTravels;
 
     @FXML
     private TableColumn<Travel, Company> columnCompany;
@@ -101,19 +101,18 @@ public class TravelsTableController implements Initializable {
             addTravelButton.setVisible(false);
         }
 
-
-        tableClients.setRowFactory(tv -> {
+        tableTravels.setRowFactory(tv -> {
             final TableRow<Travel> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2 && !row.isEmpty())
-                    loadDialog(VIEW, tableClients.getSelectionModel().getSelectedItem());
+                    loadDialog(VIEW, tableTravels.getSelectionModel().getSelectedItem(), tableTravels.getSelectionModel().getSelectedIndex());
             });
             return row;
         });
 
         executeInTransaction(em -> ClientRepositoryImpl.getInstance().findAllByClientTypeId(2L));
 
-        tableClients.setItems(FXCollections.observableList(execute(em -> {
+        tableTravels.setItems(FXCollections.observableList(execute(em -> {
             final List<Travel> travels = travelService.findAll();
 
             if (authService.getLoggedClientTypeName() == DISTRIBUTOR) {
@@ -128,16 +127,16 @@ public class TravelsTableController implements Initializable {
 
     @FXML
     private void onAddClicked(final ActionEvent event) {
-        loadDialog(ADD, null);
+        loadDialog(ADD, null, null);
     }
 
-    private void loadDialog(final DialogMode dialogMode, final Travel travel) {
+    private void loadDialog(final DialogMode dialogMode, final Travel travel, final Integer index) {
         try {
             final FXMLLoader loader = new FXMLLoader(getClass().getResource(TRAVEL_DIALOG_FXML_PATH), getLangBundle());
             final DialogPane dialogPane = loader.load();
             final TravelDialogController travelDialogController = loader.getController();
 
-            travelDialogController.injectDialogMode(dialogMode, travel, t -> tableClients.getItems().add(t));
+            travelDialogController.injectDialogMode(dialogMode, travel, t -> tableTravels.getItems().add(t), t -> tableTravels.getItems().set(index, t));
 
             final Dialog<Void> dialog = new UndecoratedDialog<>(root.getParent().getParent(), dialogPane);
             dialog.showAndWait();
@@ -215,12 +214,11 @@ public class TravelsTableController implements Initializable {
                                     btn.setDisable(true);
                                     yield SOLD_OUT_KEY;
                                 }
-
                             }
                             yield SELL_BUTTON_KEY;
                         }
                         default -> {
-                            btn.setOnAction(e -> loadDialog(EDIT, getTableView().getItems().get(getIndex())));
+                            btn.setOnAction(e -> loadDialog(EDIT, getTableView().getItems().get(getIndex()), getIndex()));
                             yield EDIT_BUTTON_KEY;
                         }
                     }));

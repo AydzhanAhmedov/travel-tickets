@@ -1,5 +1,7 @@
 package bg.tuvarna.traveltickets.controller;
 
+import bg.tuvarna.traveltickets.control.ConfirmDialog;
+import bg.tuvarna.traveltickets.control.NumberTextField;
 import bg.tuvarna.traveltickets.controller.base.BaseUndecoratedDialogController;
 import bg.tuvarna.traveltickets.entity.City;
 import bg.tuvarna.traveltickets.entity.TransportType;
@@ -14,18 +16,17 @@ import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
-import javafx.scene.control.DialogPane;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import org.apache.logging.log4j.LogManager;
@@ -33,18 +34,32 @@ import org.apache.logging.log4j.Logger;
 
 import java.math.BigDecimal;
 import java.net.URL;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import static bg.tuvarna.traveltickets.common.AppConfig.getLangBundle;
+import static bg.tuvarna.traveltickets.common.Constants.BLANK_CITY_KEY;
 import static bg.tuvarna.traveltickets.common.Constants.BUTTON_APPLY_KEY;
+import static bg.tuvarna.traveltickets.common.Constants.INVALID_HOUR_FORMAT_KEY;
+import static bg.tuvarna.traveltickets.common.Constants.INVALID_ROUTE_DATES_KEY;
+import static bg.tuvarna.traveltickets.common.Constants.INVALID_TICKET_LIMIT_KEY;
+import static bg.tuvarna.traveltickets.common.Constants.INVALID_TICKET_PRICE_KEY;
+import static bg.tuvarna.traveltickets.common.Constants.INVALID_TICKET_QUANTITY_KEY;
+import static bg.tuvarna.traveltickets.common.Constants.INVALID_TRAVEL_DETAILS_KEY;
+import static bg.tuvarna.traveltickets.common.Constants.INVALID_TRAVEL_NAME_KEY;
+import static bg.tuvarna.traveltickets.common.Constants.INVALID_TRAVEL_STATUS_KEY;
 import static bg.tuvarna.traveltickets.common.Constants.ROUTE_VIEW_FXML_PATH;
+import static bg.tuvarna.traveltickets.common.Constants.UNEXPECTED_ERROR_KEY;
+import static bg.tuvarna.traveltickets.entity.TravelStatus.Enum.ENDED;
 import static bg.tuvarna.traveltickets.util.JpaOperationsUtil.executeInTransaction;
 
 public class TravelDialogController extends BaseUndecoratedDialogController {
@@ -58,12 +73,7 @@ public class TravelDialogController extends BaseUndecoratedDialogController {
     private List<HBox> travelRouteXBoxes;
 
     private Consumer<Travel> onNewTravel;
-
-    @FXML
-    private DialogPane root;
-
-    @FXML
-    private GridPane gridPane;
+    private Consumer<Travel> onUpdateTravel;
 
     @FXML
     private TextField nameTextField;
@@ -72,19 +82,25 @@ public class TravelDialogController extends BaseUndecoratedDialogController {
     private ComboBox<TravelType.Enum> typeComboBox;
 
     @FXML
-    private TextField ticketQuantityTextField;
+    private NumberTextField ticketQuantityTextField;
+
+    @FXML
+    private NumberTextField currTicketQuantityTextField;
 
     @FXML
     private TextField ticketPriceTextField;
 
     @FXML
-    private TextField buyLimitTextField;
+    private NumberTextField buyLimitTextField;
 
     @FXML
     private TextArea detailsTextArea;
 
     @FXML
     private TextField startTimeTextField;
+
+    @FXML
+    private DatePicker endDatePicker;
 
     @FXML
     private TableView<TravelRoute> routesTableView;
@@ -112,18 +128,10 @@ public class TravelDialogController extends BaseUndecoratedDialogController {
         detailsTextArea.setWrapText(true);
         typeComboBox.getItems().setAll(TravelType.Enum.values());
         statusComboBox.getItems().setAll(TravelStatus.Enum.values());
+        startTimeTextField.setAlignment(Pos.CENTER_RIGHT);
+        ticketPriceTextField.setAlignment(Pos.CENTER_RIGHT);
 
         LOG.debug("Travel dialog loaded.");
-    }
-
-    @FXML
-    private void onStatusChange(final ActionEvent event) {
-
-    }
-
-    @FXML
-    private void onTypeChange(final ActionEvent event) {
-
     }
 
     @FXML
@@ -138,15 +146,104 @@ public class TravelDialogController extends BaseUndecoratedDialogController {
         }
     }
 
-    public void injectDialogMode(final DialogMode mode, final Travel travel, final Consumer<Travel> onNewTravel) {
+    public void injectDialogMode(final DialogMode mode, final Travel travel, final Consumer<Travel> onNewTravel, final Consumer<Travel> onUpdateTravel) {
         this.onNewTravel = onNewTravel;
-        setDialogMode(mode);
+        this.onUpdateTravel = onUpdateTravel;
 
         if (mode != DialogMode.ADD) setData(travel);
+        setDialogMode(mode);
     }
 
     private boolean dataIsValid() {
+        final DialogMode mode = getDialogMode();
+        // travel name
+        if (mode == DialogMode.ADD && (nameTextField.getText().length() < 3 || nameTextField.getText().length() > 100)) {
+            setErrorText(getLangBundle().getString(INVALID_TRAVEL_NAME_KEY));
+            return false;
+        }
+        //travel status
+        final TravelStatus.Enum newStatus = statusComboBox.getValue();
+        if (mode == DialogMode.EDIT &&
+                switch (travel.getTravelStatus().getName()) {
+                    case INCOMING -> newStatus == ENDED;
+                    case ONGOING -> newStatus != ENDED;
+                    default -> newStatus != travel.getTravelStatus().getName();
+                }) {
+
+            setErrorText(getLangBundle().getString(INVALID_TRAVEL_STATUS_KEY));
+            return false;
+        }
+        // ticket quantity
+        final int newQuantity = ticketQuantityTextField.getText().isBlank() ? 0 : Integer.parseInt(ticketQuantityTextField.getText());
+        if (newQuantity == 0 || (getDialogMode() == DialogMode.EDIT && newQuantity < travel.getTicketQuantity())) {
+            setErrorText(getLangBundle().getString(INVALID_TICKET_QUANTITY_KEY));
+            return false;
+        }
+        // ticket price
+        if (mode == DialogMode.ADD) {
+            try {
+                final double value = new BigDecimal(ticketPriceTextField.getText()).doubleValue();
+                if (value <= 0) {
+                    setErrorText(getLangBundle().getString(INVALID_TICKET_PRICE_KEY));
+                    return false;
+                }
+            }
+            catch (Exception ignored) {
+                setErrorText(getLangBundle().getString(INVALID_TICKET_PRICE_KEY));
+                return false;
+            }
+        }
+        // ticket limit
+        if (mode == DialogMode.ADD) {
+            final int limit = buyLimitTextField.getText().isBlank() ? 0 : Integer.parseInt(buyLimitTextField.getText());
+            if (limit < 1) {
+                setErrorText(getLangBundle().getString(INVALID_TICKET_LIMIT_KEY));
+                return false;
+            }
+        }
+        // travel details
+        if (detailsTextArea.getText().isBlank() || detailsTextArea.getText().length() > 500) {
+            setErrorText(getLangBundle().getString(INVALID_TRAVEL_DETAILS_KEY));
+            return false;
+        }
+        if (mode == DialogMode.ADD) {
+            // hour format
+            try {
+                HOUR_FORMATTER.parse(startTimeTextField.getText());
+            }
+            catch (Exception ignored) {
+                setErrorText(getLangBundle().getString(INVALID_HOUR_FORMAT_KEY));
+                return false;
+            }
+            // city name
+            if (travelRouteXBoxes.stream().map(hb -> ((TextField) hb.getChildren().get(0)).getText()).anyMatch(s -> s == null || s.isBlank())) {
+                setErrorText(getLangBundle().getString(BLANK_CITY_KEY));
+                return false;
+            }
+            // routes and arrival dates
+            final List<LocalDate> dates = travelRouteXBoxes.stream()
+                    .map(hb -> ((DatePicker) hb.getChildren().get(1)).getValue())
+                    .collect(Collectors.toList());
+
+            dates.add(endDatePicker.getValue());
+
+            for (int i = 1; i < dates.size(); i++) {
+                final LocalDate prev = dates.get(i - 1);
+                final LocalDate curr = dates.get(i);
+
+                if (prev == null || curr == null || prev.isAfter(curr)) {
+                    setErrorText(getLangBundle().getString(INVALID_ROUTE_DATES_KEY));
+                    return false;
+                }
+            }
+        }
         return true;
+    }
+
+    private void setErrorText(final String text) {
+        LOG.debug("Validation error occurred: {}.", text);
+        errorImageView.setVisible(!text.isBlank());
+        errorText.setText(text);
     }
 
     private void readData() {
@@ -159,7 +256,10 @@ public class TravelDialogController extends BaseUndecoratedDialogController {
         travel.setCurrentTicketQuantity(travel.getTicketQuantity());
         travel.setTicketBuyLimit(Integer.parseInt(buyLimitTextField.getText()));
 
-        final OffsetTime startTime = LocalTime.from(HOUR_FORMATTER.parse(startTimeTextField.getText().trim())).atOffset(OffsetDateTime.now().getOffset());
+        final ZoneOffset zoneOffset = OffsetDateTime.now().getOffset();
+        travel.setEndDate(endDatePicker.getValue().atTime(LocalTime.MIN.atOffset(zoneOffset)));
+
+        final OffsetTime startTime = LocalTime.from(HOUR_FORMATTER.parse(startTimeTextField.getText().trim())).atOffset(zoneOffset);
         for (int i = 0; i < travelRouteXBoxes.size(); i++) {
             final TextField cityTextField = (TextField) travelRouteXBoxes.get(i).getChildren().get(0);
             final DatePicker arrivalDatePicker = (DatePicker) travelRouteXBoxes.get(i).getChildren().get(1);
@@ -168,11 +268,10 @@ public class TravelDialogController extends BaseUndecoratedDialogController {
             final TravelRoute travelRoute = travel.getTravelRoutes().get(i);
 
             travelRoute.setCity(new City(cityTextField.getText()));
-            travelRoute.setArrivalDate(arrivalDatePicker.getValue().atTime(startTime));
+            travelRoute.setArrivalDate(arrivalDatePicker.getValue().atTime(LocalTime.MIN.atOffset(zoneOffset)));
             travelRoute.setTransportType(travelService.findTransportTypeByName(transportComboBox.getValue()));
 
-            if (i == 0) travel.setStartDate(travelRoute.getArrivalDate());
-            else if (i == travelRouteXBoxes.size() - 1) travel.setEndDate(travelRoute.getArrivalDate());
+            if (i == 0) travel.setStartDate(arrivalDatePicker.getValue().atTime(startTime));
         }
     }
 
@@ -181,10 +280,12 @@ public class TravelDialogController extends BaseUndecoratedDialogController {
 
         nameTextField.setText(travel.getName());
         ticketQuantityTextField.setText(travel.getTicketQuantity().toString());
+        currTicketQuantityTextField.setText(travel.getCurrentTicketQuantity().toString());
         ticketPriceTextField.setText(travel.getTicketPrice().toString());
         buyLimitTextField.setText(travel.getTicketBuyLimit().toString());
         detailsTextArea.setText(travel.getDetails());
         startTimeTextField.setText(HOUR_FORMATTER.format(travel.getStartDate()));
+        endDatePicker.setValue(travel.getEndDate().toLocalDate());
 
         final TravelType.Enum type = travel.getTravelType().getName();
         final TravelStatus.Enum status = travel.getTravelStatus().getName();
@@ -197,6 +298,7 @@ public class TravelDialogController extends BaseUndecoratedDialogController {
     @Override
     protected void onViewModeSet() {
         disableFields();
+        ticketQuantityTextField.setDisable(true);
         detailsTextArea.setEditable(false);
         detailsTextArea.setFocusTraversable(false);
         detailsTextArea.setStyle("-fx-opacity: 1");
@@ -210,7 +312,9 @@ public class TravelDialogController extends BaseUndecoratedDialogController {
         typeComboBox.setValue(TravelType.Enum.ADVENTURE);
         statusComboBox.setValue(TravelStatus.Enum.INCOMING);
         statusComboBox.setDisable(true);
+        currTicketQuantityTextField.setDisable(true);
         statusComboBox.setStyle("-fx-opacity: 1");
+        ticketQuantityTextField.textProperty().addListener((o, oldVal, newVal) -> currTicketQuantityTextField.setText(newVal));
 
         routesTableView.setItems(FXCollections.observableArrayList());
         if (getDialogMode() == DialogMode.ADD) {
@@ -224,9 +328,25 @@ public class TravelDialogController extends BaseUndecoratedDialogController {
         okButton.getStylesheets().addAll("/css/buttons.css");
         okButton.getStyleClass().addAll("markAsReadBtn");
         okButton.addEventFilter(ActionEvent.ACTION, e -> {
-            if (!dataIsValid()) return;
-            readData();
-            onNewTravel.accept(executeInTransaction(em -> travelService.create(travel)));
+            try {
+                if (!dataIsValid()) {
+                    e.consume();
+                    return;
+                }
+                readData();
+
+                new ConfirmDialog(null, getLangBundle().getString("label.dialog.travel_confirmation")).showAndWait()
+                        .ifPresent(type -> {
+                            if (type.getButtonData() == ButtonBar.ButtonData.YES) {
+                                onNewTravel.accept(executeInTransaction(em -> travelService.create(travel)));
+                            }
+                        });
+            }
+            catch (Exception ex) {
+                LOG.error("An error occurred trying to create new travel: ", ex);
+                setErrorText(getLangBundle().getString(UNEXPECTED_ERROR_KEY));
+                e.consume();
+            }
         });
     }
 
@@ -236,20 +356,44 @@ public class TravelDialogController extends BaseUndecoratedDialogController {
 
         final Button okButton = addDialogButton(getLangBundle().getString(BUTTON_APPLY_KEY), ButtonBar.ButtonData.OK_DONE);
         if (okButton == null) return;
+        ticketQuantityTextField.textProperty().addListener((o, oldVal, newVal) -> {
+            final String currVal = currTicketQuantityTextField.getText();
+            if (!currVal.isBlank() && !oldVal.isBlank() && !newVal.isBlank()) {
+                final int newCurrVal = Integer.parseInt(currVal) + (Integer.parseInt(newVal) - Integer.parseInt(oldVal));
+                currTicketQuantityTextField.setText(Integer.toString(newCurrVal));
+            }
+        });
 
         okButton.getStylesheets().addAll("/css/buttons.css");
         okButton.getStyleClass().addAll("markAsReadBtn");
-//        okButton.addEventFilter(ActionEvent.ACTION, e -> {
-//            onNewTravel.accept(executeInTransaction(em -> travelService.updateTravel(travel, ));
-//        });
+        okButton.addEventFilter(ActionEvent.ACTION, e -> {
+            try {
+                if (!dataIsValid()) {
+                    e.consume();
+                    return;
+                }
+
+                final TravelStatus.Enum newStatusName = statusComboBox.getValue();
+                final String newDetails = detailsTextArea.getText();
+                final Integer newTicketQuantity = Integer.parseInt(ticketQuantityTextField.getText());
+
+                onUpdateTravel.accept(executeInTransaction(em -> travelService.updateTravel(travel.getId(), newStatusName, newDetails, newTicketQuantity)));
+            }
+            catch (Exception ex) {
+                LOG.error("An error occurred trying to create new travel: ", ex);
+                setErrorText(getLangBundle().getString(UNEXPECTED_ERROR_KEY));
+                e.consume();
+            }
+        });
     }
 
     private void disableFields() {
         nameTextField.setDisable(true);
-        ticketQuantityTextField.setDisable(true);
+        currTicketQuantityTextField.setDisable(true);
         ticketPriceTextField.setDisable(true);
         buyLimitTextField.setDisable(true);
         startTimeTextField.setDisable(true);
+        endDatePicker.setDisable(true);
         typeComboBox.setDisable(true);
         typeComboBox.setStyle("-fx-opacity: 1");
         newRouteButton.setDisable(true);
@@ -279,7 +423,7 @@ public class TravelDialogController extends BaseUndecoratedDialogController {
 
                     cityTextField.setText(item.getCity() != null ? item.getCity().getName() : null);
                     arrivalDatePicker.setValue(item.getArrivalDate() != null ? item.getArrivalDate().toLocalDate() : null);
-                    transportComboBox.setValue(item.getTransportType() != null ? item.getTransportType().getName() : null);
+                    transportComboBox.setValue(item.getTransportType() != null ? item.getTransportType().getName() : TransportType.Enum.BUSS);
                     removeButton.setOnAction(e -> {
                         final int index = travelRouteXBoxes.indexOf(root);
                         travelRouteXBoxes.remove(index);

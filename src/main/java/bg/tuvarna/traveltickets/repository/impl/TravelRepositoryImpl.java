@@ -7,17 +7,28 @@ import bg.tuvarna.traveltickets.entity.User;
 import bg.tuvarna.traveltickets.repository.TravelRepository;
 import bg.tuvarna.traveltickets.repository.base.GenericCrudRepositoryImpl;
 import bg.tuvarna.traveltickets.util.EntityManagerUtil;
+import bg.tuvarna.traveltickets.util.JpaOperationsUtil;
 import org.hibernate.jpa.QueryHints;
 
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 import java.util.List;
 
+import static bg.tuvarna.traveltickets.common.Constants.ID_PARAM;
 import static bg.tuvarna.traveltickets.common.Constants.REQUEST_STATUS_ID_PARAM;
 import static bg.tuvarna.traveltickets.common.Constants.TRAVEL_ID_PARAM;
 import static bg.tuvarna.traveltickets.common.Constants.TRAVEL_STATUS_ID_PARAM;
 import static bg.tuvarna.traveltickets.common.Constants.USER_ID_PARAM;
 
 public class TravelRepositoryImpl extends GenericCrudRepositoryImpl<Travel, Long> implements TravelRepository {
+
+    private static final String FIND_BY_ID_HQL = """
+                SELECT DISTINCT t FROM Travel AS t
+                LEFT JOIN FETCH t.travelRoutes AS tr
+                LEFT JOIN FETCH tr.city
+                LEFT JOIN FETCH t.createdBy
+                WHERE t.id = :Id
+            """;
 
     private static final String FIND_ALL_HQL = """
                 SELECT DISTINCT t FROM Travel AS t
@@ -74,8 +85,18 @@ public class TravelRepositoryImpl extends GenericCrudRepositoryImpl<Travel, Long
 
     private static final String FIND_ALL_REQUESTS_BY_DISTRIBUTOR_ID_HQL = """
                 SELECT tdr FROM TravelDistributorRequest AS tdr
-                WHERE tdr.user.id = :userId
+                WHERE tdr.distributor.id = :userId
             """;
+
+    @Override
+    public Travel findById(final Long id) {
+        final TypedQuery<Travel> query = EntityManagerUtil.getEntityManager()
+                .createQuery(FIND_BY_ID_HQL, Travel.class)
+                .setParameter(ID_PARAM, id)
+                .setHint(QueryHints.HINT_PASS_DISTINCT_THROUGH, false);
+
+        return JpaOperationsUtil.getSingleResultOrNull(query);
+    }
 
     @Override
     public TravelRoute save(final TravelRoute travelRoute) {

@@ -37,7 +37,7 @@ import static bg.tuvarna.traveltickets.entity.ClientType.Enum.DISTRIBUTOR;
 import static bg.tuvarna.traveltickets.entity.NotificationType.Enum.NEW_TRAVEL;
 import static bg.tuvarna.traveltickets.entity.NotificationType.Enum.TRAVEL_STATUS_CHANGED;
 import static bg.tuvarna.traveltickets.entity.RequestStatus.Enum.APPROVED;
-import static bg.tuvarna.traveltickets.entity.RequestStatus.Enum.PENDING;
+import static bg.tuvarna.traveltickets.entity.TravelStatus.Enum.ENDED;
 import static bg.tuvarna.traveltickets.entity.TravelStatus.Enum.INCOMING;
 import static bg.tuvarna.traveltickets.util.JpaOperationsUtil.executeInTransaction;
 import static java.util.stream.Collectors.toUnmodifiableList;
@@ -56,7 +56,6 @@ public class TravelServiceImpl implements TravelService {
 
     private static final Long DISTRIBUTOR_TYPE_ID = ClientServiceImpl.getInstance().findTypeByName(DISTRIBUTOR).getId();
     private static final Long APPROVED_REQUEST_ID = RequestServiceImpl.getInstance().findStatusByName(APPROVED).getId();
-    private static final Long PENDING_REQUEST_ID = RequestServiceImpl.getInstance().findStatusByName(PENDING).getId();
 
     private final TravelRepository travelRepository = TravelRepositoryImpl.getInstance();
     private final ClientRepository clientRepository = ClientRepositoryImpl.getInstance();
@@ -85,10 +84,9 @@ public class TravelServiceImpl implements TravelService {
                 final Long distributorId = ((Cashier) authService.getLoggedClient()).getCreatedBy().getUserId();
                 final Long cityId = authService.getLoggedClient().getAddress().getCity().getId();
 
-                //TODO: why ?
                 yield travelRepository.findAllByDistributorIdAndTravelStatusId(distributorId, incomingStatusId, APPROVED_REQUEST_ID)
                         .stream()
-                        //.filter(t -> t.getTravelRoutes().stream().anyMatch(r -> r.getCity().getId().equals(cityId)))
+                        .filter(t -> t.getTravelRoutes().stream().anyMatch(r -> r.getCity().getId().equals(cityId)))
                         .collect(Collectors.toList());
             }
         };
@@ -125,14 +123,21 @@ public class TravelServiceImpl implements TravelService {
     }
 
     @Override
-    public Travel updateTravel(final Travel travel, final TravelStatus.Enum newStatusName, final String newDetails) {
-        if (Objects.requireNonNull(travel).getCreatedBy().getUserId().equals(authService.getLoggedUser().getId())) {
+    public Travel updateTravel(final Long id,
+                               final TravelStatus.Enum newStatusName,
+                               final String newDetails,
+                               final Integer newTicketQuantity) {
+
+        final Travel travel = travelRepository.findById(id);
+
+        if (!travel.getCreatedBy().getUserId().equals(authService.getLoggedUser().getId())) {
             throw new IllegalArgumentException("Only creator company can edit their travels.");
         }
-        if (newStatusName == null && newDetails == null) return travel;
+        if (newStatusName == null && newDetails == null && newTicketQuantity == null) return travel;
 
         if (newDetails != null) travel.setDetails(newDetails);
-        if (newStatusName != null) travel.setTravelStatus(findStatusByName(newStatusName));
+        if (newStatusName != null) validateAndSetStatus(travel, newStatusName);
+        if (newTicketQuantity != null) validateAndSetTicketQuantity(travel, newTicketQuantity);
 
         travelRepository.save(travel);
         if (newStatusName != null && AppConfig.ablyIsEnabled()) {
@@ -175,6 +180,28 @@ public class TravelServiceImpl implements TravelService {
         return travelTypesByNameCache.get(Objects.requireNonNull(travelTypeName));
     }
 
+    private void validateAndSetTicketQuantity(final Travel travel, final Integer newTicketQuantity) {
+        // check if ticket quantity is valid
+        if (travel.getTicketQuantity() > newTicketQuantity)
+            throw new IllegalArgumentException("Invalid new ticket quantity!");
+
+        travel.setTicketQuantity(newTicketQuantity);
+        travel.setCurrentTicketQuantity(travel.getCurrentTicketQuantity() + (newTicketQuantity - travel.getTicketQuantity()));
+    }
+
+    private void validateAndSetStatus(final Travel travel, final TravelStatus.Enum newStatusName) {
+        // check if new status is valid
+        if (switch (travel.getTravelStatus().getName()) {
+            case INCOMING -> newStatusName == ENDED;
+            case ONGOING -> newStatusName != ENDED;
+            default -> newStatusName != travel.getTravelStatus().getName();
+        }) {
+            throw new IllegalArgumentException("Invalid new status for travel with id %d, old status: %s to new: %s!"
+                    .formatted(travel.getId(), travel.getTravelStatus().getName(), newStatusName));
+        }
+        travel.setTravelStatus(findStatusByName(newStatusName));
+    }
+
     private boolean createAndSendNewTravelNotifications(final Travel travel) {
         final String message = getLangBundle().getString("label.notification.new_travel").formatted(travel.getName());
         // fetch all the distributors and create notifications for them
@@ -183,16 +210,8 @@ public class TravelServiceImpl implements TravelService {
                 .collect(Collectors.toList());
 
         if (recipients.isEmpty()) return false;
+        notificationService.createAndSend(message, NEW_TRAVEL, recipients, (n, r) -> publishMessageToAbly(NEW_TRAVELS_CHANNEL, message));
 
-        notificationService.createAndSend(message, NEW_TRAVEL, recipients, (n, r) -> {
-            try {
-                ablyClient.channels.get(NEW_TRAVELS_CHANNEL).publish("new", message);
-                LOG.info("New message published to {} channel.", NEW_TRAVELS_CHANNEL);
-            }
-            catch (AblyException e) {
-                LOG.error("Error while publishing message to ably: ", e);
-            }
-        });
         return true;
     }
 
@@ -212,19 +231,20 @@ public class TravelServiceImpl implements TravelService {
 
         if (distributorRecipients.isEmpty()) return false;
 
-        notificationService.createAndSend(message, TRAVEL_STATUS_CHANGED, recipients, (n, r) -> {
-            distributorRecipients.forEach(u -> {
-                try {
-                    final String channel = DISTRIBUTOR_TRAVELS_CHANNEL_FORMAT.formatted(u.getId());
-                    ablyClient.channels.get(channel).publish("new", message);
-                    LOG.info("New message published to {} channel.", channel);
-                }
-                catch (AblyException e) {
-                    LOG.error("Error while publishing message to ably: ", e);
-                }
-            });
-        });
+        notificationService.createAndSend(message, TRAVEL_STATUS_CHANGED, recipients,
+                (n, r) -> distributorIds.forEach(id -> publishMessageToAbly(DISTRIBUTOR_TRAVELS_CHANNEL_FORMAT.formatted(id), message))
+        );
         return true;
+    }
+
+    private void publishMessageToAbly(final String channel, final String message) {
+        try {
+            ablyClient.channels.get(channel).publish("new", message);
+            LOG.info("New message published to {} channel.", channel);
+        }
+        catch (AblyException e) {
+            LOG.error("Error while publishing message to ably: ", e);
+        }
     }
 
     private static TravelServiceImpl instance;

@@ -31,8 +31,8 @@ public final class Constants {
     public static final String EDIT_BUTTON_KEY = "label.button.edit";
     public static final String REQUEST_BUTTON_KEY = "label.button.request";
     public static final String SELL_BUTTON_KEY = "label.button.sell";
+    public static final String BUTTON_APPLY_KEY = "label.button.apply";
     public static final String SOLD_OUT_KEY = "label.sold_out";
-
 
     public static final String SYSTEM_KEY = "label.system";
     public static final String HOURS_KEY = "label.short_hours_ago";
@@ -42,6 +42,7 @@ public final class Constants {
     public static final String IMAGE_URL_KEY = "label.image_url";
     public static final String DESCRIPTION_KEY = "label.description";
 
+    // errors
     public static final String BAD_CREDENTIALS_KEY = "label.error.bad_credentials";
     public static final String UNEXPECTED_ERROR_KEY = "label.error.unexpected_error_try_again";
     public static final String BLANK_USERNAME_OR_PASSWORD_KEY = "label.error.blank_username_or_password";
@@ -56,8 +57,14 @@ public final class Constants {
     public static final String INVALID_HONORARIUM_KEY = "label.error.invalid_honorarium";
     public static final String BLANK_URL_KEY = "label.error.blank_url";
     public static final String BLANK_DESCRIPTION_KEY = "label.error.blank_description";
-
-    public static final String BUTTON_APPLY_KEY = "label.button.apply";
+    public static final String INVALID_TRAVEL_NAME_KEY = "label.error.invalid_travel_name";
+    public static final String INVALID_TRAVEL_STATUS_KEY = "label.error.invalid_travel_status";
+    public static final String INVALID_TICKET_QUANTITY_KEY = "label.error.invalid_ticket_quantity";
+    public static final String INVALID_TICKET_PRICE_KEY = "label.error.invalid_ticket_price";
+    public static final String INVALID_TICKET_LIMIT_KEY = "label.error.invalid_ticket_limit";
+    public static final String INVALID_TRAVEL_DETAILS_KEY = "label.error.invalid_travel_details";
+    public static final String INVALID_HOUR_FORMAT_KEY = "label.error.invalid_hour_format";
+    public static final String INVALID_ROUTE_DATES_KEY = "label.error.invalid_route_dates";
 
     // FXML
     public static final String CLIENT_DIALOG_FXML_PATH = "/fxml/client_dialog.fxml";

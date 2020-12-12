@@ -14,8 +14,8 @@ public class ConfirmDialog extends Alert {
 
         this.setHeaderText(caption);
         this.setContentText(contentText);
-        init();
 
+        init();
     }
 
     private void init() {
@@ -25,6 +25,5 @@ public class ConfirmDialog extends Alert {
         ButtonType btnNo = new ButtonType(getLangBundle().getString("label.button.no"), ButtonBar.ButtonData.NO);
         this.getButtonTypes().setAll(btnYes, btnNo);
     }
-
 
 }

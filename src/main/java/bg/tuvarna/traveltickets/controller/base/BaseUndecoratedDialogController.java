@@ -4,8 +4,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.DialogPane;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.paint.Color;
 
+import java.net.URL;
 import java.util.Objects;
+import java.util.ResourceBundle;
 
 /**
  * Base class for each undecorated dialog. It defines different dialog modes with view, add and edit
