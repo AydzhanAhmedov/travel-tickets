@@ -7,7 +7,7 @@ import bg.tuvarna.traveltickets.service.CityService;
 
 public class CityServiceImpl implements CityService {
 
-    CityRepository cityRepository = CityRepositoryImpl.getInstance();
+    private final CityRepository cityRepository = CityRepositoryImpl.getInstance();
 
     @Override
     public City findOrAddByName(final String name) {

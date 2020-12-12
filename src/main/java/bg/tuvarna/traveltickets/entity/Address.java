@@ -7,18 +7,20 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.io.Serial;
 import java.util.Objects;
 
 @Entity
 @Table(name = "addresses")
 public class Address extends BaseEntity {
 
+    @Serial
     private static final long serialVersionUID = -6396179517749137012L;
 
     @ManyToOne(optional = false, cascade = CascadeType.ALL)
     private City city;
 
-    @Column(nullable = false)
+    @Column(nullable = false, updatable = false)
     private String address;
 
     public Address() {
@@ -46,10 +48,6 @@ public class Address extends BaseEntity {
         this.city = city;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -64,4 +62,5 @@ public class Address extends BaseEntity {
     public int hashCode() {
         return Objects.hash(super.hashCode(), city, address);
     }
+
 }

@@ -2,6 +2,7 @@ package bg.tuvarna.traveltickets.service;
 
 import bg.tuvarna.traveltickets.entity.Notification;
 import bg.tuvarna.traveltickets.entity.NotificationRecipient;
+import bg.tuvarna.traveltickets.entity.NotificationStatus;
 import bg.tuvarna.traveltickets.entity.NotificationType;
 import bg.tuvarna.traveltickets.entity.User;
 import bg.tuvarna.traveltickets.util.notifications.RecipientsNotifier;
@@ -27,5 +28,13 @@ public interface NotificationService {
     List<NotificationRecipient> markAsSeen(List<NotificationRecipient> notificationRecipients);
 
     boolean isSeen(NotificationRecipient notification);
+
+    NotificationStatus findStatusById(Long id);
+
+    NotificationType findTypeById(Long id);
+
+    NotificationStatus findStatusByName(NotificationStatus.Enum notificationStatusName);
+
+    NotificationType findTypeByName(NotificationType.Enum notificationTypeName);
 
 }

@@ -4,14 +4,15 @@ import bg.tuvarna.traveltickets.entity.base.BaseEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.io.Serial;
 import java.util.Objects;
 
 @Entity
 @Table(name = "cities")
 public class City extends BaseEntity {
 
+    @Serial
     private static final long serialVersionUID = 2398116316143393429L;
 
     @Column(nullable = false, unique = true)
@@ -22,7 +23,6 @@ public class City extends BaseEntity {
 
     public City(String name) {
         this.name = name;
-
     }
 
     public City(Long id, String name) {

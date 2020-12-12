@@ -1,8 +1,10 @@
 package bg.tuvarna.traveltickets.service;
 
+import bg.tuvarna.traveltickets.entity.TransportType;
 import bg.tuvarna.traveltickets.entity.Travel;
 import bg.tuvarna.traveltickets.entity.TravelDistributorRequest;
 import bg.tuvarna.traveltickets.entity.TravelStatus;
+import bg.tuvarna.traveltickets.entity.TravelType;
 
 import java.util.List;
 
@@ -10,16 +12,20 @@ public interface TravelService {
 
     List<Travel> findAll();
 
-    List<TravelDistributorRequest> findAllRequests();
-
     Travel create(Travel travel);
 
     Travel updateTravel(Travel travel, TravelStatus.Enum newStatusName, String newDetails);
 
-    TravelDistributorRequest createRequest(Travel travel);
+    TransportType findTransportTypeById(Long id);
 
-    void acceptRequest(TravelDistributorRequest travelDistributorRequest);
+    TransportType findTransportTypeByName(TransportType.Enum transportTypeName);
 
-    void declineRequest(TravelDistributorRequest travelDistributorRequest);
+    TravelStatus findStatusById(Long id);
+
+    TravelStatus findStatusByName(TravelStatus.Enum travelStatusName);
+
+    TravelType findTypeById(Long id);
+
+    TravelType findTypeByName(TravelType.Enum travelTypeName);
 
 }

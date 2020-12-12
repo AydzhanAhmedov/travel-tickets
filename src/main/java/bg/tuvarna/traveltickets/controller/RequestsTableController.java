@@ -6,15 +6,14 @@ import bg.tuvarna.traveltickets.entity.Distributor;
 import bg.tuvarna.traveltickets.entity.RequestStatus;
 import bg.tuvarna.traveltickets.entity.Travel;
 import bg.tuvarna.traveltickets.entity.TravelDistributorRequest;
-import bg.tuvarna.traveltickets.service.TravelService;
-import bg.tuvarna.traveltickets.service.impl.TravelServiceImpl;
+import bg.tuvarna.traveltickets.service.RequestService;
+import bg.tuvarna.traveltickets.service.impl.RequestServiceImpl;
 import bg.tuvarna.traveltickets.util.JpaOperationsUtil;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -35,7 +34,7 @@ public class RequestsTableController implements Initializable {
 
     private static final Logger LOG = LogManager.getLogger(RequestsTableController.class);
 
-    private final TravelService travelService = TravelServiceImpl.getInstance();
+    private final RequestService requestService = RequestServiceImpl.getInstance();
 
     @FXML
     private TableView<TravelDistributorRequest> tableRequests;
@@ -62,7 +61,7 @@ public class RequestsTableController implements Initializable {
     public void initialize(final URL location, final ResourceBundle resources) {
 
         initColumns();
-        List<TravelDistributorRequest> list = JpaOperationsUtil.execute(em -> travelService.findAllRequests());
+        List<TravelDistributorRequest> list = JpaOperationsUtil.execute(em -> requestService.findAll());
         tableRequests.setItems(FXCollections.observableList(list));
     }
 
@@ -122,7 +121,7 @@ public class RequestsTableController implements Initializable {
                         ConfirmDialog alert = new ConfirmDialog(null, getLangBundle().getString("label.dialog.accept_request"));
                         alert.showAndWait().ifPresent(type -> {
                             if (type.getButtonData() == ButtonBar.ButtonData.YES) {
-                                travelService.acceptRequest(travelDistributorRequest);
+                                requestService.acceptRequest(travelDistributorRequest);
                                 tableRequests.getItems().set(getIndex(), travelDistributorRequest);
                             }
                         });
@@ -133,7 +132,7 @@ public class RequestsTableController implements Initializable {
                         ConfirmDialog alert = new ConfirmDialog(null, getLangBundle().getString("label.dialog.decline_requst"));
                         alert.showAndWait().ifPresent(type -> {
                             if (type.getButtonData() == ButtonBar.ButtonData.YES) {
-                                travelService.declineRequest(travelDistributorRequest);
+                                requestService.declineRequest(travelDistributorRequest);
                                 tableRequests.getItems().set(getIndex(), travelDistributorRequest);
                             }
                         });

@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Table;
+import java.io.Serial;
 import java.util.Objects;
 
 @Immutable
@@ -16,6 +17,7 @@ import java.util.Objects;
 @Table(name = "request_statuses")
 public class RequestStatus extends BaseEntity {
 
+    @Serial
     private static final long serialVersionUID = 5989003038680325200L;
 
     public enum Enum {
@@ -38,7 +40,7 @@ public class RequestStatus extends BaseEntity {
         this.name = name;
     }
 
-    public RequestStatus(long id, Enum name) {
+    public RequestStatus(Long id, Enum name) {
         this(name);
         super.id = id;
     }

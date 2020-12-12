@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Table;
+import java.io.Serial;
 import java.util.Objects;
 
 @Immutable
@@ -16,6 +17,7 @@ import java.util.Objects;
 @Table(name = "client_types")
 public class ClientType extends BaseEntity {
 
+    @Serial
     private static final long serialVersionUID = 4811666361979795492L;
 
     /**
@@ -26,7 +28,7 @@ public class ClientType extends BaseEntity {
 
         @Override
         public String toString() {
-            return AppConfig.getLangBundle().getString("label."+this.name().toLowerCase());
+            return AppConfig.getLangBundle().getString("label." + this.name().toLowerCase());
         }
     }
 

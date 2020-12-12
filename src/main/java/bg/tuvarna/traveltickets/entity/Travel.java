@@ -1,27 +1,32 @@
 package bg.tuvarna.traveltickets.entity;
 
-import bg.tuvarna.traveltickets.entity.base.BaseClientAuditEntity;
+import bg.tuvarna.traveltickets.service.impl.TravelServiceImpl;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.PostLoad;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
+import java.io.Serial;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-@EntityListeners(TravelEntityListener.class)
+import static bg.tuvarna.traveltickets.entity.TravelStatus.Enum.INCOMING;
+import static bg.tuvarna.traveltickets.entity.base.BaseAuditAbstractEntity.BaseClientAuditEntity;
+
 @Entity
 @Table(name = "travels")
 public class Travel extends BaseClientAuditEntity<Company> {
 
+    @Serial
     private static final long serialVersionUID = 6063243358784196914L;
 
     private String name;
@@ -161,6 +166,17 @@ public class Travel extends BaseClientAuditEntity<Company> {
 
     public void setTravelRoutes(List<TravelRoute> travelRoutes) {
         this.travelRoutes = travelRoutes;
+    }
+
+    @PrePersist
+    public void prePersist() {
+        if (travelStatus == null) travelStatus = TravelServiceImpl.getInstance().findStatusByName(INCOMING);
+    }
+
+    @PostLoad
+    public void postLoad() {
+        travelType = TravelServiceImpl.getInstance().findTypeById(travelType.getId());
+        travelStatus = TravelServiceImpl.getInstance().findStatusById(travelStatus.getId());
     }
 
     @Override

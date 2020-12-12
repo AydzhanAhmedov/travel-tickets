@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Table;
+import java.io.Serial;
 import java.util.Objects;
 
 @Immutable
@@ -15,6 +16,7 @@ import java.util.Objects;
 @Table(name = "notification_statuses")
 public class NotificationStatus extends BaseEntity {
 
+    @Serial
     private static final long serialVersionUID = -5904733920359559595L;
 
     public enum Enum {SEEN, NOT_SEEN}

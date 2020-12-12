@@ -4,31 +4,30 @@ import bg.tuvarna.traveltickets.common.AppConfig;
 import bg.tuvarna.traveltickets.entity.Cashier;
 import bg.tuvarna.traveltickets.entity.Client;
 import bg.tuvarna.traveltickets.entity.ClientType;
-import bg.tuvarna.traveltickets.entity.Distributor;
+import bg.tuvarna.traveltickets.entity.TransportType;
 import bg.tuvarna.traveltickets.entity.Travel;
-import bg.tuvarna.traveltickets.entity.TravelDistributorRequest;
 import bg.tuvarna.traveltickets.entity.TravelRoute;
 import bg.tuvarna.traveltickets.entity.TravelStatus;
+import bg.tuvarna.traveltickets.entity.TravelType;
 import bg.tuvarna.traveltickets.entity.User;
 import bg.tuvarna.traveltickets.repository.ClientRepository;
-import bg.tuvarna.traveltickets.repository.RequestRepository;
 import bg.tuvarna.traveltickets.repository.TravelRepository;
 import bg.tuvarna.traveltickets.repository.impl.ClientRepositoryImpl;
-import bg.tuvarna.traveltickets.repository.impl.RequestRepositoryImpl;
 import bg.tuvarna.traveltickets.repository.impl.TravelRepositoryImpl;
 import bg.tuvarna.traveltickets.service.AuthService;
 import bg.tuvarna.traveltickets.service.CityService;
 import bg.tuvarna.traveltickets.service.NotificationService;
-import bg.tuvarna.traveltickets.service.RequestStatusService;
 import bg.tuvarna.traveltickets.service.TravelService;
-import bg.tuvarna.traveltickets.service.TravelStatusService;
+import bg.tuvarna.traveltickets.util.JpaOperationsUtil;
 import io.ably.lib.realtime.AblyRealtime;
 import io.ably.lib.types.AblyException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static bg.tuvarna.traveltickets.common.AppConfig.getLangBundle;
@@ -39,28 +38,32 @@ import static bg.tuvarna.traveltickets.entity.NotificationType.Enum.NEW_TRAVEL;
 import static bg.tuvarna.traveltickets.entity.NotificationType.Enum.TRAVEL_STATUS_CHANGED;
 import static bg.tuvarna.traveltickets.entity.RequestStatus.Enum.APPROVED;
 import static bg.tuvarna.traveltickets.entity.RequestStatus.Enum.PENDING;
-import static bg.tuvarna.traveltickets.entity.RequestStatus.Enum.REJECTED;
 import static bg.tuvarna.traveltickets.entity.TravelStatus.Enum.INCOMING;
 import static bg.tuvarna.traveltickets.util.JpaOperationsUtil.executeInTransaction;
+import static java.util.stream.Collectors.toUnmodifiableList;
+import static java.util.stream.Collectors.toUnmodifiableMap;
 
 public class TravelServiceImpl implements TravelService {
 
     private static final Logger LOG = LogManager.getLogger(TravelServiceImpl.class);
 
-    private static final Long INCOMING_STATUS_ID = TravelStatusServiceImpl.getInstance().findByName(INCOMING).getId();
-    private static final Long DISTRIBUTOR_TYPE_ID = ClientTypeServiceImpl.getInstance().findByName(DISTRIBUTOR).getId();
-    private static final Long APPROVED_REQUEST_ID = RequestStatusServiceImpl.getInstance().findByName(APPROVED).getId();
-    private static final Long PENDING_REQUEST_ID = RequestStatusServiceImpl.getInstance().findByName(PENDING).getId();
+    private final Map<Long, TransportType> transportTypesByIdCache;
+    private final Map<Long, TravelStatus> travelStatusesByIdCache;
+    private final Map<Long, TravelType> travelTypesByIdCache;
+    private final Map<TransportType.Enum, TransportType> transportTypesByNameCache;
+    private final Map<TravelStatus.Enum, TravelStatus> travelStatusesByNameCache;
+    private final Map<TravelType.Enum, TravelType> travelTypesByNameCache;
+
+    private static final Long DISTRIBUTOR_TYPE_ID = ClientServiceImpl.getInstance().findTypeByName(DISTRIBUTOR).getId();
+    private static final Long APPROVED_REQUEST_ID = RequestServiceImpl.getInstance().findStatusByName(APPROVED).getId();
+    private static final Long PENDING_REQUEST_ID = RequestServiceImpl.getInstance().findStatusByName(PENDING).getId();
 
     private final TravelRepository travelRepository = TravelRepositoryImpl.getInstance();
     private final ClientRepository clientRepository = ClientRepositoryImpl.getInstance();
-    private final RequestRepository requestRepository = RequestRepositoryImpl.getInstance();
 
     private final AblyRealtime ablyClient = AppConfig.getAblyClient();
     private final AuthService authService = AuthServiceImpl.getInstance();
-    private final TravelStatusService travelStatusService = TravelStatusServiceImpl.getInstance();
     private final NotificationService notificationService = NotificationServiceImpl.getInstance();
-    private final RequestStatusService requestStatusService = RequestStatusServiceImpl.getInstance();
 
     private final CityService cityService = CityServiceImpl.getInstance();
 
@@ -72,32 +75,22 @@ public class TravelServiceImpl implements TravelService {
         }
 
         final Long clientId = authService.getLoggedUser().getId();
+        final Long incomingStatusId = findStatusByName(INCOMING).getId();
 
         // companies only their travels, distributors and cashiers only the travel they can sell tickets
         return switch (authService.getLoggedClientTypeName()) {
             case COMPANY -> travelRepository.findAllByCompanyId(clientId);
-            case DISTRIBUTOR -> travelRepository.findAllByTravelStatusId(INCOMING_STATUS_ID);
+            case DISTRIBUTOR -> travelRepository.findAllByTravelStatusId(incomingStatusId);
             case CASHIER -> {
                 final Long distributorId = ((Cashier) authService.getLoggedClient()).getCreatedBy().getUserId();
                 final Long cityId = authService.getLoggedClient().getAddress().getCity().getId();
 
-                yield travelRepository.findAllByDistributorIdAndTravelStatusId(distributorId, INCOMING_STATUS_ID, APPROVED_REQUEST_ID)
+                //TODO: why ?
+                yield travelRepository.findAllByDistributorIdAndTravelStatusId(distributorId, incomingStatusId, APPROVED_REQUEST_ID)
                         .stream()
                         //.filter(t -> t.getTravelRoutes().stream().anyMatch(r -> r.getCity().getId().equals(cityId)))
                         .collect(Collectors.toList());
             }
-        };
-    }
-
-    @Override
-    public List<TravelDistributorRequest> findAllRequests() {
-        final Long clientId = authService.getLoggedUser().getId();
-        final ClientType.Enum clientTypeName = authService.getLoggedClientTypeName();
-
-        return switch (clientTypeName) {
-            case DISTRIBUTOR -> travelRepository.findAllRequestsByDistributorId(clientId);
-            case COMPANY -> travelRepository.findAllRequestsByCompanyIdAndRequestStatusId(clientId, PENDING_REQUEST_ID);
-            default -> throw new RuntimeException("Only distributors and companies are able to view requests!");
         };
     }
 
@@ -139,7 +132,7 @@ public class TravelServiceImpl implements TravelService {
         if (newStatusName == null && newDetails == null) return travel;
 
         if (newDetails != null) travel.setDetails(newDetails);
-        if (newStatusName != null) travel.setTravelStatus(travelStatusService.findByName(newStatusName));
+        if (newStatusName != null) travel.setTravelStatus(findStatusByName(newStatusName));
 
         travelRepository.save(travel);
         if (newStatusName != null && AppConfig.ablyIsEnabled()) {
@@ -153,23 +146,33 @@ public class TravelServiceImpl implements TravelService {
     }
 
     @Override
-    public TravelDistributorRequest createRequest(final Travel travel) {
-        if (!DISTRIBUTOR.equals(authService.getLoggedClientTypeName())) {
-            throw new RuntimeException("Only distributors can create requests for travels!");
-        }
-        return travelRepository.save(new TravelDistributorRequest(travel, (Distributor) (authService.getLoggedClient())));
+    public TransportType findTransportTypeById(final Long id) {
+        return transportTypesByIdCache.get(Objects.requireNonNull(id));
     }
 
     @Override
-    public void acceptRequest(final TravelDistributorRequest travelDistributorRequest) {
-        travelDistributorRequest.setRequestStatus(requestStatusService.findByName(APPROVED));
-        requestRepository.save(travelDistributorRequest);
+    public TransportType findTransportTypeByName(final TransportType.Enum transportTypeName) {
+        return transportTypesByNameCache.get(Objects.requireNonNull(transportTypeName));
     }
 
     @Override
-    public void declineRequest(final TravelDistributorRequest travelDistributorRequest) {
-        travelDistributorRequest.setRequestStatus(requestStatusService.findByName(REJECTED));
-        requestRepository.save(travelDistributorRequest);
+    public TravelStatus findStatusById(final Long id) {
+        return travelStatusesByIdCache.get(Objects.requireNonNull(id));
+    }
+
+    @Override
+    public TravelStatus findStatusByName(final TravelStatus.Enum travelStatusName) {
+        return travelStatusesByNameCache.get(Objects.requireNonNull(travelStatusName));
+    }
+
+    @Override
+    public TravelType findTypeById(final Long id) {
+        return travelTypesByIdCache.get(Objects.requireNonNull(id));
+    }
+
+    @Override
+    public TravelType findTypeByName(final TravelType.Enum travelTypeName) {
+        return travelTypesByNameCache.get(Objects.requireNonNull(travelTypeName));
     }
 
     private boolean createAndSendNewTravelNotifications(final Travel travel) {
@@ -237,7 +240,38 @@ public class TravelServiceImpl implements TravelService {
     }
 
     private TravelServiceImpl() {
-        super();
+        final List<TransportType> transportTypes = JpaOperationsUtil.execute(em ->
+                em.createQuery("FROM TransportType", TransportType.class)
+                        .getResultStream()
+                        .collect(toUnmodifiableList())
+        );
+        final List<TravelStatus> statuses = JpaOperationsUtil.execute(em ->
+                em.createQuery("FROM TravelStatus", TravelStatus.class)
+                        .getResultStream()
+                        .collect(toUnmodifiableList())
+        );
+        final List<TravelType> types = JpaOperationsUtil.execute(em ->
+                em.createQuery("FROM TravelType", TravelType.class)
+                        .getResultStream()
+                        .collect(toUnmodifiableList())
+        );
+
+        travelTypesByIdCache = types.stream()
+                .collect(toUnmodifiableMap(TravelType::getId, Function.identity()));
+        travelTypesByNameCache = types.stream()
+                .collect(toUnmodifiableMap(TravelType::getName, Function.identity()));
+
+        travelStatusesByIdCache = statuses.stream()
+                .collect(toUnmodifiableMap(TravelStatus::getId, Function.identity()));
+        travelStatusesByNameCache = statuses.stream()
+                .collect(toUnmodifiableMap(TravelStatus::getName, Function.identity()));
+
+        transportTypesByIdCache = transportTypes.stream()
+                .collect(toUnmodifiableMap(TransportType::getId, Function.identity()));
+        transportTypesByNameCache = transportTypes.stream()
+                .collect(toUnmodifiableMap(TransportType::getName, Function.identity()));
+
+        LOG.info("{} instantiated, transport types, statuses and types fetched and cached.", getClass());
     }
 
 }

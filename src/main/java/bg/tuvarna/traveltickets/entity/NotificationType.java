@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Table;
+import java.io.Serial;
 import java.util.Objects;
 
 @Immutable
@@ -15,6 +16,7 @@ import java.util.Objects;
 @Table(name = "notification_types")
 public class NotificationType extends BaseEntity {
 
+    @Serial
     private static final long serialVersionUID = 7514162606074788391L;
 
     public enum Enum {NEW_TRAVEL, TRAVEL_STATUS_CHANGED, SOLD_TICKETS, UNSOLD_TICKETS}

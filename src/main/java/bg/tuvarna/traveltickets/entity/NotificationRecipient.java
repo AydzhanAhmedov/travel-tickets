@@ -1,21 +1,27 @@
 package bg.tuvarna.traveltickets.entity;
 
+import bg.tuvarna.traveltickets.service.impl.NotificationServiceImpl;
+
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
+import javax.persistence.PostLoad;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
-@EntityListeners(NotificationRecipientEntityListener.class)
+import static bg.tuvarna.traveltickets.entity.NotificationStatus.Enum.NOT_SEEN;
+
 @Entity
 @Table(name = "notifications_recipients")
 public class NotificationRecipient implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 268742443330560001L;
 
     @EmbeddedId
@@ -60,6 +66,17 @@ public class NotificationRecipient implements Serializable {
 
     public void setNotificationStatus(NotificationStatus notificationStatus) {
         this.notificationStatus = notificationStatus;
+    }
+
+    @PrePersist
+    public void prePersist() {
+        if (notificationStatus == null)
+            notificationStatus = NotificationServiceImpl.getInstance().findStatusByName(NOT_SEEN);
+    }
+
+    @PostLoad
+    public void postLoad() {
+        notificationStatus = NotificationServiceImpl.getInstance().findStatusById(notificationStatus.getId());
     }
 
     @Override

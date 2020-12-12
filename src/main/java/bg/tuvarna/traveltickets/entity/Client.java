@@ -1,9 +1,10 @@
 package bg.tuvarna.traveltickets.entity;
 
+import bg.tuvarna.traveltickets.service.impl.ClientServiceImpl;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
@@ -12,16 +13,18 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
+import javax.persistence.PostLoad;
 import javax.persistence.Table;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
-@EntityListeners(ClientEntityListener.class)
 @Entity
 @Table(name = "clients")
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Client implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -9066096581032000088L;
 
     @Id
@@ -29,7 +32,7 @@ public class Client implements Serializable {
     private Long userId;
 
     @MapsId("user_id")
-    @OneToOne(optional = false, fetch = FetchType.LAZY)
+    @OneToOne(optional = false, fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -102,21 +105,26 @@ public class Client implements Serializable {
         this.address = address;
     }
 
+    @PostLoad
+    public void postLoad() {
+        clientType = ClientServiceImpl.getInstance().findTypeById(clientType.getId());
+    }
+
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Client client = (Client) o;
-        return Objects.equals(userId, client.userId) &&
-                Objects.equals(user, client.user) &&
-                Objects.equals(clientType, client.clientType) &&
-                Objects.equals(name, client.name) &&
-                Objects.equals(phone, client.phone);
+        final Client client = (Client) o;
+        return Objects.equals(userId, client.userId)
+                && Objects.equals(user, client.user)
+                && Objects.equals(clientType, client.clientType)
+                && Objects.equals(name, client.name) && Objects.equals(phone, client.phone)
+                && Objects.equals(address, client.address);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(userId, user, clientType, name, phone);
+        return Objects.hash(userId, user, clientType, name, phone, address);
     }
 
 }

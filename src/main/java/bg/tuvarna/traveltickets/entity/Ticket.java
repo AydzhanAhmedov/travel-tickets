@@ -1,18 +1,20 @@
 package bg.tuvarna.traveltickets.entity;
 
-import bg.tuvarna.traveltickets.entity.base.BaseClientAuditEntity;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.io.Serial;
 import java.util.Objects;
+
+import static bg.tuvarna.traveltickets.entity.base.BaseAuditAbstractEntity.BaseClientAuditEntity;
 
 @Entity
 @Table(name = "tickets")
 public class Ticket extends BaseClientAuditEntity<Cashier> {
 
+    @Serial
     private static final long serialVersionUID = 8812749995652436145L;
 
     @ManyToOne
@@ -31,7 +33,7 @@ public class Ticket extends BaseClientAuditEntity<Cashier> {
     public Ticket() {
     }
 
-    public Ticket(long id) {
+    public Ticket(Long id) {
         super.id = id;
     }
 

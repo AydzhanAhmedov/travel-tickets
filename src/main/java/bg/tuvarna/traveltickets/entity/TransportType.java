@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Table;
+import java.io.Serial;
 import java.util.Objects;
 
 import static bg.tuvarna.traveltickets.common.AppConfig.getLangBundle;
@@ -17,6 +18,7 @@ import static bg.tuvarna.traveltickets.common.AppConfig.getLangBundle;
 @Table(name = "transport_types")
 public class TransportType extends BaseEntity {
 
+    @Serial
     private static final long serialVersionUID = -7545179502426967324L;
 
     public enum Enum {

@@ -2,12 +2,14 @@ package bg.tuvarna.traveltickets.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
 @Embeddable
 public class NotificationRecipientID implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -7117467286788379816L;
 
     @Column(name = "notification_id", updatable = false)

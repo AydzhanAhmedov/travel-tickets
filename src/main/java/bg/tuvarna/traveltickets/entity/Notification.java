@@ -1,26 +1,29 @@
 package bg.tuvarna.traveltickets.entity;
 
-import bg.tuvarna.traveltickets.entity.base.BaseUserAuditEntity;
+import bg.tuvarna.traveltickets.service.impl.NotificationServiceImpl;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.PostLoad;
 import javax.persistence.Table;
+import java.io.Serial;
 import java.util.Objects;
 
-@EntityListeners(NotificationEntityListener.class)
+import static bg.tuvarna.traveltickets.entity.base.BaseAuditAbstractEntity.BaseUserAuditEntity;
+
 @Entity
 @Table(name = "notifications")
 public class Notification extends BaseUserAuditEntity {
 
+    @Serial
     private static final long serialVersionUID = 1527812768320401028L;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "type_id", nullable = false)
-    NotificationType notificationType;
+    private NotificationType notificationType;
 
     @Column(nullable = false, updatable = false)
     private String message;
@@ -46,6 +49,11 @@ public class Notification extends BaseUserAuditEntity {
         return message;
     }
 
+    @PostLoad
+    public void postLoad() {
+        notificationType = NotificationServiceImpl.getInstance().findTypeById(notificationType.getId());
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -60,4 +68,5 @@ public class Notification extends BaseUserAuditEntity {
     public int hashCode() {
         return Objects.hash(super.hashCode(), notificationType, message);
     }
+
 }

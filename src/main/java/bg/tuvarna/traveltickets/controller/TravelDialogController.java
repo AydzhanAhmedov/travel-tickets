@@ -7,14 +7,8 @@ import bg.tuvarna.traveltickets.entity.Travel;
 import bg.tuvarna.traveltickets.entity.TravelRoute;
 import bg.tuvarna.traveltickets.entity.TravelStatus;
 import bg.tuvarna.traveltickets.entity.TravelType;
-import bg.tuvarna.traveltickets.service.TransportTypeService;
 import bg.tuvarna.traveltickets.service.TravelService;
-import bg.tuvarna.traveltickets.service.TravelStatusService;
-import bg.tuvarna.traveltickets.service.TravelTypeService;
-import bg.tuvarna.traveltickets.service.impl.TransportTypeServiceImpl;
 import bg.tuvarna.traveltickets.service.impl.TravelServiceImpl;
-import bg.tuvarna.traveltickets.service.impl.TravelStatusServiceImpl;
-import bg.tuvarna.traveltickets.service.impl.TravelTypeServiceImpl;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -59,10 +53,6 @@ public class TravelDialogController extends BaseUndecoratedDialogController {
     private static final DateTimeFormatter HOUR_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
 
     private final TravelService travelService = TravelServiceImpl.getInstance();
-
-    private final TravelStatusService travelStatusService = TravelStatusServiceImpl.getInstance();
-    private final TravelTypeService travelTypeService = TravelTypeServiceImpl.getInstance();
-    private final TransportTypeService transportTypeService = TransportTypeServiceImpl.getInstance();
 
     private Travel travel;
     private List<HBox> travelRouteXBoxes;
@@ -162,8 +152,8 @@ public class TravelDialogController extends BaseUndecoratedDialogController {
     private void readData() {
         travel.setName(nameTextField.getText());
         travel.setDetails(detailsTextArea.getText());
-        travel.setTravelType(travelTypeService.findByName(typeComboBox.getValue()));
-        travel.setTravelStatus(travelStatusService.findByName(statusComboBox.getValue()));
+        travel.setTravelType(travelService.findTypeByName(typeComboBox.getValue()));
+        travel.setTravelStatus(travelService.findStatusByName(statusComboBox.getValue()));
         travel.setTicketPrice(new BigDecimal(ticketPriceTextField.getText()));
         travel.setTicketQuantity(Integer.parseInt(ticketQuantityTextField.getText()));
         travel.setCurrentTicketQuantity(travel.getTicketQuantity());
@@ -179,7 +169,7 @@ public class TravelDialogController extends BaseUndecoratedDialogController {
 
             travelRoute.setCity(new City(cityTextField.getText()));
             travelRoute.setArrivalDate(arrivalDatePicker.getValue().atTime(startTime));
-            travelRoute.setTransportType(transportTypeService.findByName(transportComboBox.getValue()));
+            travelRoute.setTransportType(travelService.findTransportTypeByName(transportComboBox.getValue()));
 
             if (i == 0) travel.setStartDate(travelRoute.getArrivalDate());
             else if (i == travelRouteXBoxes.size() - 1) travel.setEndDate(travelRoute.getArrivalDate());
@@ -194,7 +184,7 @@ public class TravelDialogController extends BaseUndecoratedDialogController {
         ticketPriceTextField.setText(travel.getTicketPrice().toString());
         buyLimitTextField.setText(travel.getTicketBuyLimit().toString());
         detailsTextArea.setText(travel.getDetails());
-        startTimeTextField.setText(String.valueOf(travel.getStartDate().getHour()));
+        startTimeTextField.setText(HOUR_FORMATTER.format(travel.getStartDate()));
 
         final TravelType.Enum type = travel.getTravelType().getName();
         final TravelStatus.Enum status = travel.getTravelStatus().getName();

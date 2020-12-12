@@ -2,6 +2,7 @@ package bg.tuvarna.traveltickets.service;
 
 import bg.tuvarna.traveltickets.entity.Client;
 import bg.tuvarna.traveltickets.entity.ClientType;
+import bg.tuvarna.traveltickets.entity.Role;
 import bg.tuvarna.traveltickets.entity.User;
 
 public interface AuthService {
@@ -21,5 +22,9 @@ public interface AuthService {
     User findByEmail(String email);
 
     void logout();
+
+    Role findRoleById(Long id);
+
+    Role findRoleByName(Role.Enum roleName);
 
 }

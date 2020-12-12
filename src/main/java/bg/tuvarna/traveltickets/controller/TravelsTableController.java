@@ -9,8 +9,10 @@ import bg.tuvarna.traveltickets.entity.TravelStatus;
 import bg.tuvarna.traveltickets.entity.TravelType;
 import bg.tuvarna.traveltickets.repository.impl.ClientRepositoryImpl;
 import bg.tuvarna.traveltickets.service.AuthService;
+import bg.tuvarna.traveltickets.service.RequestService;
 import bg.tuvarna.traveltickets.service.TravelService;
 import bg.tuvarna.traveltickets.service.impl.AuthServiceImpl;
+import bg.tuvarna.traveltickets.service.impl.RequestServiceImpl;
 import bg.tuvarna.traveltickets.service.impl.TravelServiceImpl;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -59,6 +61,7 @@ public class TravelsTableController implements Initializable {
     private static final Logger LOG = LogManager.getLogger(TravelsTableController.class);
 
     private final TravelService travelService = TravelServiceImpl.getInstance();
+    private final RequestService requestService = RequestServiceImpl.getInstance();
     private final AuthService authService = AuthServiceImpl.getInstance();
 
     private Set<Long> travelsWithRequests;
@@ -114,7 +117,7 @@ public class TravelsTableController implements Initializable {
             final List<Travel> travels = travelService.findAll();
 
             if (authService.getLoggedClientTypeName() == DISTRIBUTOR) {
-                travelsWithRequests = travelService.findAllRequests().stream().map(r -> r.getTravel().getId()).collect(toSet());
+                travelsWithRequests = requestService.findAll().stream().map(r -> r.getTravel().getId()).collect(toSet());
             } else {
                 travelsWithRequests = Collections.emptySet();
             }
@@ -197,7 +200,7 @@ public class TravelsTableController implements Initializable {
                     btn.setText(getLangBundle().getString(switch (authService.getLoggedClientTypeName()) {
                         case DISTRIBUTOR -> {
                             btn.setOnAction(e -> {
-                                executeInTransaction(em -> travelService.createRequest(item));
+                                executeInTransaction(em -> requestService.createRequest(item));
                                 travelsWithRequests.add(item.getId());
                                 getTableView().getItems().set(getIndex(), item);
                             });
@@ -214,8 +217,7 @@ public class TravelsTableController implements Initializable {
                                 }
 
                             }
-
-                            yield SELL_BUTTON_KEY; // TODO: implement with tickets functionality
+                            yield SELL_BUTTON_KEY;
                         }
                         default -> {
                             btn.setOnAction(e -> loadDialog(EDIT, getTableView().getItems().get(getIndex())));

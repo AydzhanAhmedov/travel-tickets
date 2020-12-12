@@ -11,8 +11,8 @@ import bg.tuvarna.traveltickets.service.AuthService;
 import bg.tuvarna.traveltickets.service.NotificationService;
 import bg.tuvarna.traveltickets.service.impl.AuthServiceImpl;
 import bg.tuvarna.traveltickets.service.impl.NotificationServiceImpl;
-import bg.tuvarna.traveltickets.service.impl.RequestStatusServiceImpl;
-import bg.tuvarna.traveltickets.service.impl.TravelStatusServiceImpl;
+import bg.tuvarna.traveltickets.service.impl.RequestServiceImpl;
+import bg.tuvarna.traveltickets.service.impl.TravelServiceImpl;
 import bg.tuvarna.traveltickets.util.notifications.LoggedRecipientNotifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -42,8 +42,8 @@ public final class ScheduledTicketsNotificationCheck implements Runnable {
 
     private static final Logger LOG = LogManager.getLogger(ScheduledTicketsNotificationCheck.class);
 
-    private static final Long INCOMING_STATUS_ID = TravelStatusServiceImpl.getInstance().findByName(INCOMING).getId();
-    private static final Long APPROVED_STATUS_ID = RequestStatusServiceImpl.getInstance().findByName(APPROVED).getId();
+    private static final Long INCOMING_STATUS_ID = TravelServiceImpl.getInstance().findStatusByName(INCOMING).getId();
+    private static final Long APPROVED_STATUS_ID = RequestServiceImpl.getInstance().findStatusByName(APPROVED).getId();
 
     private final TravelRepository travelRepository = TravelRepositoryImpl.getInstance();
 

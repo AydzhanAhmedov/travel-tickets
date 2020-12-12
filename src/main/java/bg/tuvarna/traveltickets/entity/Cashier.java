@@ -1,23 +1,28 @@
 package bg.tuvarna.traveltickets.entity;
 
+import bg.tuvarna.traveltickets.service.impl.AuthServiceImpl;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.PrePersist;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
+import java.io.Serial;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.Objects;
 
-@EntityListeners(CashierEntityListener.class)
+import static java.time.ZoneOffset.UTC;
+
 @Entity
 @Table(name = "cashiers")
 @PrimaryKeyJoinColumn(name = "client_id")
 public class Cashier extends Client {
 
+    @Serial
     private static final long serialVersionUID = 1596590746408352705L;
 
     @Column(nullable = false)
@@ -25,10 +30,10 @@ public class Cashier extends Client {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by", updatable = false, nullable = false)
-    Distributor createdBy;
+    private Distributor createdBy;
 
     @Column(name = "created_at", updatable = false, nullable = false)
-    OffsetDateTime createdAt;
+    private OffsetDateTime createdAt;
 
     public Cashier() {
         super();
@@ -52,6 +57,12 @@ public class Cashier extends Client {
 
     public OffsetDateTime getCreatedAt() {
         return createdAt;
+    }
+
+    @PrePersist
+    public void prePersist() {
+        createdBy = AuthServiceImpl.getInstance().getLoggedClient() instanceof Distributor d ? d : null;
+        createdAt = OffsetDateTime.now(UTC);
     }
 
     @Override

@@ -11,11 +11,8 @@ import bg.tuvarna.traveltickets.entity.Distributor;
 import bg.tuvarna.traveltickets.entity.Role;
 import bg.tuvarna.traveltickets.entity.User;
 import bg.tuvarna.traveltickets.service.AuthService;
-import bg.tuvarna.traveltickets.service.ClientService;
 import bg.tuvarna.traveltickets.service.impl.AuthServiceImpl;
 import bg.tuvarna.traveltickets.service.impl.ClientServiceImpl;
-import bg.tuvarna.traveltickets.service.impl.ClientTypeServiceImpl;
-import bg.tuvarna.traveltickets.service.impl.RoleServiceImpl;
 import bg.tuvarna.traveltickets.util.JpaOperationsUtil;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -60,9 +57,9 @@ import static bg.tuvarna.traveltickets.common.Constants.USERNAME_USED_KEY;
 
 public class ClientDialogController extends BaseUndecoratedDialogController {
 
-    private final ClientService clientService = ClientServiceImpl.getInstance();
-    private final AuthService authService = AuthServiceImpl.getInstance();
     private static final Logger LOG = LogManager.getLogger(ClientDialogController.class);
+
+    private final AuthService authService = AuthServiceImpl.getInstance();
 
     private Client client;
     private ClientType.Enum clientType;
@@ -288,13 +285,13 @@ public class ClientDialogController extends BaseUndecoratedDialogController {
             };
 
             User user = new User();
-            user.setRole(RoleServiceImpl.getInstance().findByName(Role.Enum.CLIENT));
+            user.setRole(authService.findRoleByName(Role.Enum.CLIENT));
             client.setUser(user);
 
             LOG.debug("New local client created");
         }
 
-        client.setClientType(ClientTypeServiceImpl.getInstance().findByName(clientType));
+        client.setClientType(ClientServiceImpl.getInstance().findTypeByName(clientType));
 
         City city = new City(cityTextField.getText());
         Address address = new Address(city, addressTextField.getText());

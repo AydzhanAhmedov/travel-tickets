@@ -1,24 +1,26 @@
 package bg.tuvarna.traveltickets.entity;
 
-import javax.persistence.CascadeType;
+import bg.tuvarna.traveltickets.service.impl.TravelServiceImpl;
+
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
+import javax.persistence.PostLoad;
 import javax.persistence.Table;
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.Objects;
 
-@EntityListeners(TravelRouteEntityListener.class)
 @Entity
 @Table(name = "travels_routes")
 public class TravelRoute implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 4885712622963495508L;
 
     @EmbeddedId
@@ -82,6 +84,11 @@ public class TravelRoute implements Serializable {
 
     public void setArrivalDate(OffsetDateTime arrivalDate) {
         this.arrivalDate = arrivalDate;
+    }
+
+    @PostLoad
+    public void postLoad() {
+        transportType = TravelServiceImpl.getInstance().findTransportTypeById(transportType.getId());
     }
 
     @Override
