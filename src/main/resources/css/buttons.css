@@ -28,6 +28,7 @@
     -fx-graphic: url('../images/exit_button.png');
 }
 .exitButton:hover {
+    -fx-border-width: 0px;
     -fx-background-color: transparent;
     -fx-graphic: url('../images/hovered_exit_button.png');
 }

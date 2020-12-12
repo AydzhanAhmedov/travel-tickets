@@ -73,6 +73,30 @@ public class ClientDialogController extends BaseUndecoratedDialogController {
     private ImageView errorImageView;
 
     @FXML
+    private Label labelEmail;
+
+    @FXML
+    private Label labelUsername;
+
+    @FXML
+    private Label labelPassword;
+
+    @FXML
+    private Label labelType;
+
+    @FXML
+    private Label labelName;
+
+    @FXML
+    private Label labelPhone;
+
+    @FXML
+    private Label labelAddress;
+
+    @FXML
+    private Label labelCity;
+
+    @FXML
     private GridPane gridPane;
 
     @FXML
@@ -142,13 +166,40 @@ public class ClientDialogController extends BaseUndecoratedDialogController {
         if (mode != DialogMode.ADD) setData(client);
     }
 
+    public void injectDialogMode(final DialogMode mode, final User user) {
+        setDialogMode(mode);
+        usernameTextField.setText(user.getUsername());
+        emailTextField.setText(user.getEmail());
+    }
+
+    public void hideExitButton() {
+        exitButton.setVisible(false);
+    }
+
+    public void hideAllClientFields() {
+        clientTypeComboBox.setVisible(false);
+        labelType.setVisible(false);
+        nameTextField.setVisible(false);
+        labelName.setVisible(false);
+        phoneTextField.setVisible(false);
+        labelPhone.setVisible(false);
+        addressTextField.setVisible(false);
+        labelAddress.setVisible(false);
+        cityTextField.setVisible(false);
+        labelCity.setVisible(false);
+        detail1TextField.setVisible(false);
+        detail1Label.setVisible(false);
+        detail2Label.setVisible(false);
+        detail2TextField.setVisible(false);
+    }
+
     private boolean validate() {
 
         if (!Pattern.compile("^(.+)@(.+)$").matcher(emailTextField.getText()).matches()) {
             setErrorText(getLangBundle().getString(INVALID_EMAIL_KEY));
             return false;
         } else {
-            if (authService.findByEmail(emailTextField.getText()) != null) {
+            if (client.getUser().getEmail().compareTo(emailTextField.getText()) != 0 && authService.findByEmail(emailTextField.getText()) != null) {
                 setErrorText(getLangBundle().getString(EMAIL_USED_KEY));
                 return false;
             }
@@ -158,7 +209,7 @@ public class ClientDialogController extends BaseUndecoratedDialogController {
             setErrorText(getLangBundle().getString(INVALID_USERNAME_KEY));
             return false;
         } else {
-            if (authService.findByUsername(usernameTextField.getText()) != null) {
+            if (client.getUser().getUsername().compareTo(usernameTextField.getText()) != 0 && authService.findByUsername(usernameTextField.getText()) != null) {
                 setErrorText(getLangBundle().getString(USERNAME_USED_KEY));
                 return false;
             }

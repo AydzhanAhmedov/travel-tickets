@@ -46,6 +46,7 @@ import static bg.tuvarna.traveltickets.common.AppScreens.LOGIN;
 import static bg.tuvarna.traveltickets.common.Constants.ACTIVE_NOTIFICATIONS_BTN_CSS;
 import static bg.tuvarna.traveltickets.common.Constants.NOTIFICATIONS_BTN_CSS;
 import static bg.tuvarna.traveltickets.common.Constants.NOTIFICATIONS_DIALOG_FXML_PATH;
+import static bg.tuvarna.traveltickets.common.Constants.PROFILE_VIEW_FXML_PATH;
 import static bg.tuvarna.traveltickets.util.JpaOperationsUtil.execute;
 import static bg.tuvarna.traveltickets.util.notifications.NotificationEvent.NEW_NOTIFICATION;
 
@@ -114,7 +115,14 @@ public class HomeController extends BaseUndecoratedController {
 
     @FXML
     private void onProfileButtonClicked(ActionEvent event) {
-
+        try {
+            BorderPane borderPane = FXMLLoader.load(getClass().getResource(PROFILE_VIEW_FXML_PATH), getLangBundle());
+            contentText.setText(getLangBundle().getString("label.profile"));
+            childBorderPane.setCenter(borderPane);
+        }
+        catch (IOException e) {
+            LOG.error("Error loading " + this.toString().toLowerCase() + " menu content: ", e);
+        }
     }
 
     @FXML

@@ -20,6 +20,7 @@ import static bg.tuvarna.traveltickets.common.Constants.TRAVELS_TABLE_FXML_PATH;
 
 public enum MenuContent {
 
+
     CLIENTS("label.clients", "/images/baseline_people_black_18dp.png", CLIENTS_TABLE_FXML_PATH),
     STATISTIC("label.statistics", "/images/baseline_insert_chart_black_18dp.png", null),
     TRAVELS("label.travels", "/images/baseline_public_black_18dp.png", TRAVELS_TABLE_FXML_PATH),

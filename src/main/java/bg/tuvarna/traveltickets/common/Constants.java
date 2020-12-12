@@ -33,6 +33,8 @@ public final class Constants {
     public static final String SELL_BUTTON_KEY = "label.button.sell";
     public static final String BUTTON_APPLY_KEY = "label.button.apply";
     public static final String SOLD_OUT_KEY = "label.sold_out";
+    public static final String APPROVED_KEY = "label.approved";
+    public static final String REJECTED_KEY = "label.rejected";
 
     public static final String SYSTEM_KEY = "label.system";
     public static final String HOURS_KEY = "label.short_hours_ago";
@@ -46,6 +48,7 @@ public final class Constants {
     public static final String BAD_CREDENTIALS_KEY = "label.error.bad_credentials";
     public static final String UNEXPECTED_ERROR_KEY = "label.error.unexpected_error_try_again";
     public static final String BLANK_USERNAME_OR_PASSWORD_KEY = "label.error.blank_username_or_password";
+    public static final String BLANK_BUYER_NAME_KEY = "label.error.blank_buyer_name";
     public static final String INVALID_EMAIL_KEY = "label.error.invalid_email";
     public static final String INVALID_USERNAME_KEY = "label.error.invalid_username";
     public static final String USERNAME_USED_KEY = "label.error.username_used";
@@ -76,6 +79,7 @@ public final class Constants {
     public static final String TRAVELS_TABLE_FXML_PATH = "/fxml/table_travels.fxml";
     public static final String REQUESTS_TABLE_FXML_PATH = "/fxml/table_requests.fxml";
     public static final String TICKETS_TABLE_FXML_PATH = "/fxml/table_tickets.fxml";
+    public static final String PROFILE_VIEW_FXML_PATH = "/fxml/profile_view.fxml";
 
     // Other constants
     public static final String EMPTY_STRING = "";

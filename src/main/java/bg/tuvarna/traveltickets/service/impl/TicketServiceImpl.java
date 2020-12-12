@@ -1,8 +1,11 @@
 package bg.tuvarna.traveltickets.service.impl;
 
 import bg.tuvarna.traveltickets.entity.Ticket;
+import bg.tuvarna.traveltickets.entity.Travel;
 import bg.tuvarna.traveltickets.repository.TicketRepository;
+import bg.tuvarna.traveltickets.repository.TravelRepository;
 import bg.tuvarna.traveltickets.repository.impl.TicketRepositoryImpl;
+import bg.tuvarna.traveltickets.repository.impl.TravelRepositoryImpl;
 import bg.tuvarna.traveltickets.service.AuthService;
 import bg.tuvarna.traveltickets.service.TicketService;
 
@@ -14,6 +17,7 @@ public class TicketServiceImpl implements TicketService {
 
     private final AuthService authService = AuthServiceImpl.getInstance();
     private final TicketRepository ticketRepository = TicketRepositoryImpl.getInstance();
+    private final TravelRepository travelRepository = TravelRepositoryImpl.getInstance();
 
     public static TicketServiceImpl getInstance() {
         if (instance == null) {
@@ -31,6 +35,10 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     public Ticket save(final Ticket ticket) {
+
+        Travel travel = ticket.getTravel();
+        travel.setCurrentTicketQuantity(travel.getCurrentTicketQuantity()-1);
+        travelRepository.save(travel);
         return ticketRepository.save(ticket);
     }
 

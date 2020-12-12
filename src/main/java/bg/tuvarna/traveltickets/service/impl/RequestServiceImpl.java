@@ -46,7 +46,7 @@ public class RequestServiceImpl implements RequestService {
 
         return switch (clientTypeName) {
             case DISTRIBUTOR -> travelRepository.findAllRequestsByDistributorId(clientId);
-            case COMPANY -> travelRepository.findAllRequestsByCompanyIdAndRequestStatusId(clientId, findStatusByName(PENDING).getId());
+            case COMPANY -> travelRepository.findAllRequestsByCompanyId(clientId);
             default -> throw new RuntimeException("Only distributors and companies are able to view requests!");
         };
     }

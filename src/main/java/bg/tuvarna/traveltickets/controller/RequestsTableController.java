@@ -12,6 +12,7 @@ import bg.tuvarna.traveltickets.util.JpaOperationsUtil;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.TableCell;
@@ -28,7 +29,9 @@ import java.util.ResourceBundle;
 
 import static bg.tuvarna.traveltickets.common.AppConfig.getLangBundle;
 import static bg.tuvarna.traveltickets.common.Constants.ACCEPT_BUTTON_KEY;
+import static bg.tuvarna.traveltickets.common.Constants.APPROVED_KEY;
 import static bg.tuvarna.traveltickets.common.Constants.DECLINE_BUTTON_KEY;
+import static bg.tuvarna.traveltickets.common.Constants.REJECTED_KEY;
 
 public class RequestsTableController implements Initializable {
 
@@ -113,35 +116,45 @@ public class RequestsTableController implements Initializable {
                 } else {
                     final TravelDistributorRequest travelDistributorRequest = getTableView().getItems().get(getIndex());
 
-                    if (travelDistributorRequest.getRequestStatus().getName() != RequestStatus.Enum.PENDING)
-                        return;
-
-                    final Button btnAccept = new Button(getLangBundle().getString(ACCEPT_BUTTON_KEY));
-                    btnAccept.setOnAction(event -> {
-                        ConfirmDialog alert = new ConfirmDialog(null, getLangBundle().getString("label.dialog.accept_request"));
-                        alert.showAndWait().ifPresent(type -> {
-                            if (type.getButtonData() == ButtonBar.ButtonData.YES) {
-                                requestService.acceptRequest(travelDistributorRequest);
-                                tableRequests.getItems().set(getIndex(), travelDistributorRequest);
-                            }
+                    if (travelDistributorRequest.getRequestStatus().getName() == RequestStatus.Enum.APPROVED) {
+                        final Button btnApproved = new Button(getLangBundle().getString(APPROVED_KEY));
+                        btnApproved.setStyle("-fx-background-color: #23801c");
+                        btnApproved.setDisable(true);
+                        setGraphic(btnApproved);
+                    } else if (travelDistributorRequest.getRequestStatus().getName() == RequestStatus.Enum.REJECTED) {
+                        final Button btnRejected = new Button(getLangBundle().getString(REJECTED_KEY));
+                        btnRejected.setStyle("-fx-background-color: #800d0d");
+                        btnRejected.setDisable(true);
+                        setGraphic(btnRejected);
+                    } else {
+                        final Button btnAccept = new Button(getLangBundle().getString(ACCEPT_BUTTON_KEY));
+                        btnAccept.setOnAction(event -> {
+                            ConfirmDialog alert = new ConfirmDialog(null, getLangBundle().getString("label.dialog.accept_request"));
+                            alert.showAndWait().ifPresent(type -> {
+                                if (type.getButtonData() == ButtonBar.ButtonData.YES) {
+                                    requestService.acceptRequest(travelDistributorRequest);
+                                    tableRequests.getItems().set(getIndex(), travelDistributorRequest);
+                                }
+                            });
                         });
-                    });
 
-                    final Button btnDecline = new Button(getLangBundle().getString(DECLINE_BUTTON_KEY));
-                    btnDecline.setOnAction(event -> {
-                        ConfirmDialog alert = new ConfirmDialog(null, getLangBundle().getString("label.dialog.decline_requst"));
-                        alert.showAndWait().ifPresent(type -> {
-                            if (type.getButtonData() == ButtonBar.ButtonData.YES) {
-                                requestService.declineRequest(travelDistributorRequest);
-                                tableRequests.getItems().set(getIndex(), travelDistributorRequest);
-                            }
+                        final Button btnDecline = new Button(getLangBundle().getString(DECLINE_BUTTON_KEY));
+                        btnDecline.setOnAction(event -> {
+                            ConfirmDialog alert = new ConfirmDialog(null, getLangBundle().getString("label.dialog.decline_requst"));
+                            alert.showAndWait().ifPresent(type -> {
+                                if (type.getButtonData() == ButtonBar.ButtonData.YES) {
+                                    requestService.declineRequest(travelDistributorRequest);
+                                    tableRequests.getItems().set(getIndex(), travelDistributorRequest);
+                                }
+                            });
                         });
-                    });
 
-                    final HBox hBox = new HBox();
-                    hBox.setSpacing(5);
-                    hBox.getChildren().addAll(btnAccept, btnDecline);
-                    setGraphic(hBox);
+                        final HBox hBox = new HBox();
+                        hBox.setAlignment(Pos.CENTER);
+                        hBox.setSpacing(5);
+                        hBox.getChildren().addAll(btnAccept, btnDecline);
+                        setGraphic(hBox);
+                    }
                 }
             }
         });

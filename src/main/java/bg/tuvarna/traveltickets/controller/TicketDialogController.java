@@ -16,14 +16,20 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
+import javafx.scene.text.Text;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.time.format.DateTimeFormatter;
 import java.util.function.Consumer;
+import java.util.regex.Pattern;
 
 import static bg.tuvarna.traveltickets.common.AppConfig.getLangBundle;
+import static bg.tuvarna.traveltickets.common.Constants.BLANK_BUYER_NAME_KEY;
 import static bg.tuvarna.traveltickets.common.Constants.BUTTON_APPLY_KEY;
+import static bg.tuvarna.traveltickets.common.Constants.INVALID_EMAIL_KEY;
+import static bg.tuvarna.traveltickets.common.Constants.INVALID_PHONE_KEY;
 
 
 public class TicketDialogController extends BaseUndecoratedDialogController {
@@ -36,6 +42,12 @@ public class TicketDialogController extends BaseUndecoratedDialogController {
     TicketService ticketService = TicketServiceImpl.getInstance();
 
     private Consumer<Ticket> onNewTicket;
+
+    @FXML
+    private ImageView errorImage;
+
+    @FXML
+    private Text errorText;
 
     @FXML
     private DialogPane root;
@@ -88,8 +100,29 @@ public class TicketDialogController extends BaseUndecoratedDialogController {
     }
 
     private boolean validate() {
-        // TODO add validator
+
+        if (buyerNameTextField.getText().isBlank()) {
+            setErrorText(getLangBundle().getString(BLANK_BUYER_NAME_KEY));
+            return false;
+        }
+
+        if (buyerPhoneTextField.getText().length() < 6) {
+            setErrorText(getLangBundle().getString(INVALID_PHONE_KEY));
+            return false;
+        }
+
+        if (!Pattern.compile("^(.+)@(.+)$").matcher(buyerEmailTextField.getText()).matches()) {
+            setErrorText(getLangBundle().getString(INVALID_EMAIL_KEY));
+            return false;
+        }
+
         return true;
+    }
+
+    private void setErrorText(final String text) {
+        LOG.debug("Error occurred" + text);
+        errorImage.setVisible(!text.isBlank());
+        errorText.setText(text);
     }
 
     @Override
@@ -101,9 +134,11 @@ public class TicketDialogController extends BaseUndecoratedDialogController {
     }
 
     private void onAddClick(Event event) {
-
-        if (!validate())
+        if (!validate()) {
+            event.consume();
             return;
+        }
+
         readData();
         JpaOperationsUtil.executeInTransaction(em -> ticketService.save(ticket));
         LOG.debug("Ticket created");

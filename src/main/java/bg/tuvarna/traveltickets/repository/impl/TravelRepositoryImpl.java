@@ -83,6 +83,12 @@ public class TravelRepositoryImpl extends GenericCrudRepositoryImpl<Travel, Long
                 WHERE t.createdBy.id = :userId AND tdr.requestStatus.id =:requestStatusId
             """;
 
+    private static final String FIND_ALL_REQUESTS_BY_COMPANY_ID_HQL = """
+                SELECT tdr FROM TravelDistributorRequest AS tdr
+                LEFT JOIN FETCH tdr.travel AS t
+                WHERE t.createdBy.id = :userId
+            """;
+
     private static final String FIND_ALL_REQUESTS_BY_DISTRIBUTOR_ID_HQL = """
                 SELECT tdr FROM TravelDistributorRequest AS tdr
                 WHERE tdr.distributor.id = :userId
@@ -128,6 +134,14 @@ public class TravelRepositoryImpl extends GenericCrudRepositoryImpl<Travel, Long
         return EntityManagerUtil.getEntityManager()
                 .createQuery(FIND_ALL_REQUESTS_BY_COMPANY_ID_AND_STATUS_ID_HQL, TravelDistributorRequest.class)
                 .setParameter(REQUEST_STATUS_ID_PARAM, statusId)
+                .setParameter(USER_ID_PARAM, companyId)
+                .getResultList();
+    }
+
+    @Override
+    public List<TravelDistributorRequest> findAllRequestsByCompanyId(final Long companyId) {
+        return EntityManagerUtil.getEntityManager()
+                .createQuery(FIND_ALL_REQUESTS_BY_COMPANY_ID_HQL, TravelDistributorRequest.class)
                 .setParameter(USER_ID_PARAM, companyId)
                 .getResultList();
     }

@@ -252,8 +252,9 @@ public class TravelsTableController implements Initializable {
             ticket.setTravel(item);
             ticketDialogController.injectDialogMode(ADD, ticket, null);
             final Dialog<Void> dialog = new UndecoratedDialog<>(root.getParent().getParent(), dialogPane);
-            dialog.showAndWait();
 
+            dialog.showAndWait();
+            tableTravels.getItems().set(tableTravels.getSelectionModel().getSelectedIndex(), item);
         }
         catch (IOException ex) {
             ex.printStackTrace();
