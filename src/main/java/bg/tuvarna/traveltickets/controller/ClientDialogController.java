@@ -1,6 +1,5 @@
 package bg.tuvarna.traveltickets.controller;
 
-import bg.tuvarna.traveltickets.control.NumberTextField;
 import bg.tuvarna.traveltickets.controller.base.BaseUndecoratedDialogController;
 import bg.tuvarna.traveltickets.entity.Address;
 import bg.tuvarna.traveltickets.entity.Cashier;
@@ -101,7 +100,7 @@ public class ClientDialogController extends BaseUndecoratedDialogController {
     private TextField nameTextField;
 
     @FXML
-    private NumberTextField phoneTextField;
+    private TextField phoneTextField;
 
     @FXML
     private TextField addressTextField;
@@ -242,6 +241,11 @@ public class ClientDialogController extends BaseUndecoratedDialogController {
     }
 
     private void onEditClick(Event event) {
+        if (!validate()) {
+            event.consume();
+            return;
+        }
+
         readData();
         JpaOperationsUtil.executeInTransaction(em -> ClientServiceImpl.getInstance().save(client));
         onNewClient.accept(client);

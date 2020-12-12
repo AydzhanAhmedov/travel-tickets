@@ -36,6 +36,14 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     public List<Ticket> findAll() {
-        return ticketRepository.findAllByCashierId(authService.getLoggedClient().getUserId());
+
+        Long clientId = authService.getLoggedUser().getId();
+
+        return switch (authService.getLoggedClientTypeName()) {
+            case CASHIER -> ticketRepository.findAllByCashierId(clientId);
+            case COMPANY -> ticketRepository.findAllByCompanyId(clientId);
+            case DISTRIBUTOR -> ticketRepository.findAllByDistributorId(clientId);
+            default -> throw new IllegalStateException("Unexpected value: " + authService.getLoggedClientTypeName());
+        };
     }
 }

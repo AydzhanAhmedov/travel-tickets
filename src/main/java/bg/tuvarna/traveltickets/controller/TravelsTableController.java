@@ -42,6 +42,7 @@ import static bg.tuvarna.traveltickets.common.AppConfig.getShortDateTimeFormatte
 import static bg.tuvarna.traveltickets.common.Constants.EDIT_BUTTON_KEY;
 import static bg.tuvarna.traveltickets.common.Constants.REQUEST_BUTTON_KEY;
 import static bg.tuvarna.traveltickets.common.Constants.SELL_BUTTON_KEY;
+import static bg.tuvarna.traveltickets.common.Constants.SOLD_OUT_KEY;
 import static bg.tuvarna.traveltickets.common.Constants.TICKET_DIALOG_FXML_PATH;
 import static bg.tuvarna.traveltickets.common.Constants.TRAVEL_DIALOG_FXML_PATH;
 import static bg.tuvarna.traveltickets.controller.base.BaseUndecoratedDialogController.DialogMode.ADD;
@@ -203,7 +204,17 @@ public class TravelsTableController implements Initializable {
                             yield REQUEST_BUTTON_KEY;
                         }
                         case CASHIER -> {
-                            btn.setOnAction(e -> onTicketBuy(e, item));
+                            if (item.getTravelStatus().getName() == TravelStatus.Enum.INCOMING) {
+                                if (item.getCurrentTicketQuantity() > 0)
+                                    btn.setOnAction(e -> onTicketBuy(e, item));
+                                else {
+                                    btn.setStyle("-fx-background-color: #800d0d");
+                                    btn.setDisable(true);
+                                    yield SOLD_OUT_KEY;
+                                }
+
+                            }
+
                             yield SELL_BUTTON_KEY; // TODO: implement with tickets functionality
                         }
                         default -> {
@@ -220,24 +231,7 @@ public class TravelsTableController implements Initializable {
                 }
             }
 
-            private void onTicketBuy(final ActionEvent actionEvent, Travel item) {
-                try {
-                    final FXMLLoader loader = new FXMLLoader(getClass().getResource(TICKET_DIALOG_FXML_PATH), getLangBundle());
-                    final DialogPane dialogPane;
-                    dialogPane = loader.load();
 
-                    final TicketDialogController ticketDialogController = loader.getController();
-                    Ticket ticket = new Ticket();
-                    ticket.setTravel(item);
-                    ticketDialogController.injectDialogMode(ADD, ticket);
-                    final Dialog<Void> dialog = new UndecoratedDialog<>(root.getParent().getParent(), dialogPane);
-                    dialog.showAndWait();
-
-                }
-                catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-            }
         });
 
         columnName.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -247,4 +241,22 @@ public class TravelsTableController implements Initializable {
         columnAction.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue()));
     }
 
+    private void onTicketBuy(final ActionEvent actionEvent, Travel item) {
+        try {
+            final FXMLLoader loader = new FXMLLoader(getClass().getResource(TICKET_DIALOG_FXML_PATH), getLangBundle());
+            final DialogPane dialogPane;
+            dialogPane = loader.load();
+
+            final TicketDialogController ticketDialogController = loader.getController();
+            Ticket ticket = new Ticket();
+            ticket.setTravel(item);
+            ticketDialogController.injectDialogMode(ADD, ticket, null);
+            final Dialog<Void> dialog = new UndecoratedDialog<>(root.getParent().getParent(), dialogPane);
+            dialog.showAndWait();
+
+        }
+        catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
 }

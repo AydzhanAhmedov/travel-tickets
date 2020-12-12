@@ -15,6 +15,7 @@ public final class Constants {
     public static final String USERNAME_PARAM = "username";
     public static final String EMAIL_PARAM = "email";
     public static final String USER_ID_PARAM = "userId";
+    public static final String ID_PARAM = "Id";
     public static final String CITY_NAME_PARAM = "cityName";
     public static final String TRAVEL_STATUS_ID_PARAM = "travelStatusId";
     public static final String REQUEST_STATUS_ID_PARAM = "requestStatusId";
@@ -30,6 +31,8 @@ public final class Constants {
     public static final String EDIT_BUTTON_KEY = "label.button.edit";
     public static final String REQUEST_BUTTON_KEY = "label.button.request";
     public static final String SELL_BUTTON_KEY = "label.button.sell";
+    public static final String SOLD_OUT_KEY = "label.sold_out";
+
 
     public static final String SYSTEM_KEY = "label.system";
     public static final String HOURS_KEY = "label.short_hours_ago";

@@ -17,6 +17,19 @@ public class TicketRepositoryImpl extends GenericCrudRepositoryImpl<Ticket, Long
                 WHERE c.userId = :userId 
             """;
 
+    private static final String FIND_ALL_BY_DISTRIBUTOR_ID = """
+                SELECT t FROM Ticket as t
+                LEFT JOIN FETCH t.createdBy as c
+                LEFT JOIN FETCH c.createdBy as d
+                WHERE d.userId = :userId
+            """;
+
+    private static final String FIND_ALL_BY_COMPANY_ID = """
+                SELECT t FROM Ticket as t
+                LEFT JOIN FETCH t.travel as tr
+                LEFT JOIN FETCH tr.createdBy as c
+                WHERE c.userId = :userId
+            """;
     private static TicketRepositoryImpl instance;
 
     public static TicketRepositoryImpl getInstance() {
@@ -42,11 +55,17 @@ public class TicketRepositoryImpl extends GenericCrudRepositoryImpl<Ticket, Long
 
     @Override
     public List<Ticket> findAllByDistributorId(final long distributorId) {
-        return null;
+        return EntityManagerUtil.getEntityManager()
+                .createQuery(FIND_ALL_BY_DISTRIBUTOR_ID, Ticket.class)
+                .setParameter(USER_ID_PARAM, distributorId)
+                .getResultList();
     }
 
     @Override
     public List<Ticket> findAllByCompanyId(final long companyId) {
-        return null;
+        return EntityManagerUtil.getEntityManager()
+                .createQuery(FIND_ALL_BY_COMPANY_ID, Ticket.class)
+                .setParameter(USER_ID_PARAM, companyId)
+                .getResultList();
     }
 }
