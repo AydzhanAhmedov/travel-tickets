@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 
 import static bg.tuvarna.traveltickets.common.Constants.CLIENT_TYPE_ID_PARAM;
 import static bg.tuvarna.traveltickets.common.Constants.USER_ID_PARAM;
+import static java.util.stream.Collectors.toMap;
 
 public class ClientRepositoryImpl extends GenericCrudRepositoryImpl<Client, Long> implements ClientRepository {
 
@@ -32,7 +33,7 @@ public class ClientRepositoryImpl extends GenericCrudRepositoryImpl<Client, Long
                 (
                 SELECT t.id ,
                 		dclient.user_id ,
-                		 count(t2.id) / ticket_quantity::decimal * 100 AS pa
+                		 count(t2.id) /  CAST(ticket_quantity AS DECIMAL) * 100 AS pa
                 FROM travels t
                 JOIN tickets t2
                 	ON t2.travel_id = t.id
@@ -46,7 +47,7 @@ public class ClientRepositoryImpl extends GenericCrudRepositoryImpl<Client, Long
                 GROUP BY t.id , dclient.user_id , t.ticket_quantity
                 )
                 AS foo
-                GROUP BY user_id;
+                GROUP BY user_id
             """;
 
     private static final String FIND_TYPE_BY_ID_HQL = """
@@ -126,12 +127,14 @@ public class ClientRepositoryImpl extends GenericCrudRepositoryImpl<Client, Long
                 .collect(Collectors.toList());
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Map<Long, Integer> findDistributorsRating() {
-        return EntityManagerUtil.getEntityManager()
+        final List<Tuple> tuples = EntityManagerUtil.getEntityManager()
                 .createNativeQuery(FIND_RATING_SQL, Tuple.class)
-                .getResultStream()
-                .collect(Collectors.toMap(t -> t.get))
+                .getResultList();
+
+        return tuples.stream().collect(toMap(t -> t.get(0, Number.class).longValue(), t -> t.get(1, Number.class).intValue()));
     }
 
     private static ClientRepositoryImpl instance;
