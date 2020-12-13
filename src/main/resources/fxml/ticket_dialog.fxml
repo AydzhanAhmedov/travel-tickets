@@ -16,10 +16,10 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<DialogPane fx:id="root" minHeight="289.0" prefHeight="315.0" prefWidth="344.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="bg.tuvarna.traveltickets.controller.TicketDialogController">
+<DialogPane fx:id="root" minHeight="289.0" prefHeight="315.0" prefWidth="394.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="bg.tuvarna.traveltickets.controller.TicketDialogController">
     <header>
         <AnchorPane prefHeight="30.0" prefWidth="306.0">
-            <Button fx:id="exitButton" cache="true" cacheHint="SPEED" layoutX="314.0" layoutY="4.0" maxHeight="20.0" maxWidth="20.0" minHeight="20.0" minWidth="20.0" mnemonicParsing="false" onMouseClicked="#onExitButtonClicked" prefHeight="20.0" prefWidth="20.0" styleClass="exitButton" stylesheets="@../css/buttons.css" />
+            <Button fx:id="exitButton" cache="true" cacheHint="SPEED" layoutX="360.0" layoutY="4.0" maxHeight="20.0" maxWidth="20.0" minHeight="20.0" minWidth="20.0" mnemonicParsing="false" onMouseClicked="#onExitButtonClicked" prefHeight="20.0" prefWidth="20.0" styleClass="exitButton" stylesheets="@../css/buttons.css" />
         </AnchorPane>
     </header>
     <content>
@@ -27,8 +27,8 @@
          <children>
               <GridPane minHeight="150.0" prefHeight="179.0" prefWidth="344.0">
                   <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="163.20001220703125" minWidth="10.0" prefWidth="135.60000762939453" />
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="226.400032043457" minWidth="10.0" prefWidth="181.19999237060546" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="168.4000244140625" minWidth="10.0" prefWidth="167.60003662109375" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="226.400032043457" minWidth="10.0" prefWidth="185.99996337890624" />
                   </columnConstraints>
                   <rowConstraints>
                       <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
