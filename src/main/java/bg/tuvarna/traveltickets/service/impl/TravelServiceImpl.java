@@ -63,7 +63,6 @@ public class TravelServiceImpl implements TravelService {
     private final AblyRealtime ablyClient = AppConfig.getAblyClient();
     private final AuthService authService = AuthServiceImpl.getInstance();
     private final NotificationService notificationService = NotificationServiceImpl.getInstance();
-
     private final CityService cityService = CityServiceImpl.getInstance();
 
     @Override
@@ -220,16 +219,12 @@ public class TravelServiceImpl implements TravelService {
         final String message = getLangBundle().getString("label.notification.travel_status_changed").formatted(travel.getName(), newStatus);
 
         // fetch all interested distributors and their cashiers to create notifications for them
-        final List<User> distributorRecipients = travelRepository.findAllDistributorsByTravelId(travel.getId(), APPROVED_REQUEST_ID);
+        final List<User> recipients = travelRepository.findAllDistributorsByTravelId(travel.getId(), APPROVED_REQUEST_ID);
 
-        final List<Long> distributorIds = distributorRecipients.stream().map(User::getId).collect(Collectors.toList());
-        final List<User> recipients = clientRepository.findAllCashiersByDistributorIds(distributorIds).stream()
-                .map(Client::getUser)
-                .collect(Collectors.toList());
+        if (recipients.isEmpty()) return false;
 
-        recipients.addAll(distributorRecipients);
-
-        if (distributorRecipients.isEmpty()) return false;
+        final List<Long> distributorIds = recipients.stream().map(User::getId).collect(Collectors.toList());
+        clientRepository.findAllCashiersByDistributorIds(distributorIds).stream().map(Client::getUser).forEach(recipients::add);
 
         notificationService.createAndSend(message, TRAVEL_STATUS_CHANGED, recipients,
                 (n, r) -> distributorIds.forEach(id -> publishMessageToAbly(DISTRIBUTOR_TRAVELS_CHANNEL_FORMAT.formatted(id), message))

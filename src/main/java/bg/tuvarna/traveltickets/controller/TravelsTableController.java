@@ -3,11 +3,11 @@ package bg.tuvarna.traveltickets.controller;
 import bg.tuvarna.traveltickets.control.UndecoratedDialog;
 import bg.tuvarna.traveltickets.controller.base.BaseUndecoratedDialogController.DialogMode;
 import bg.tuvarna.traveltickets.entity.Company;
+import bg.tuvarna.traveltickets.entity.RequestStatus;
 import bg.tuvarna.traveltickets.entity.Ticket;
 import bg.tuvarna.traveltickets.entity.Travel;
 import bg.tuvarna.traveltickets.entity.TravelStatus;
 import bg.tuvarna.traveltickets.entity.TravelType;
-import bg.tuvarna.traveltickets.repository.impl.ClientRepositoryImpl;
 import bg.tuvarna.traveltickets.service.AuthService;
 import bg.tuvarna.traveltickets.service.RequestService;
 import bg.tuvarna.traveltickets.service.TravelService;
@@ -36,12 +36,14 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.Set;
 
 import static bg.tuvarna.traveltickets.common.AppConfig.getLangBundle;
 import static bg.tuvarna.traveltickets.common.AppConfig.getShortDateTimeFormatter;
+import static bg.tuvarna.traveltickets.common.Constants.APPROVED_KEY;
 import static bg.tuvarna.traveltickets.common.Constants.EDIT_BUTTON_KEY;
+import static bg.tuvarna.traveltickets.common.Constants.REJECTED_KEY;
 import static bg.tuvarna.traveltickets.common.Constants.REQUEST_BUTTON_KEY;
 import static bg.tuvarna.traveltickets.common.Constants.SELL_BUTTON_KEY;
 import static bg.tuvarna.traveltickets.common.Constants.SOLD_OUT_KEY;
@@ -54,7 +56,7 @@ import static bg.tuvarna.traveltickets.entity.ClientType.Enum.COMPANY;
 import static bg.tuvarna.traveltickets.entity.ClientType.Enum.DISTRIBUTOR;
 import static bg.tuvarna.traveltickets.util.JpaOperationsUtil.execute;
 import static bg.tuvarna.traveltickets.util.JpaOperationsUtil.executeInTransaction;
-import static java.util.stream.Collectors.toSet;
+import static java.util.stream.Collectors.toMap;
 
 public class TravelsTableController implements Initializable {
 
@@ -64,7 +66,7 @@ public class TravelsTableController implements Initializable {
     private final RequestService requestService = RequestServiceImpl.getInstance();
     private final AuthService authService = AuthServiceImpl.getInstance();
 
-    private Set<Long> travelsWithRequests;
+    private Map<Long, RequestStatus.Enum> requestStatusByTravelId;
 
     @FXML
     private BorderPane root;
@@ -109,16 +111,13 @@ public class TravelsTableController implements Initializable {
             });
             return row;
         });
-
-        executeInTransaction(em -> ClientRepositoryImpl.getInstance().findAllByClientTypeId(2L));
-
         tableTravels.setItems(FXCollections.observableList(execute(em -> {
             final List<Travel> travels = travelService.findAll();
 
             if (authService.getLoggedClientTypeName() == DISTRIBUTOR) {
-                travelsWithRequests = requestService.findAll().stream().map(r -> r.getTravel().getId()).collect(toSet());
+                requestStatusByTravelId = requestService.findAll().stream().collect(toMap(r -> r.getTravel().getId(), r -> r.getRequestStatus().getName()));
             } else {
-                travelsWithRequests = Collections.emptySet();
+                requestStatusByTravelId = Collections.emptyMap();
             }
 
             return travels;
@@ -200,9 +199,16 @@ public class TravelsTableController implements Initializable {
                         case DISTRIBUTOR -> {
                             btn.setOnAction(e -> {
                                 executeInTransaction(em -> requestService.createRequest(item));
-                                travelsWithRequests.add(item.getId());
+                                requestStatusByTravelId.put(item.getId(), RequestStatus.Enum.PENDING);
                                 getTableView().getItems().set(getIndex(), item);
                             });
+                            if (requestStatusByTravelId.get(item.getId()) == RequestStatus.Enum.APPROVED) {
+                                btn.setStyle("-fx-background-color: #23801c");
+                                yield APPROVED_KEY;
+                            } else if (requestStatusByTravelId.get(item.getId()) == RequestStatus.Enum.REJECTED) {
+                                btn.setStyle("-fx-background-color: #800d0d");
+                                yield REJECTED_KEY;
+                            }
                             yield REQUEST_BUTTON_KEY;
                         }
                         case CASHIER -> {
@@ -225,7 +231,7 @@ public class TravelsTableController implements Initializable {
                     btn.getStylesheets().addAll(addTravelButton.getStylesheets());
                     btn.getStyleClass().addAll(addTravelButton.getStyleClass());
 
-                    if (travelsWithRequests.contains(item.getId())) btn.setDisable(true);
+                    if (requestStatusByTravelId.containsKey(item.getId())) btn.setDisable(true);
 
                     setGraphic(btn);
                 }
