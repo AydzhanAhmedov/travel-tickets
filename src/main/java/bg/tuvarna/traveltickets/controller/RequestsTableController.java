@@ -7,7 +7,9 @@ import bg.tuvarna.traveltickets.entity.Distributor;
 import bg.tuvarna.traveltickets.entity.RequestStatus;
 import bg.tuvarna.traveltickets.entity.Travel;
 import bg.tuvarna.traveltickets.entity.TravelDistributorRequest;
+import bg.tuvarna.traveltickets.service.ClientService;
 import bg.tuvarna.traveltickets.service.RequestService;
+import bg.tuvarna.traveltickets.service.impl.ClientServiceImpl;
 import bg.tuvarna.traveltickets.service.impl.RequestServiceImpl;
 import bg.tuvarna.traveltickets.util.JpaOperationsUtil;
 import javafx.collections.FXCollections;
@@ -25,8 +27,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.net.URL;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import static bg.tuvarna.traveltickets.common.AppConfig.getLangBundle;
@@ -40,6 +42,9 @@ public class RequestsTableController implements Initializable {
     private static final Logger LOG = LogManager.getLogger(RequestsTableController.class);
 
     private final RequestService requestService = RequestServiceImpl.getInstance();
+    private final ClientService clientService = ClientServiceImpl.getInstance();
+
+    Map<Long, Integer> ratings;
 
     @FXML
     private TableView<TravelDistributorRequest> tableRequests;
@@ -67,6 +72,7 @@ public class RequestsTableController implements Initializable {
 
         initColumns();
         List<TravelDistributorRequest> list = JpaOperationsUtil.execute(em -> requestService.findAll());
+        ratings = clientService.findDistributorsRatings();
         tableRequests.setItems(FXCollections.observableList(list));
     }
 
@@ -95,6 +101,18 @@ public class RequestsTableController implements Initializable {
         });
         columnStartDate.setCellValueFactory(new PropertyValueFactory<>("travel"));
 
+        columnRating.setCellFactory(col -> new TableCell<>() {
+            @Override
+            protected void updateItem(final Client item, final boolean empty) {
+                if (empty) {
+                    setText(null);
+                } else {
+                    Integer rating = ratings.get(item.getUserId());
+                    setText(rating == null ? "N/A" : rating.toString());
+                }
+            }
+        });
+        columnRating.setCellValueFactory(new PropertyValueFactory<>("distributor"));
         columnRequester.setCellFactory(col -> new TableCell<>() {
             @Override
             protected void updateItem(final Distributor item, final boolean empty) {

@@ -87,6 +87,17 @@ public class ClientServiceImpl implements ClientService {
         return clientTypeByNameCache.get(Objects.requireNonNull(clientTypeName));
     }
 
+    @Override
+    public Map<Long, Integer> findDistributorsRatings() {
+        Map<Long, Integer> ratings = clientRepository.findDistributorsRating();
+
+        ratings.replaceAll((k, v) -> {
+            return (v + 19) / 20;
+        });
+
+        return ratings;
+    }
+
     private static ClientServiceImpl instance;
 
     public static ClientServiceImpl getInstance() {

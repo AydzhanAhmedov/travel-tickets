@@ -4,6 +4,7 @@ import bg.tuvarna.traveltickets.entity.Client;
 import bg.tuvarna.traveltickets.entity.ClientType;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ClientService {
 
@@ -17,4 +18,5 @@ public interface ClientService {
 
     ClientType findTypeByName(ClientType.Enum clientTypeName);
 
+    Map<Long, Integer> findDistributorsRatings();
 }
