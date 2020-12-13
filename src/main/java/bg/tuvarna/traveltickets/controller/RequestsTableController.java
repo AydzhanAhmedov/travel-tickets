@@ -1,5 +1,6 @@
 package bg.tuvarna.traveltickets.controller;
 
+import bg.tuvarna.traveltickets.common.AppConfig;
 import bg.tuvarna.traveltickets.control.ConfirmDialog;
 import bg.tuvarna.traveltickets.entity.Client;
 import bg.tuvarna.traveltickets.entity.Distributor;
@@ -24,6 +25,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.net.URL;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -88,7 +90,7 @@ public class RequestsTableController implements Initializable {
         columnStartDate.setCellFactory(col -> new TableCell<>() {
             @Override
             protected void updateItem(final Travel item, final boolean empty) {
-                setText(!empty ? item.getStartDate().toString() : null);
+                setText(!empty ? AppConfig.getDateTimeFormatter().format(item.getStartDate()) : null);
             }
         });
         columnStartDate.setCellValueFactory(new PropertyValueFactory<>("travel"));

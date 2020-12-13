@@ -1,5 +1,6 @@
 package bg.tuvarna.traveltickets.controller;
 
+import bg.tuvarna.traveltickets.common.AppConfig;
 import bg.tuvarna.traveltickets.controller.base.BaseUndecoratedDialogController;
 import bg.tuvarna.traveltickets.entity.Cashier;
 import bg.tuvarna.traveltickets.entity.Ticket;
@@ -21,6 +22,7 @@ import javafx.scene.text.Text;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
@@ -83,6 +85,7 @@ public class TicketDialogController extends BaseUndecoratedDialogController {
         cashierNameTextField.setText(cashier.getName());
         travelNameTextField.setText(ticket.getTravel().getName());
 
+        createdAtTextFeild.setText(AppConfig.getDateTimeFormatter().format(OffsetDateTime.now()));
         final Button okButton = addDialogButton(getLangBundle().getString(BUTTON_APPLY_KEY), ButtonBar.ButtonData.OK_DONE);
         if (okButton == null) return;
 
@@ -175,7 +178,7 @@ public class TicketDialogController extends BaseUndecoratedDialogController {
 
         final Cashier cashier = ticket.getCreatedBy();
         cashierNameTextField.setText(cashier.getName());
-        createdAtTextFeild.setText(ticket.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        createdAtTextFeild.setText(AppConfig.getDateTimeFormatter().format(ticket.getCreatedAt()));
     }
 
 }
