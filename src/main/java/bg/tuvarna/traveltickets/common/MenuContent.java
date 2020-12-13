@@ -22,7 +22,6 @@ public enum MenuContent {
 
 
     CLIENTS("label.clients", "/images/baseline_people_black_18dp.png", CLIENTS_TABLE_FXML_PATH),
-    STATISTIC("label.statistics", "/images/baseline_insert_chart_black_18dp.png", null),
     TRAVELS("label.travels", "/images/baseline_public_black_18dp.png", TRAVELS_TABLE_FXML_PATH),
     REQUESTS("label.requests", "/images/baseline_rule_black_18dp.png", REQUESTS_TABLE_FXML_PATH),
     SOLD_TICKETS("label.sold_tickets", "/images/baseline_receipt_black_18dp.png", TICKETS_TABLE_FXML_PATH);
@@ -68,9 +67,9 @@ public enum MenuContent {
         }
     }
 
-    private static final List<MenuContent> ADMIN_CONTENT = List.of(CLIENTS, STATISTIC);
-    private static final List<MenuContent> COMPANY_CONTENT = List.of(TRAVELS, REQUESTS, SOLD_TICKETS, STATISTIC);
-    private static final List<MenuContent> DISTRIBUTOR_CONTENT = List.of(CLIENTS, TRAVELS, SOLD_TICKETS, STATISTIC);
+    private static final List<MenuContent> ADMIN_CONTENT = List.of(CLIENTS);
+    private static final List<MenuContent> COMPANY_CONTENT = List.of(TRAVELS, REQUESTS, SOLD_TICKETS);
+    private static final List<MenuContent> DISTRIBUTOR_CONTENT = List.of(CLIENTS, TRAVELS, SOLD_TICKETS);
     private static final List<MenuContent> CASHIER_CONTENT = List.of(TRAVELS, SOLD_TICKETS);
 
     public static List<MenuContent> getAdminContent() {
