@@ -5,6 +5,7 @@ import bg.tuvarna.traveltickets.entity.ClientType;
 import bg.tuvarna.traveltickets.repository.base.GenericCrudRepository;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ClientRepository extends GenericCrudRepository<Client, Long> {
 
@@ -18,4 +19,5 @@ public interface ClientRepository extends GenericCrudRepository<Client, Long> {
 
     List<Client> findAllCashiersByDistributorIds(List<Long> distributorId);
 
+    Map<Long,Integer> findDistributorsRating();
 }

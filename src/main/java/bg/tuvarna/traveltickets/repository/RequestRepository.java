@@ -9,4 +9,6 @@ import java.util.List;
 public interface RequestRepository extends GenericCrudRepository<TravelDistributorRequest, TravelDistributorID> {
 
     List<TravelDistributorRequest> findAllByTravelId(Long travelId);
+
+
 }

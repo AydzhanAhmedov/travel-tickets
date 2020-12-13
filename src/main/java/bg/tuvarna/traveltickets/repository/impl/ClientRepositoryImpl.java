@@ -8,8 +8,10 @@ import bg.tuvarna.traveltickets.repository.base.GenericCrudRepositoryImpl;
 import bg.tuvarna.traveltickets.util.EntityManagerUtil;
 import bg.tuvarna.traveltickets.util.JpaOperationsUtil;
 
+import javax.persistence.Tuple;
 import javax.persistence.TypedQuery;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static bg.tuvarna.traveltickets.common.Constants.CLIENT_TYPE_ID_PARAM;
@@ -22,6 +24,29 @@ public class ClientRepositoryImpl extends GenericCrudRepositoryImpl<Client, Long
                 LEFT JOIN FETCH c.address AS a
                 LEFT JOIN FETCH a.city
                 WHERE c.userId = :userId
+            """;
+
+    private static final String FIND_RATING_SQL = """
+                SELECT user_id, avg(pa)
+                FROM
+                (
+                SELECT t.id ,
+                		dclient.user_id ,
+                		 count(t2.id) / ticket_quantity::decimal * 100 AS pa
+                FROM travels t
+                JOIN tickets t2
+                	ON t2.travel_id = t.id
+                JOIN cashiers c
+                	ON c.client_id = t2.created_by 	
+                JOIN distributors d
+                	ON d.client_id = c.created_by
+                JOIN clients dclient
+                	ON dclient.user_id = d.client_id
+                WHERE t.travel_status_id = (SELECT id FROM travel_statuses WHERE "name" = 'ENDED')
+                GROUP BY t.id , dclient.user_id , t.ticket_quantity
+                )
+                AS foo
+                GROUP BY user_id;
             """;
 
     private static final String FIND_TYPE_BY_ID_HQL = """
@@ -99,6 +124,14 @@ public class ClientRepositoryImpl extends GenericCrudRepositoryImpl<Client, Long
                 .getResultStream()
                 .map(c -> (Client) c)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Map<Long, Integer> findDistributorsRating() {
+        return EntityManagerUtil.getEntityManager()
+                .createNativeQuery(FIND_RATING_SQL, Tuple.class)
+                .getResultStream()
+                .collect(Collectors.toMap(t -> t.get))
     }
 
     private static ClientRepositoryImpl instance;
