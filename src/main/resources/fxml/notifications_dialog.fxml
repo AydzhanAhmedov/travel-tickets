@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Point3D?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DialogPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.text.Font?>
+
+<DialogPane fx:id="root" prefHeight="530.0" prefWidth="750.0" snapToPixel="false" style="-fx-background-color: #c5c5e6;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="bg.tuvarna.traveltickets.controller.NotificationsDialogController">
+   <header>
+      <AnchorPane prefHeight="30.0" prefWidth="750.0">
+         <Button fx:id="exitButton" cache="true" cacheHint="SPEED" layoutX="738.0" layoutY="6.0" maxHeight="20.0" maxWidth="20.0" minHeight="20.0" minWidth="20.0" mnemonicParsing="false" onMouseClicked="#onExitButtonClicked" prefHeight="20.0" prefWidth="20.0" styleClass="exitButton" stylesheets="@../css/buttons.css" />
+      </AnchorPane>
+   </header>
+   <content>
+      <BorderPane prefHeight="550.0" prefWidth="750.0">
+         <bottom>
+            <AnchorPane prefHeight="30.0" prefWidth="750.0" BorderPane.alignment="CENTER">
+               <Button fx:id="markAllAsSeenButton" layoutX="191.0" layoutY="6.0" mnemonicParsing="false" onAction="#onMarkAllAsSeenClicked" prefHeight="32.0" prefWidth="379.0" styleClass="markAsReadBtn" stylesheets="@../css/buttons.css" text="%label.button.mark_all_as_seen" AnchorPane.leftAnchor="191.0" AnchorPane.rightAnchor="191.0">
+                  <font>
+                     <Font size="16.0" />
+                  </font>
+               </Button>
+            </AnchorPane>
+         </bottom>
+         <rotationAxis>
+            <Point3D />
+         </rotationAxis>
+         <top>
+            <TableView fx:id="tableNotifications" prefHeight="465.0" prefWidth="700.0" stylesheets="@../css/tables.css" BorderPane.alignment="CENTER">
+               <columns>
+                  <TableColumn fx:id="columnFrom" editable="false" prefWidth="120.0" sortable="false" text="%label.from" reorderable="false" />
+                  <TableColumn fx:id="columnMessage" editable="false" prefWidth="360.0" sortable="false" text="%label.message" reorderable="false" />
+                  <TableColumn fx:id="columnDate" editable="false" prefWidth="160.0" sortable="false" text="%label.date" reorderable="false" />
+                  <TableColumn fx:id="columnAction" editable="false" sortable="false" text="%label.action" reorderable="false" />
+               </columns>
+            </TableView>
+         </top>
+      </BorderPane>
+   </content>
+</DialogPane>

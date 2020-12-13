@@ -1,5 +1,8 @@
 package bg.tuvarna.traveltickets.entity;
 
+import bg.tuvarna.traveltickets.service.impl.ClientServiceImpl;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,15 +13,18 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
+import javax.persistence.PostLoad;
 import javax.persistence.Table;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
 @Table(name = "clients")
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class Client implements Serializable {
+public class Client implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -9066096581032000088L;
 
     @Id
@@ -26,7 +32,7 @@ public abstract class Client implements Serializable {
     private Long userId;
 
     @MapsId("user_id")
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @OneToOne(optional = false, fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -39,13 +45,24 @@ public abstract class Client implements Serializable {
     @Column(nullable = false)
     private String phone;
 
+    @ManyToOne(optional = false, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Address address;
+
     public Client() {
-        super();
     }
 
     public Client(final User user) {
         userId = user.getId();
         this.user = user;
+    }
+
+    public void setUserId(final Long userId) {
+        this.userId = userId;
+    }
+
+    public void setUser(final User user) {
+        this.user = user;
+        this.userId = user.getId();
     }
 
     public Long getUserId() {
@@ -80,21 +97,34 @@ public abstract class Client implements Serializable {
         this.phone = phone;
     }
 
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(final Address address) {
+        this.address = address;
+    }
+
+    @PostLoad
+    public void postLoad() {
+        clientType = ClientServiceImpl.getInstance().findTypeById(clientType.getId());
+    }
+
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Client client = (Client) o;
-        return Objects.equals(userId, client.userId) &&
-                Objects.equals(user, client.user) &&
-                Objects.equals(clientType, client.clientType) &&
-                Objects.equals(name, client.name) &&
-                Objects.equals(phone, client.phone);
+        final Client client = (Client) o;
+        return Objects.equals(userId, client.userId)
+                && Objects.equals(user, client.user)
+                && Objects.equals(clientType, client.clientType)
+                && Objects.equals(name, client.name) && Objects.equals(phone, client.phone)
+                && Objects.equals(address, client.address);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(userId, user, clientType, name, phone);
+        return Objects.hash(userId, user, clientType, name, phone, address);
     }
 
 }

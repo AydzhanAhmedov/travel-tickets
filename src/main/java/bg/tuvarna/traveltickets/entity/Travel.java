@@ -1,32 +1,41 @@
 package bg.tuvarna.traveltickets.entity;
 
-import bg.tuvarna.traveltickets.entity.base.BaseAuditEntity;
+import bg.tuvarna.traveltickets.service.impl.TravelServiceImpl;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.PostLoad;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
+import java.io.Serial;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
+import static bg.tuvarna.traveltickets.entity.TravelStatus.Enum.INCOMING;
+import static bg.tuvarna.traveltickets.entity.base.BaseAuditAbstractEntity.BaseClientAuditEntity;
+
 @Entity
 @Table(name = "travels")
-public class Travel extends BaseAuditEntity {
+public class Travel extends BaseClientAuditEntity<Company> {
 
+    @Serial
     private static final long serialVersionUID = 6063243358784196914L;
 
-    @ManyToOne
+    private String name;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "travel_type_id", nullable = false)
     private TravelType travelType;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "travel_status_id", nullable = false)
     private TravelStatus travelStatus;
 
@@ -53,42 +62,30 @@ public class Travel extends BaseAuditEntity {
     @OneToMany(mappedBy = "travel", cascade = CascadeType.ALL)
     private List<TravelRoute> travelRoutes = new ArrayList<>();
 
-    //@OneToMany(mappedBy = "travel")
-    //private List<TravelDistributorRequest> distributorRequests = new ArrayList<>();
-
-    //public void addDistributorRequest(Distributor distributor, RequestStatus requestStatus) {
-    //    TravelDistributorRequest distributorRequest = new TravelDistributorRequest(this, distributor);
-    //    distributorRequest.setRequestStatus(requestStatus);
-    //    distributorRequests.add(distributorRequest);
-    //}
-
-    public void addTravelRoute(City city, OffsetDateTime date, TransportType type) {
-        TravelRoute travelRoute = new TravelRoute(this, city);
-        travelRoute.setArrivalDate(date);
-        travelRoute.setTransportType(type);
-        travelRoutes.add(travelRoute);
-    }
-
-    // TODO test remove
-    public void removeTravelRoute(City city) {
-        for (Iterator<TravelRoute> iterator = travelRoutes.iterator();
-             iterator.hasNext(); ) {
-            TravelRoute travelRoute = iterator.next();
-
-            if (travelRoute.getTravel().equals(this) &&
-                    travelRoute.getCity().equals(city)) {
-                iterator.remove();
-                travelRoute.setCity(null);
-                travelRoute.setTravel(null);
-            }
-        }
-    }
+    @OneToMany(mappedBy = "travel")
+    private List<TravelDistributorRequest> distributorRequests = new ArrayList<>();
 
     public Travel() {
     }
 
     public Travel(Long id) {
         super.id = id;
+    }
+
+    public List<TravelDistributorRequest> getDistributorRequests() {
+        return distributorRequests;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    public void setDistributorRequests(final List<TravelDistributorRequest> distributorRequests) {
+        this.distributorRequests = distributorRequests;
     }
 
     public TravelType getTravelType() {
@@ -171,22 +168,25 @@ public class Travel extends BaseAuditEntity {
         this.travelRoutes = travelRoutes;
     }
 
-    //public List<TravelDistributorRequest> getDistributorRequests() {
-    //    return distributorRequests;
-    //}
-//
-    //public void setDistributorRequests(List<TravelDistributorRequest> distributorRequests) {
-    //    this.distributorRequests = distributorRequests;
-    //}
+    @PrePersist
+    public void prePersist() {
+        if (travelStatus == null) travelStatus = TravelServiceImpl.getInstance().findStatusByName(INCOMING);
+    }
 
+    @PostLoad
+    public void postLoad() {
+        travelType = TravelServiceImpl.getInstance().findTypeById(travelType.getId());
+        travelStatus = TravelServiceImpl.getInstance().findStatusById(travelStatus.getId());
+    }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-        Travel travel = (Travel) o;
-        return Objects.equals(travelType, travel.travelType) &&
+        final Travel travel = (Travel) o;
+        return Objects.equals(name, travel.name) &&
+                Objects.equals(travelType, travel.travelType) &&
                 Objects.equals(travelStatus, travel.travelStatus) &&
                 Objects.equals(startDate, travel.startDate) &&
                 Objects.equals(endDate, travel.endDate) &&
@@ -195,11 +195,13 @@ public class Travel extends BaseAuditEntity {
                 Objects.equals(ticketPrice, travel.ticketPrice) &&
                 Objects.equals(ticketBuyLimit, travel.ticketBuyLimit) &&
                 Objects.equals(details, travel.details) &&
-                Objects.equals(travelRoutes, travel.travelRoutes);
+                Objects.equals(travelRoutes, travel.travelRoutes) &&
+                Objects.equals(distributorRequests, travel.distributorRequests);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), travelType, travelStatus, startDate, endDate, ticketQuantity, currentTicketQuantity, ticketPrice, ticketBuyLimit, details, travelRoutes);
+        return Objects.hash(super.hashCode(), name, travelType, travelStatus, startDate, endDate, ticketQuantity, currentTicketQuantity, ticketPrice, ticketBuyLimit, details, travelRoutes, distributorRequests);
     }
+
 }

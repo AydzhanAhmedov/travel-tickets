@@ -1,5 +1,6 @@
 package bg.tuvarna.traveltickets.entity;
 
+import bg.tuvarna.traveltickets.common.AppConfig;
 import bg.tuvarna.traveltickets.entity.base.BaseEntity;
 import org.hibernate.annotations.Immutable;
 
@@ -8,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Table;
+import java.io.Serial;
 import java.util.Objects;
 
 @Immutable
@@ -15,12 +17,20 @@ import java.util.Objects;
 @Table(name = "client_types")
 public class ClientType extends BaseEntity {
 
+    @Serial
     private static final long serialVersionUID = 4811666361979795492L;
 
     /**
      * ClientType's names enum.
      */
-    public enum Enum {COMPANY, DISTRIBUTOR, CASHIER}
+    public enum Enum {
+        COMPANY, DISTRIBUTOR, CASHIER;
+
+        @Override
+        public String toString() {
+            return AppConfig.getLangBundle().getString("label." + this.name().toLowerCase());
+        }
+    }
 
     @Enumerated(EnumType.STRING)
     @Column(insertable = false, nullable = false)

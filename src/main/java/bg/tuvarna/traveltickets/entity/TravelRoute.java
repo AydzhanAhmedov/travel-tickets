@@ -1,14 +1,17 @@
 package bg.tuvarna.traveltickets.entity;
 
+import bg.tuvarna.traveltickets.service.impl.TravelServiceImpl;
+
 import javax.persistence.Column;
-import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
+import javax.persistence.PostLoad;
 import javax.persistence.Table;
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.Objects;
@@ -17,6 +20,7 @@ import java.util.Objects;
 @Table(name = "travels_routes")
 public class TravelRoute implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 4885712622963495508L;
 
     @EmbeddedId
@@ -30,7 +34,7 @@ public class TravelRoute implements Serializable {
     @MapsId("cityID")
     private City city;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "transport_type_id", nullable = false)
     private TransportType transportType;
 
@@ -44,6 +48,10 @@ public class TravelRoute implements Serializable {
         this.travel = travel;
         this.city = city;
         this.travelCityID = new TravelCityID(travel.getId(), city.getId());
+    }
+
+    public TravelCityID getTravelCityID() {
+        return travelCityID;
     }
 
     public Travel getTravel() {
@@ -76,6 +84,11 @@ public class TravelRoute implements Serializable {
 
     public void setArrivalDate(OffsetDateTime arrivalDate) {
         this.arrivalDate = arrivalDate;
+    }
+
+    @PostLoad
+    public void postLoad() {
+        transportType = TravelServiceImpl.getInstance().findTransportTypeById(transportType.getId());
     }
 
     @Override

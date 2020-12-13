@@ -1,20 +1,27 @@
 package bg.tuvarna.traveltickets.entity;
 
+import bg.tuvarna.traveltickets.service.impl.NotificationServiceImpl;
+
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
+import javax.persistence.PostLoad;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
+
+import static bg.tuvarna.traveltickets.entity.NotificationStatus.Enum.NOT_SEEN;
 
 @Entity
 @Table(name = "notifications_recipients")
 public class NotificationRecipient implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 268742443330560001L;
 
     @EmbeddedId
@@ -28,7 +35,7 @@ public class NotificationRecipient implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     private User recipient;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "notification_status_id", nullable = false)
     private NotificationStatus notificationStatus;
 
@@ -61,6 +68,17 @@ public class NotificationRecipient implements Serializable {
         this.notificationStatus = notificationStatus;
     }
 
+    @PrePersist
+    public void prePersist() {
+        if (notificationStatus == null)
+            notificationStatus = NotificationServiceImpl.getInstance().findStatusByName(NOT_SEEN);
+    }
+
+    @PostLoad
+    public void postLoad() {
+        notificationStatus = NotificationServiceImpl.getInstance().findStatusById(notificationStatus.getId());
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -77,11 +95,5 @@ public class NotificationRecipient implements Serializable {
         return Objects.hash(notificationRecipientID, notification, recipient, notificationStatus);
     }
 
-    @PrePersist
-    protected final void prePersist() {
-        if (notificationStatus == null)
-            //TODO Get status from database
-            notificationStatus = new NotificationStatus(1L, NotificationStatus.Enum.NOT_SEEN);
-    }
 }
 

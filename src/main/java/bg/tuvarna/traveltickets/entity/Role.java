@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Table;
+import java.io.Serial;
 import java.util.Objects;
 
 @Immutable
@@ -15,12 +16,13 @@ import java.util.Objects;
 @Table(name = "roles")
 public class Role extends BaseEntity {
 
+    @Serial
     private static final long serialVersionUID = 4074864207273715830L;
 
     /**
      * Role's names enum.
      */
-    public enum Enum { ADMIN, CLIENT }
+    public enum Enum {ADMIN, CLIENT}
 
     @Enumerated(EnumType.STRING)
     @Column(insertable = false, nullable = false)

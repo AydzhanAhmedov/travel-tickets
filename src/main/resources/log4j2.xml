@@ -1,21 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration>
+    <Properties>
+        <Property name="pattern">%d{yyyy-MMM-dd HH:mm:ss a} [%t] %-5level %logger{36} - %msg%n</Property>
+    </Properties>
     <Appenders>
         <Console name="Console-Appender" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d{yyyy-MMM-dd HH:mm:ss a} [%t] %-5level %logger{36} - %msg%n"/>
+            <PatternLayout pattern="${pattern}"/>
         </Console>
+
+        <RollingFile name="RollingFile-Appender" fileName="./logs/travel_tickets.log"
+                     filePattern="./logs/travel_tickets-%d{yyyy-MM-dd}-%i.log" >
+            <PatternLayout pattern="${pattern}"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="5MB" />
+            </Policies>
+        </RollingFile>
     </Appenders>
     <Loggers>
-        <Logger name="org.hibernate" level="warn">
+        <Logger name="org.hibernate" level="warn" additivity="false">
+            <AppenderRef ref="Console-Appender"/>
+            <AppenderRef ref="RollingFile-Appender"/>
+        </Logger>
+
+        <Logger name="org.hibernate.type.descriptor.sql" level="trace" additivity="false">
             <AppenderRef ref="Console-Appender"/>
         </Logger>
 
-        <Logger name="org.hibernate.type.descriptor.sql" level="trace">
+        <Logger name="bg.tuvarna.traveltickets" level="debug" additivity="false">
             <AppenderRef ref="Console-Appender"/>
+            <AppenderRef ref="RollingFile-Appender"/>
         </Logger>
 
         <Root level="error">
             <AppenderRef ref="Console-Appender"/>
+            <AppenderRef ref="RollingFile-Appender"/>
         </Root>
     </Loggers>
 </Configuration>

@@ -1,5 +1,8 @@
 package bg.tuvarna.traveltickets.util;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -14,6 +17,8 @@ import static bg.tuvarna.traveltickets.common.Constants.PERSISTENT_UNIT_NAME;
  */
 public final class EntityManagerUtil {
 
+    private static final Logger LOG = LogManager.getLogger(EntityManagerUtil.class);
+
     private static final EntityManagerFactory EMF_INSTANCE = Persistence.createEntityManagerFactory(PERSISTENT_UNIT_NAME);
     private static final ThreadLocal<EntityManager> EM_THREAD_LOCAL = new ThreadLocal<>();
 
@@ -23,10 +28,15 @@ public final class EntityManagerUtil {
 
     public static void closeEntityManagerFactory() {
         EMF_INSTANCE.close();
+        LOG.warn("EntityManagerFactory closed.");
     }
 
     public static EntityManager newEntityManager() {
         return EMF_INSTANCE.createEntityManager();
+    }
+
+    public static boolean entityManagerIsInstantiated() {
+        return EM_THREAD_LOCAL.get() != null;
     }
 
     public static EntityManager getEntityManager() {
@@ -34,6 +44,7 @@ public final class EntityManagerUtil {
 
         if (entityManager == null) {
             entityManager = newEntityManager();
+            LOG.warn("Entity manager instantiated.");
             EM_THREAD_LOCAL.set(entityManager);
         }
 
@@ -45,6 +56,7 @@ public final class EntityManagerUtil {
 
         if (entityManager != null) {
             entityManager.close();
+            LOG.warn("Entity manager closed.");
             EM_THREAD_LOCAL.set(null);
         }
     }

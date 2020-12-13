@@ -1,9 +1,9 @@
-.loginBtn {
+.loginBtn, .markAsReadBtn, .mainButton{
     -fx-background-color: radial-gradient(center 50% 50%, radius 100%, #7076ba, #444484);
     -fx-text-fill: #d3d3ed;
     -fx-background-radius: 10px;
 }
-.loginBtn:hover {
+.loginBtn:hover, .markAsReadBtn:hover, .mainButton:hover{
     -fx-background-color: transparent;
     -fx-background-radius: 10px;
     -fx-text-fill: #444484;
@@ -12,7 +12,7 @@
     -fx-border-radius: 10px;
     -fx-border-style: solid;
 }
-.loginBtn:pressed {
+.loginBtn:pressed, .markAsReadBtn:pressed, .mainButton:pressed{
     -fx-background-color: transparent;
     -fx-background-radius: 10px;
     -fx-text-fill: #444484;
@@ -28,6 +28,7 @@
     -fx-graphic: url('../images/exit_button.png');
 }
 .exitButton:hover {
+    -fx-border-width: 0px;
     -fx-background-color: transparent;
     -fx-graphic: url('../images/hovered_exit_button.png');
 }

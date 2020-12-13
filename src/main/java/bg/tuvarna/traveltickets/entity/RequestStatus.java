@@ -1,5 +1,6 @@
 package bg.tuvarna.traveltickets.entity;
 
+import bg.tuvarna.traveltickets.common.AppConfig;
 import bg.tuvarna.traveltickets.entity.base.BaseEntity;
 import org.hibernate.annotations.Immutable;
 
@@ -8,17 +9,25 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Table;
+import java.io.Serial;
 import java.util.Objects;
-import java.util.prefs.BackingStoreException;
 
 @Immutable
 @Entity
 @Table(name = "request_statuses")
 public class RequestStatus extends BaseEntity {
 
+    @Serial
     private static final long serialVersionUID = 5989003038680325200L;
 
-    public enum Enum {PENDING, APPROVED, REJECTED}
+    public enum Enum {
+        PENDING, APPROVED, REJECTED;
+
+        @Override
+        public String toString() {
+            return AppConfig.getLangBundle().getString("label." + this.name().toLowerCase());
+        }
+    }
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, unique = true)
@@ -31,7 +40,7 @@ public class RequestStatus extends BaseEntity {
         this.name = name;
     }
 
-    public RequestStatus(long id, Enum name) {
+    public RequestStatus(Long id, Enum name) {
         this(name);
         super.id = id;
     }

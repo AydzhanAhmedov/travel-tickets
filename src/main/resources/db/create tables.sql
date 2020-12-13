@@ -67,13 +67,14 @@ CREATE TABLE transport_types(
 DROP TABLE IF EXISTS travels;
 CREATE TABLE travels(
 	id bigserial NOT NULL PRIMARY KEY,
+	name varchar(100) NOT NULL,
 	travel_type_id int4 NOT NULL,
 	travel_status_id int4 NOT NULL,
 	start_date timestamp NOT NULL,
 	end_date timestamp NOT NULL CHECK (end_date >= start_date),
 	ticket_quantity int2 NOT NULL CHECK (ticket_quantity > 0),
 	current_ticket_quantity int2 NOT NULL CHECK (current_ticket_quantity >= 0 AND current_ticket_quantity <= ticket_quantity),
-	ticket_price numeric NOT NULL,
+	ticket_price numeric(15,2) NOT NULL,
 	ticket_buy_limit int2 NOT NULL,
 	details varchar(500),
 	created_at timestamp NOT NULL,
@@ -97,7 +98,7 @@ CREATE TABLE cashiers(
 	client_id int8 NOT NULL PRIMARY KEY,
 	created_by int8 NOT NULL,
 	created_at timestamp NOT NULL,
-	honorarium money NOT NULL
+	honorarium numeric(15,2) NOT NULL
 );
 
 DROP TABLE IF EXISTS clients;
@@ -151,13 +152,6 @@ CREATE TABLE addresses(
 
 DROP TABLE IF EXISTS cities;
 CREATE TABLE cities(
-	id bigserial NOT NULL PRIMARY KEY,
-	name varchar(50) NOT NULL,
-	region_id int8 NOT NULL
-);
-
-DROP TABLE IF EXISTS regions;
-CREATE TABLE regions(
 	id bigserial NOT NULL PRIMARY KEY,
 	name varchar(50) NOT NULL UNIQUE
 );
@@ -235,7 +229,3 @@ ALTER TABLE users
 ALTER TABLE addresses
 	ADD CONSTRAINT fk_addresses_city_id FOREIGN KEY
 (city_id) REFERENCES cities(id);
-
-ALTER TABLE cities 
-	ADD CONSTRAINT fk_cities_region_id FOREIGN KEY 
-(region_id) REFERENCES regions(id);

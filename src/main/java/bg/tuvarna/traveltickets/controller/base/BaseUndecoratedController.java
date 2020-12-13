@@ -6,18 +6,17 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import static bg.tuvarna.traveltickets.common.AppConfig.getPrimaryStage;
-
 /**
  * Base class for each controller. Each fxml file should define the id of the {@link Parent} as 'root'
  * and the id of the {@link Button} that's responsible for exiting as 'exitButton'.
  */
-public abstract class BaseController implements Initializable {
+public abstract class BaseUndecoratedController implements Initializable {
 
     private double xOffset = 0;
     private double yOffset = 0;
@@ -30,7 +29,8 @@ public abstract class BaseController implements Initializable {
 
     @FXML
     protected void onExitButtonClicked(final MouseEvent event) {
-        getPrimaryStage().fireEvent(new WindowEvent(getPrimaryStage(), WindowEvent.WINDOW_CLOSE_REQUEST));
+        final Window window = root.getScene().getWindow();
+        window.fireEvent(new WindowEvent(window, WindowEvent.WINDOW_CLOSE_REQUEST));
     }
 
     @Override
@@ -39,16 +39,14 @@ public abstract class BaseController implements Initializable {
     }
 
     public void makeSceneDraggable() {
-        final Stage primaryStage = getPrimaryStage();
-
         root.setOnMousePressed(e -> {
             xOffset = e.getSceneX();
             yOffset = e.getSceneY();
         });
-
         root.setOnMouseDragged(e -> {
-            primaryStage.setX(e.getScreenX() - xOffset);
-            primaryStage.setY(e.getScreenY() - yOffset);
+            final Stage stage = (Stage) root.getScene().getWindow();
+            stage.setX(e.getScreenX() - xOffset);
+            stage.setY(e.getScreenY() - yOffset);
         });
     }
 

@@ -1,5 +1,7 @@
 package bg.tuvarna.traveltickets.entity;
 
+import bg.tuvarna.traveltickets.service.impl.AuthServiceImpl;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -8,15 +10,19 @@ import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
+import java.io.Serial;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.Objects;
+
+import static java.time.ZoneOffset.UTC;
 
 @Entity
 @Table(name = "cashiers")
 @PrimaryKeyJoinColumn(name = "client_id")
 public class Cashier extends Client {
 
+    @Serial
     private static final long serialVersionUID = 1596590746408352705L;
 
     @Column(nullable = false)
@@ -24,7 +30,7 @@ public class Cashier extends Client {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by", updatable = false, nullable = false)
-    private User createdBy;
+    private Distributor createdBy;
 
     @Column(name = "created_at", updatable = false, nullable = false)
     private OffsetDateTime createdAt;
@@ -45,12 +51,18 @@ public class Cashier extends Client {
         this.honorarium = honorarium;
     }
 
-    public User getCreatedBy() {
+    public Distributor getCreatedBy() {
         return createdBy;
     }
 
     public OffsetDateTime getCreatedAt() {
         return createdAt;
+    }
+
+    @PrePersist
+    public void prePersist() {
+        createdBy = AuthServiceImpl.getInstance().getLoggedClient() instanceof Distributor d ? d : null;
+        createdAt = OffsetDateTime.now(UTC);
     }
 
     @Override
@@ -67,13 +79,6 @@ public class Cashier extends Client {
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), honorarium, createdBy, createdAt);
-    }
-
-    //TODO: implement with BaseAuditEntity in sprint 3
-    @PrePersist
-    protected final void prePersist() {
-        createdBy = new User(1L, null);
-        createdAt = OffsetDateTime.now();
     }
 
 }

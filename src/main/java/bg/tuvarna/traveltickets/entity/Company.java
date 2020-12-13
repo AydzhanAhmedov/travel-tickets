@@ -4,6 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
+import java.io.Serial;
 import java.util.Objects;
 
 @Entity
@@ -11,6 +12,7 @@ import java.util.Objects;
 @PrimaryKeyJoinColumn(name = "client_id")
 public class Company extends Client {
 
+    @Serial
     private static final long serialVersionUID = -8277742577799198024L;
 
     @Column(name = "logo_url")
