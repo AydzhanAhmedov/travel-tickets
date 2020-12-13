@@ -70,7 +70,9 @@ public final class ScheduledTicketsNotificationCheck implements Runnable {
             LOG.warn("No notification check needs to be performed cause user is cashier.");
             return;
         }
-        notifierFunction.notifyRecipient(executeInTransaction(em -> createNotificationsIfNeeded(clientId, clientType)));
+
+        final List<Notification> notifications = executeInTransaction(em -> createNotificationsIfNeeded(clientId, clientType));
+        if (!notifications.isEmpty()) notifierFunction.notifyRecipient(notifications);
     }
 
     private List<Notification> createNotificationsIfNeeded(final Long clientId, final ClientType.Enum clientType) {
