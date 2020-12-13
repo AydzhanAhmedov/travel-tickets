@@ -214,7 +214,7 @@ public class TravelsTableController implements Initializable {
                         case CASHIER -> {
                             if (item.getTravelStatus().getName() == TravelStatus.Enum.INCOMING) {
                                 if (item.getCurrentTicketQuantity() > 0)
-                                    btn.setOnAction(e -> onTicketBuy(e, item));
+                                    btn.setOnAction(e -> onTicketBuy(e, item, getIndex()));
                                 else {
                                     btn.setStyle("-fx-background-color: #800d0d");
                                     btn.setDisable(true);
@@ -247,7 +247,7 @@ public class TravelsTableController implements Initializable {
         columnAction.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue()));
     }
 
-    private void onTicketBuy(final ActionEvent actionEvent, Travel item) {
+    private void onTicketBuy(final ActionEvent actionEvent, Travel item, int index) {
         try {
             final FXMLLoader loader = new FXMLLoader(getClass().getResource(TICKET_DIALOG_FXML_PATH), getLangBundle());
             final DialogPane dialogPane;
@@ -260,7 +260,7 @@ public class TravelsTableController implements Initializable {
             final Dialog<Void> dialog = new UndecoratedDialog<>(root.getParent().getParent(), dialogPane);
 
             dialog.showAndWait();
-            tableTravels.getItems().set(tableTravels.getSelectionModel().getSelectedIndex(), item);
+            tableTravels.getItems().set(index, item);
         }
         catch (IOException ex) {
             ex.printStackTrace();
