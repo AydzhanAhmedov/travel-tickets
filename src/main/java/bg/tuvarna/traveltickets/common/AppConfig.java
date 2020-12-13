@@ -100,7 +100,7 @@ public final class AppConfig {
 
     public static void configure(final Stage primaryStage) {
         AppConfig.primaryStage = primaryStage;
-        //configureAbly();
+        configureAbly();
         configureHibernate();
         configurePrimaryStage();
         LOG.debug("Application configured.");
@@ -113,7 +113,7 @@ public final class AppConfig {
             try {
                 Platform.exit();
                 EntityManagerUtil.closeEntityManagerFactory();
-                // ablyClient.close();
+                ablyClient.close();
             }
             catch (Exception ex) {
                 LOG.error("Error on closing app: ", ex);

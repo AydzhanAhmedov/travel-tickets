@@ -8,6 +8,7 @@ import bg.tuvarna.traveltickets.controller.base.BaseUndecoratedController;
 import bg.tuvarna.traveltickets.entity.ClientType;
 import bg.tuvarna.traveltickets.entity.Company;
 import bg.tuvarna.traveltickets.entity.NotificationRecipient;
+import bg.tuvarna.traveltickets.schedule.ScheduledTicketsNotificationCheck;
 import bg.tuvarna.traveltickets.service.AuthService;
 import bg.tuvarna.traveltickets.service.NotificationService;
 import bg.tuvarna.traveltickets.service.impl.AuthServiceImpl;
@@ -39,6 +40,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import static bg.tuvarna.traveltickets.common.AppConfig.getLangBundle;
 import static bg.tuvarna.traveltickets.common.AppConfig.setPrimaryStageScene;
@@ -219,10 +221,10 @@ public class HomeController extends BaseUndecoratedController {
             return;
         }
 
-//        scheduledExecutorService.scheduleWithFixedDelay(
-//                new ScheduledTicketsNotificationCheck(n -> fireNewNotificationEvent()),
-//                0L, AppConfig.getNotificationCheckPeriod(), TimeUnit.MILLISECONDS
-//        );
+        scheduledExecutorService.scheduleWithFixedDelay(
+                new ScheduledTicketsNotificationCheck(n -> fireNewNotificationEvent()),
+                0L, AppConfig.getNotificationCheckPeriod(), TimeUnit.MILLISECONDS
+        );
     }
 
 }
