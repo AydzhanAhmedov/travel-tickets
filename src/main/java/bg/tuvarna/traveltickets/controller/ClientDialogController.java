@@ -199,7 +199,7 @@ public class ClientDialogController extends BaseUndecoratedDialogController {
             setErrorText(getLangBundle().getString(INVALID_EMAIL_KEY));
             return false;
         } else {
-            if (client.getUser().getEmail().compareTo(emailTextField.getText()) != 0 && authService.findByEmail(emailTextField.getText()) != null) {
+            if (client != null && client.getUser().getEmail().compareTo(emailTextField.getText()) != 0 && authService.findByEmail(emailTextField.getText()) != null) {
                 setErrorText(getLangBundle().getString(EMAIL_USED_KEY));
                 return false;
             }
@@ -209,7 +209,7 @@ public class ClientDialogController extends BaseUndecoratedDialogController {
             setErrorText(getLangBundle().getString(INVALID_USERNAME_KEY));
             return false;
         } else {
-            if (client.getUser().getUsername().compareTo(usernameTextField.getText()) != 0 && authService.findByUsername(usernameTextField.getText()) != null) {
+            if (client != null && client.getUser().getUsername().compareTo(usernameTextField.getText()) != 0 && authService.findByUsername(usernameTextField.getText()) != null) {
                 setErrorText(getLangBundle().getString(USERNAME_USED_KEY));
                 return false;
             }

@@ -339,6 +339,8 @@ public class TravelDialogController extends BaseUndecoratedDialogController {
                         .ifPresent(type -> {
                             if (type.getButtonData() == ButtonBar.ButtonData.YES) {
                                 onNewTravel.accept(executeInTransaction(em -> travelService.create(travel)));
+                            } else {
+                                e.consume();
                             }
                         });
             }
